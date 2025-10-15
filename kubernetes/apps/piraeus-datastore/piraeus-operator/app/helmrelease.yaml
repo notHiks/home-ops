@@ -30,8 +30,8 @@ spec:
     autogenerate: false
     tls:
       certManagerIssuerRef:
-        name: selfsigned-issuer
-        kind: ClusterIssuer
+        name: ca-bootstrapper
+        kind: Issuer
     imageConfigOverride:
       - base: quay.io/piraeusdatastore
         components:

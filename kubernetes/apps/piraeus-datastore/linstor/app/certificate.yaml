@@ -14,8 +14,8 @@ spec:
     - key encipherment
     - cert sign
   issuerRef:
-    name: selfsigned-issuer
-    kind: ClusterIssuer
+    name: ca-bootstrapper
+    kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -31,8 +31,8 @@ spec:
     - key encipherment
     - cert sign
   issuerRef:
-    name: selfsigned-issuer
-    kind: ClusterIssuer
+    name: ca-bootstrapper
+    kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

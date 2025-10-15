@@ -1,17 +1,8 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cert-manager.io/issuer_v1.json
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: linstor-api-ca
+  name: ca-bootstrapper
+  namespace: piraeus-datastore
 spec:
-  ca:
-    secretName: linstor-api-ca
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: linstor-internal-ca
-spec:
-  ca:
-    secretName: linstor-internal-ca
+  selfSigned: { }
