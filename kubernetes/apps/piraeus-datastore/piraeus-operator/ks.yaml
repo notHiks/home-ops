@@ -10,8 +10,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: cert-manager
+#  dependsOn:
+#   - name: cert-manager
   path: ./kubernetes/apps/piraeus-datastore/piraeus-operator/app
   prune: true
   sourceRef:
