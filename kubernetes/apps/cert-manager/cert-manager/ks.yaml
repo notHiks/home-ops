@@ -49,7 +49,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: cert-manager
-  path: ./kubernetes/apps/cert-manager/selfsigned-issuers
+  path: ./kubernetes/apps//cert-manager/cert-manager/selfsigned-issuers
   prune: true
   sourceRef:
     kind: GitRepository
