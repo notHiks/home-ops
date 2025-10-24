@@ -14,7 +14,7 @@ metadata:
 spec:
   ingressClassName: internal
   rules:
-  - host: "${LINSTOR}"
+  - host: "linstore.musai.ovh"
     http:
       paths:
       - backend:
