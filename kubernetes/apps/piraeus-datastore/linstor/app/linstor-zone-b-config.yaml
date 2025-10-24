@@ -20,6 +20,7 @@ spec:
   - name: data-zone-b
     lvmThinPool:
       thinPool: data
+      volumeGroup: piraeus-vg
     source:
       hostDevices:
       - /dev/sdb
