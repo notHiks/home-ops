@@ -7,5 +7,5 @@ resources:
   - ./certificate.yaml
   - ./ingress.yaml
   - ./issuer.yaml
-  - ./linstorsatelliteconfiguration-a.yaml
-  - ./linstorsatelliteconfiguration-b.yaml
+  - ./linstor-zone-a-config.yaml
+  - ./linstor-zone-b-config.yaml
