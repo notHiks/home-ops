@@ -3,26 +3,27 @@
 apiVersion: piraeus.io/v1
 kind: LinstorSatelliteConfiguration
 metadata:
-  name: linstor-satellites
+  name: linstor-satellite-zone-a
 spec:
   internalTLS:
     certManager:
       name: linstor-internal-ca
       kind: Issuer
   nodeAffinity:
-    nodeSelectorTerms:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
       - matchExpressions:
-          - key: topology.kubernetes.io/zone
-            operator: In
-            values:
-              - b
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values:
+          - a
   storagePools:
-  - name: data
+  - name: data-zone-a
     lvmThinPool:
       thinPool: data
     source:
       hostDevices:
-        - /dev/sdb
+      - /dev/sda
   patches:
     - target:
         kind: DaemonSet
