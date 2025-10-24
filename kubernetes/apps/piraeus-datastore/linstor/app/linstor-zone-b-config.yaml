@@ -3,7 +3,7 @@
 apiVersion: piraeus.io/v1
 kind: LinstorSatelliteConfiguration
 metadata:
-  name: linstor-satellite-zone-a
+  name: linstor-satellite-zone-b
 spec:
   internalTLS:
     certManager:
