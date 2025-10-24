@@ -12,6 +12,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: cert-manager-selfsigned-issuers
+      namespace: cert-manager
   path: ./kubernetes/apps/piraeus-datastore/piraeus-operator/app
   prune: true
   sourceRef:
