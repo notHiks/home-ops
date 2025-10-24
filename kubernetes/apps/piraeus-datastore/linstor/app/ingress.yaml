@@ -14,7 +14,7 @@ metadata:
 spec:
   ingressClassName: internal
   rules:
-  - host: "linstor.${SECRET_DOMAIN}"
+  - host: ["]linstor.${SECRET_DOMAIN}"]
     http:
       paths:
       - backend:
