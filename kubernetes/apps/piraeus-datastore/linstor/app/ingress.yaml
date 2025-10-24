@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: linstor-gui
   annotations:
-    external-dns.alpha.kubernetes.io/target: "linstor.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "linstor.${SECRET-DOMAIN}"
     nginx.ingress.kubernetes.io/proxy-ssl-secret: "piraeus-datastore/linstor-gui-tls"
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/secure-backends: "true"
@@ -14,7 +14,7 @@ metadata:
 spec:
   ingressClassName: internal
   rules:
-  - host: "linstor.${SECRET_DOMAIN}"
+  - host: "linstor.${SECRET-DOMAIN}"
     http:
       paths:
       - backend:
