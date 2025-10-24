@@ -10,7 +10,6 @@ spec:
       name: linstor-internal-ca
       kind: Issuer
   nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
       - matchExpressions:
         - key: topology.kubernetes.io/zone
