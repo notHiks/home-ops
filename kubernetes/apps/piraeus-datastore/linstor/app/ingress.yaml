@@ -21,6 +21,6 @@ spec:
           service:
             name: linstor-controller
             port:
-              number: 3371
+              number: 3370
         path: /
         pathType: Prefix
