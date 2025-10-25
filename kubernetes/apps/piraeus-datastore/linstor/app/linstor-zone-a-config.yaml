@@ -31,48 +31,35 @@ spec:
         - op: add
           path: /metadata/annotations/reloader.stakater.com~1auto
           value: "true"
-    - target:
-        kind: Pod
-        name: satellite
-      patch: |
-        apiVersion: v1
-        kind: Pod
-        metadata:
-          name: satellite
-        spec:
-          hostNetwork: true
-          initContainers:
-            - name: drbd-shutdown-guard
-              $patch: delete
-            - name: drbd-module-loader
-              $patch: delete
-          containers:
-          - name: linstor-satellite
-            volumeMounts:
-            - mountPath: /run
-              name: host-run
-            securityContext:
-              readOnlyRootFilesystem: false
-          volumes:
-            - name: run-systemd-system
-              $patch: delete
-            - name: run-drbd-shutdown-guard
-              $patch: delete
-            - name: systemd-bus-socket
-              $patch: delete
-            - name: lib-modules
-              $patch: delete
-            - name: usr-src
-              $patch: delete
-            - name: etc-lvm-backup
-              hostPath:
-                path: /var/etc/lvm/backup
-                type: DirectoryOrCreate
-            - name: etc-lvm-archive
-              hostPath:
-                path: /var/etc/lvm/archive
-                type: DirectoryOrCreate
-            - name: host-run
-              hostPath:
-                path: /run
-                type: DirectoryOrCreate
+---
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: talos-loader-override
+spec:
+  podTemplate:
+    spec:
+      initContainers:
+        - name: drbd-shutdown-guard
+          $patch: delete
+        - name: drbd-module-loader
+          $patch: delete
+      volumes:
+        - name: run-systemd-system
+          $patch: delete
+        - name: run-drbd-shutdown-guard
+          $patch: delete
+        - name: systemd-bus-socket
+          $patch: delete
+        - name: lib-modules
+          $patch: delete
+        - name: usr-src
+          $patch: delete
+        - name: etc-lvm-backup
+          hostPath:
+            path: /var/etc/lvm/backup
+            type: DirectoryOrCreate
+        - name: etc-lvm-archive
+          hostPath:
+            path: /var/etc/lvm/archive
+            type: DirectoryOrCreate
