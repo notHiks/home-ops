@@ -9,4 +9,4 @@ resources:
   - ./issuer.yaml
   - ./linstor-zone-a-config.yaml
   - ./linstor-zone-b-config.yaml
-  - ./override.yaml
+  - ./talos-override.yaml
