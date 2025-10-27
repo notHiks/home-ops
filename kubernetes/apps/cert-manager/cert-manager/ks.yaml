@@ -42,6 +42,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: cert-manager
+      namespace: cert-manager
   path: ./kubernetes/apps/cert-manager/selfsigned-issuers
   prune: true
   sourceRef:
