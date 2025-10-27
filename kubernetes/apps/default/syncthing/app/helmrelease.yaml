@@ -1,4 +1,5 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -7,56 +8,92 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: syncthing
+    name: app-template
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
       retries: 3
   values:
-    replicaCount: 1
-    persistence:
-      enabled: true
-      existingClaim: syncthing-pv-claim
-      mountPath: /var/syncthing
-    env:
-      - name: PUID
-        value: "1000"
-      - name: PGID
-        value: "1000"
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
+    controllers:
+      syncthing:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/haraldkoch/syncthing
+              tag: 2.0.10
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            resources:
+              requests:
+                cpu: 15m
+                memory: 150M
+              limits:
+                memory: 300M
     service:
-      enabled: true
-      type: ClusterIP
-      services:
-        dashboard:
-          enabled: true
-          name: syncthing-dashboard
-          port: 8384
-          targetPort: 8384
-          protocol: TCP
-        protocol:
-          enabled: true
-          name: syncthing-protocol
-          ports:
-            - name: syncthing-tcp
-              port: 22000
-              protocol: TCP
-              targetPort: 22000
-            - name: syncthing-udp
-              port: 22000
-              protocol: UDP
-              targetPort: 22000
-            - name: syncthing-disc
-              port: 21027
-              protocol: UDP
-              targetPort: 21027
-    statefulset:
-      enabled: true
-      serviceName: syncthing
-      terminationGracePeriodSeconds: 60
+      app:
+        controller: syncthing
+        ipFamilyPolicy: PreferDualStack
+        primary: true
+        ports:
+          http:
+            port: 8384
+            primary: true
+      listen:
+        controller: syncthing
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: "${SYNCTHING_IPV4},${SYNCTHING_IPV6}"
+        externalTrafficPolicy: Local
+        ipFamilies: [IPv4, IPv6]
+        ipFamilyPolicy: PreferDualStack
+        ports:
+          listen:
+            port: 22000
+            protocol: TCP
+            targetPort: 22000
+          discovery:
+            enabled: true
+            port: 21027
+            protocol: UDP
+            targetPort: 21027
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${CLUSTER_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: 8384
+      browser:
+        hostnames: ["sync.${CLUSTER_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+    persistence:
+      # TODO: volsync
+      config:
+        type: persistentVolumeClaim
+        suffix: config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        advancedMounts:
+          browser:
+            app:
+              - path: /config
+      data:
+        enabled: true
+        type: nfs
+        server: ${SECRET_BACKUP_SERVER:=fnord}
+        path: /backup/data/k8s/syncthing
+        globalMounts:
+          - path: /var/syncthing
