@@ -3,7 +3,6 @@
 *.key
 *.decrypted~*.yaml
 /age.key
-/.sopsrc
 /cloudflare-tunnel.json
 /github-deploy.key
 /github-deploy.key.pub
