@@ -73,27 +73,16 @@ spec:
           - backendRefs:
               - identifier: app
                 port: 8384
-      browser:
-        hostnames: ["sync.${CLUSTER_DOMAIN}"]
-        parentRefs:
-          - name: envoy-internal
-            namespace: network
-            sectionName: https
     persistence:
       # TODO: volsync
       config:
         type: persistentVolumeClaim
-        suffix: config
+        size: 8Gi
+        storageClass: linbit-local
         accessMode: ReadWriteOnce
-        size: 1Gi
-        advancedMounts:
-          browser:
-            app:
-              - path: /config
-      data:
-        enabled: true
-        type: nfs
-        server: ${SECRET_BACKUP_SERVER:=fnord}
-        path: /backup/data/k8s/syncthing
         globalMounts:
-          - path: /var/syncthing
+          - path: "/var/syncthing"
+      data:
+        existingClaim: syncthing-data
+        globalMounts:
+          - path: "/data"
