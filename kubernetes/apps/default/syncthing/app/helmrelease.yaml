@@ -82,7 +82,7 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: "/var/syncthing"
-      data:
-        existingClaim: syncthing-data
-        globalMounts:
-          - path: "/data"
+#      data:
+#        existingClaim: syncthing-data
+#        globalMounts:
+#          - path: "/data"
