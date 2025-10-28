@@ -6,8 +6,8 @@ metadata:
   name: linbit-local
 provisioner: linstor.csi.linbit.com
 parameters:
-  linstor.csi.linbit.com/storagePool: "data"
-  linstor.csi.linbit.com/layerList: "data-zone-a"
+  linstor.csi.linbit.com/storagePool: "data-zone-a"
+  linstor.csi.linbit.com/layerList: "storage"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
@@ -38,7 +38,7 @@ metadata:
 reclaimPolicy: Delete
 provisioner: linstor.csi.linbit.com
 parameters:
-  linstor.csi.linbit.com/storagePool: "linstor_data/data"
+  linstor.csi.linbit.com/storagePool: "data-zone-a"
   linstor.csi.linbit.com/layerList: "storage"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
 allowVolumeExpansion: true
