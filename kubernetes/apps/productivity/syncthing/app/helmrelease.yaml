@@ -81,8 +81,11 @@ spec:
         storageClass: linbit-replicated
         accessMode: ReadWriteOnce
         globalMounts:
-          - path: "/var/syncthing"
-#      data:
-#        existingClaim: syncthing-data
-#        globalMounts:
-#          - path: "/data"
+          - path: "/config"
+      data:
+        type: persistentVolumeClaim
+        size: 8Gi
+        storageClass: linbit-local
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: "/data"
