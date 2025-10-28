@@ -7,7 +7,7 @@ metadata:
 provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
-  linstor.csi.linbit.com/layerList: "storage"
+  linstor.csi.linbit.com/layerList: "data-zone-a"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
