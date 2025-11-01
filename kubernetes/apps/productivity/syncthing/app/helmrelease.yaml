@@ -19,6 +19,9 @@ spec:
   values:
     controllers:
       syncthing:
+        pod:
+          nodeSelector:
+            kubernetes.io/hostname: hikaru-01
         containers:
           app:
             image:
