@@ -17,7 +17,7 @@ spec:
           values:
           - b
   storagePools:
-  - name: data-zone-b
+  - name: data
     lvmThinPool:
       thinPool: data
     source:

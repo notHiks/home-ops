@@ -22,7 +22,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/haraldkoch/syncthing
+              repository: ghcr.io/syncthing/syncthing
               tag: 2.0.10
             probes:
               liveness:
@@ -38,20 +38,17 @@ spec:
     service:
       app:
         controller: syncthing
-        ipFamilyPolicy: PreferDualStack
         primary: true
         ports:
           http:
             port: 8384
-            primary: true
       listen:
         controller: syncthing
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: "${SYNCTHING_IPV4}"
+          external-dns.alpha.kubernetes.io/hostname: sync.${SECRET_DOMAIN}
+          lbipam.cilium.io/ips: 192.168.99.55
         externalTrafficPolicy: Local
-        ipFamilies: [IPv4]
-        ipFamilyPolicy: PreferDualStack
         ports:
           listen:
             port: 22000
@@ -64,7 +61,7 @@ spec:
             targetPort: 21027
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${CLUSTER_DOMAIN}"]
+        hostnames: ["sync.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -77,15 +74,16 @@ spec:
       # TODO: volsync
       config:
         type: persistentVolumeClaim
-        size: 8Gi
+        suffix: config
+        size: 1Gi
         storageClass: linbit-replicated
         accessMode: ReadWriteOnce
         globalMounts:
-          - path: "/config"
+          - path: /config
       data:
         type: persistentVolumeClaim
         size: 8Gi
         storageClass: linbit-local
         accessMode: ReadWriteOnce
         globalMounts:
-          - path: "/data"
+          - path: /var/syncthing
