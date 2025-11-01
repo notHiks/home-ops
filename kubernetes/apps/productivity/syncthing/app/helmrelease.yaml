@@ -37,6 +37,7 @@ spec:
                 memory: 300M
     service:
       app:
+        forceRename: syncthing
         controller: syncthing
         primary: true
         ports:
@@ -83,7 +84,7 @@ spec:
           - path: /config
       data:
         type: persistentVolumeClaim
-        size: 8Gi
+        size: 1000Gi
         storageClass: linbit-local
         accessMode: ReadWriteOnce
         globalMounts:
