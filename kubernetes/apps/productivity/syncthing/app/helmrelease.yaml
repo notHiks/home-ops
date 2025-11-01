@@ -61,7 +61,8 @@ spec:
             targetPort: 21027
     route:
       app:
-        hostnames: ["sync.${SECRET_DOMAIN}"]
+        hostnames:
+        - "{{ .Release.Name }}.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
