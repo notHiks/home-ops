@@ -2,11 +2,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app cloudflare-dns
+  name: &app pihole-dns
 spec:
   chartRef:
     kind: OCIRepository
-    name: cloudflare-dns
+    name: pihole-dns
   interval: 1h
   values:
     fullnameOverride: *app
@@ -19,15 +19,15 @@ spec:
             key: api-token
     extraArgs:
       - --cloudflare-dns-records-per-page=1000
-      - --cloudflare-proxied
+      - --cloudflare-proxied=false
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
-      - --gateway-name=envoy-external
+      - --gateway-name=envoy-internal
     triggerLoopOnEvent: true
     policy: sync
     sources: ["crd", "gateway-httproute"]
     txtPrefix: k8s.
-    txtOwnerId: external
+    txtOwnerId: internal
     domainFilters: ["${SECRET_DOMAIN}"]
     serviceMonitor:
       enabled: true
