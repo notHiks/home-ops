@@ -19,7 +19,7 @@ spec:
       paths:
       - backend:
           service:
-            name: linstor-controller
+            name: linstor-controller-test
             port:
               number: 3370
         path: /
