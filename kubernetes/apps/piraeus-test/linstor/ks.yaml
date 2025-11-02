@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app linstor
+  name: &app linstor-test
   namespace: flux-system
 spec:
   targetNamespace: piraeus-test
@@ -11,7 +11,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: piraeus-operator
+    - name: piraeus-operator-test
   path: ./kubernetes/apps/piraeus-test/linstor/app
   prune: true
   sourceRef:
@@ -25,14 +25,14 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app linstor-storageclass
+  name: &app linstor-storageclass-test
   namespace: flux-system
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: linstor
+    - name: linstor-test
   path: ./kubernetes/apps/piraeus-test/linstor/storageclass
   prune: true
   force: true
