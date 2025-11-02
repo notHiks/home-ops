@@ -8,7 +8,7 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: piraeus-operator
+    name: piraeus-operator-test
   install:
     replace: true
     remediation:
