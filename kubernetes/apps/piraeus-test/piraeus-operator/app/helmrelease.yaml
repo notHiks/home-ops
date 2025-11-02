@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: piraeus-operator
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: piraeus-operator
+  install:
+    replace: true
+    remediation:
+      retries: 3
+  upgrade:
+    force: true
+    preserveValues: true
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    installCRDs: true
+    autogenerate: false
+    tls:
+      certManagerIssuerRef:
+        name: selfsigned-issuer
+        kind: ClusterIssuer
+    imageConfigOverride:
+      - base: quay.io/piraeusdatastore
+        components:
+          linstor-controller:
+            tag: v1.32.2
+            image: piraeus-server
+          linstor-satellite:
+            tag: v1.32.2
+            image: piraeus-server

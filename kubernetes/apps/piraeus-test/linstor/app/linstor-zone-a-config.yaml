@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/piraeusdatastore/piraeus-operator/refs/heads/v2/config/crd/bases/piraeus.io_linstorsatelliteconfigurations.yaml
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: linstor-satellite-zone-a-test
+spec:
+  internalTLS:
+    certManager:
+      name: linstor-internal-ca-test
+      kind: Issuer
+  nodeAffinity:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values:
+          - d
+  storagePools:
+  - name: data
+    lvmThinPool:
+      thinPool: data
+    source:
+      hostDevices:
+      - /dev/sda
+  patches:
+    - target:
+        kind: DaemonSet
+        name: linstor-satellite
+      patch: |-
+        - op: add
+          path: /metadata/annotations/reloader.stakater.com~1auto
+          value: "true"
