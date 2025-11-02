@@ -3,7 +3,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: linbit-local
+  name: linbit-local-test
 provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
@@ -15,7 +15,7 @@ allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: linbit-replicated
+  name: linbit-replicated-test
   annotations:
     storageclass.kubernetes.io/is-default-class: "true"
 provisioner: linstor.csi.linbit.com
@@ -34,7 +34,7 @@ allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: linbit-snapshot
+  name: linbit-snapshot-test
 reclaimPolicy: Delete
 provisioner: linstor.csi.linbit.com
 parameters:
