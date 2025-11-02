@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ./linstorcluster.yaml
   - ./certificate.yaml
-  - ./ingress.yaml
+  - ./httproute.yaml
   - ./issuer.yaml
   - ./linstor-zone-a-config.yaml
   - ./linstor-zone-b-config.yaml
