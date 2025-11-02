@@ -119,7 +119,7 @@ spec:
               - identifier: app
                 port: 8384
       browser:
-        hostnames: ["sync.${CLUSTER_DOMAIN}"]
+        hostnames: ["sync.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
