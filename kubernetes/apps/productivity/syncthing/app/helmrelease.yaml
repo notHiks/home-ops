@@ -90,18 +90,15 @@ spec:
           lbipam.cilium.io/ips: 192.168.99.55
         externalTrafficPolicy: Local
         ports:
-          listen:
-            port: 22000
-            protocol: TCP
-            targetPort: 22000
           discovery:
-            enabled: true
             port: 21027
             protocol: UDP
-            targetPort: 21027
-          listen-udp:
-            enabled: true
+          listen-tcp:
             port: 22000
+            protocol: TCP
+          listen-udp:
+            port: 22000
+            protocol: UDP
       browser:
         controller: browser
         ports:
