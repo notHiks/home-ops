@@ -106,7 +106,8 @@ spec:
             port: *browserPort
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames:
+        - "{{ .Release.Name }}.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -116,7 +117,8 @@ spec:
               - identifier: app
                 port: 8384
       browser:
-        hostnames: ["sync.${SECRET_DOMAIN}"]
+        hostnames:
+        - "sync.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
