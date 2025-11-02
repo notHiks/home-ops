@@ -90,18 +90,15 @@ spec:
           lbipam.cilium.io/ips: 192.168.99.55
         externalTrafficPolicy: Local
         ports:
-          listen:
-            port: 22000
-            protocol: TCP
-            targetPort: 22000
           discovery:
-            enabled: true
             port: 21027
             protocol: UDP
-            targetPort: 21027
-          listen-udp:
-            enabled: true
+          listen-tcp:
             port: 22000
+            protocol: TCP
+          listen-udp:
+            port: 22000
+            protocol: UDP
       browser:
         controller: browser
         ports:
@@ -109,7 +106,8 @@ spec:
             port: *browserPort
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames:
+        - "{{ .Release.Name }}.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -119,7 +117,8 @@ spec:
               - identifier: app
                 port: 8384
       browser:
-        hostnames: ["sync.${SECRET_DOMAIN}"]
+        hostnames:
+        - "sync.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
