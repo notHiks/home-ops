@@ -37,7 +37,44 @@ spec:
                 cpu: 15m
                 memory: 150M
               limits:
-                memory: 300M
+                memory: 500M
+      browser:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/haraldkoch/filebrowser
+              tag: v2.44.2
+            env:
+              TZ: ${TIMEZONE:=Etc/UTC}
+              FB_DATABASE: /config/filebrowser.db
+              FB_ROOT: /var/syncthing
+              FB_LOG: stdout
+              FB_NOAUTH: true
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &browserPort 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 500Mi
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            fsGroupChangePolicy: "OnRootMismatch"
     service:
       app:
         forceRename: syncthing
@@ -50,7 +87,6 @@ spec:
         controller: syncthing
         type: LoadBalancer
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: sync.musai.ovh
           lbipam.cilium.io/ips: 192.168.99.55
         externalTrafficPolicy: Local
         ports:
@@ -63,10 +99,17 @@ spec:
             port: 21027
             protocol: UDP
             targetPort: 21027
+          listen-udp:
+            enabled: true
+            port: 22000
+      browser:
+        controller: browser
+        ports:
+          http:
+            port: *browserPort
     route:
       app:
-        hostnames:
-        - "{{ .Release.Name }}.musai.ovh"
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
@@ -75,6 +118,16 @@ spec:
           - backendRefs:
               - identifier: app
                 port: 8384
+      browser:
+        hostnames: ["sync.${CLUSTER_DOMAIN}"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: browser
+                port: *browserPort
     persistence:
       # TODO: volsync
       config:
