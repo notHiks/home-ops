@@ -90,7 +90,7 @@ spec:
           enabled: false
     # all namespaces that will utilize the vpn should be added here
     routed_namespaces: &routedNamespaces
-      - downloads
+      - media
     webhook:
       image:
         repository: ghcr.io/angelnu/gateway-admision-controller
@@ -109,7 +109,7 @@ spec:
       # -- boolean: Default behaviour for new PODs in the evaluated namespace
       # if true then the gatewayLabel and gatewayAnnotation below will not be utilized and the
       # gateway will be injected into every pod in the routed_namespaces
-      gatewayDefault: false
+      gatewayDefault: true
 
       # -- boolean: gatewayLabel and gatewayAnnotation controls the label/annotation key of which the value,
       #   by default, must be 'true' on the pod in order for the gateway sidecar to be injected.

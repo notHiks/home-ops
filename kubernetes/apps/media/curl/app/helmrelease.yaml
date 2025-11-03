@@ -1,0 +1,27 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: debugger
+  namespace: media
+spec:
+  interval: 5m
+  releaseName: debugger
+  chart:
+    spec:
+      chart: raw
+      sourceRef:
+        kind: HelmRepository
+        name: generic-charts
+        namespace: flux-system
+      version: ">=0.2.0"
+  values:
+    resources:
+      - apiVersion: v1
+        kind: Pod
+        metadata:
+          name: debugger
+        spec:
+          containers:
+            - name: debugger
+              image: curlimages/curl
+              command: ["sleep", "3600"]
