@@ -1,26 +1,19 @@
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: debugger
 spec:
-  interval: 5m
-  releaseName: debugger
-  chart:
-    spec:
-      chart: raw
-      sourceRef:
-        kind: HelmRepository
-        name: generic-charts
-        namespace: flux-system
-      version: ">=0.2.0"
+  chartRef:
+    kind: OCIRepository
+    name: echo
+  interval: 1h
   values:
-    resources:
-      - apiVersion: v1
-        kind: Pod
-        metadata:
-          name: debugger
-        spec:
-          containers:
-            - name: debugger
-              image: curlimages/curl
-              command: ["sleep", "3600"]
+    controllers:
+      echo:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: curlimages/curl
+              tag: 8.16.0
