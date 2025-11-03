@@ -6,7 +6,7 @@ metadata:
 spec:
   chartRef:
     kind: OCIRepository
-    name: echo
+    name: debugger
   interval: 1h
   values:
     controllers:
