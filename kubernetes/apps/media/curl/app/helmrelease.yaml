@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: debugger
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: debugger
+  interval: 1h
+  values:
+    controllers:
+      echo:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: curlimages/curl
+              tag: 8.16.0
