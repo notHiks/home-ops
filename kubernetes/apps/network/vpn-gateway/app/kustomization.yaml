@@ -7,3 +7,4 @@ resources:
   - ./secret.sops.yaml
   - ./networkpolicy.yaml
   - ./helmrepository.yaml
+  - ./device-plugin.yaml
