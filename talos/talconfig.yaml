@@ -78,6 +78,7 @@ nodes:
 
 # Global patches
 patches:
+  - "@./patches/global/machine-api-access.yaml"
   - "@./patches/global/machine-files.yaml"
   - "@./patches/global/machine-drbd.yaml"
   - "@./patches/global/machine-interface.yaml"
