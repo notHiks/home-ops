@@ -82,6 +82,7 @@ spec:
             memory: 64M
           limits:
             memory: 128M
+            squat.ai/tun: "1"
         securityContext:
           capabilities: { add: ["NET_ADMIN"] }
         # network policy is disabled because we need 2 CiliumNetworkPolicies
