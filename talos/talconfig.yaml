@@ -78,7 +78,6 @@ nodes:
 
 # Global patches
 patches:
-  - "@./patches/global/machine-api-access.yaml"
   - "@./patches/global/machine-files.yaml"
   - "@./patches/global/machine-drbd.yaml"
   - "@./patches/global/machine-interface.yaml"
@@ -86,6 +85,7 @@ patches:
   - "@./patches/global/machine-network.yaml"
   - "@./patches/global/machine-sysctls.yaml"
   - "@./patches/global/machine-time.yaml"
+  - "@./patches/global/machine-api-access.yaml"
 
 # Controller patches
 controlPlane:
