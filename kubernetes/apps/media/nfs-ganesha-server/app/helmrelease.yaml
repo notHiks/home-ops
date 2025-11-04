@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: nfs-server-provisioner
-      version: 4.0.8
+      version: 1.8.0
       sourceRef:
         kind: HelmRepository
         name: nfs-provisioner-charts
@@ -22,4 +22,11 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-
+  values:
+  # https://github.com/kubernetes-sigs/nfs-ganesha-server-and-external-provisioner/blob/master/charts/nfs-server-provisioner/values.yaml
+    persistence:
+      enabled: true
+      storageClass: linbit-local
+      size: 20Gi
+    storageClass:
+      defaultClass: true
