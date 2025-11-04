@@ -69,7 +69,7 @@ spec:
         #   TZ
           VPN_TYPE: wireguard
           VPN_INTERFACE: wg0
-          WIREGUARD_MTU: 1320
+       #  WIREGUARD_MTU: 1320
           FIREWALL_ENABLED_DISABLING_IT_SHOOTS_YOU_IN_YOUR_FOOT: off
           DOT: off
           PUBLICIP_API: ip2location
