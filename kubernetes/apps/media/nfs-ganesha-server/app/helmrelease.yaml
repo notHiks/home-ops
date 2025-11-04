@@ -22,34 +22,4 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
-  values:
-    replicaCount: 1
-    persistence:
-      config:
-        enabled: true
-        type: persistentVolumeClaim
-        accessMode: ReadWriteOnce
-        size: 20Gi
-        storageClass: linbit-local
-    service:
-      app:
-        controller: nfs-ganesha-server
-        primary: true
-        ports:
-          http:
-            port: 2049
-    nfs:
-      # Path exported by the NFS server
-      path: /export
-      # Which network CIDR is allowed to mount
-      allowedClients: 10.0.0.0/8
-    storageClass:
-      create: true
-      defaultClass: false
-      name: nfs-client
-      reclaimPolicy: Delete
-      provisionerName: cluster.local/nfs-nfs-ganesha-server
-      allowVolumeExpansion: true
-      parameters:
-        archiveOnDelete: "false"
 
