@@ -3,10 +3,14 @@ kind: HelmRelease
 metadata:
   name: nfs-ganesha-server
 spec:
-  interval: 1h
-  chartRef:
-    kind: OCIRepository
-    name: nfs-ganesha-server
+  interval: 15m
+  chart:
+    spec:
+      chart: nfs-ganesha
+      version: 4.0.8
+      sourceRef:
+        kind: HelmRepository
+        name: nfs-provisioner-charts
   install:
     replace: true
     remediation:
@@ -19,14 +23,6 @@ spec:
       strategy: rollback
       retries: 3
   values:
-    controllers:
-      nfs-ganesha-server:
-        strategy: RollingUpdate
-        containers:
-          app:
-            image:
-              repository: ghcr.io/hi-fi/nfs-ganesha
-              tag: v6.5
     replicaCount: 1
     persistence:
       config:
