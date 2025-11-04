@@ -6,9 +6,13 @@ metadata:
   name: &app vpn-gateway
 spec:
   interval: 30m
-  chartRef:
-    kind: OCIRepository
-    name: vpn-gateway
+  chart:
+    spec:
+      chart: pod-gateway
+      version: 6.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: angelnu-charts
   install:
     remediation:
       retries: 3
