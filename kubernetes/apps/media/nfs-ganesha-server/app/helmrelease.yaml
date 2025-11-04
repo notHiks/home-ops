@@ -19,6 +19,14 @@ spec:
       strategy: rollback
       retries: 3
   values:
+    controllers:
+      nfs-ganesha-server:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/hi-fi/nfs-ganesha
+              tag: v6.5
     replicaCount: 1
     persistence:
       enabled: true
