@@ -28,6 +28,7 @@ spec:
               tag: 4.21.4@sha256:75f5037770eab774b82f298268305af8a18a01a1daad679f8d2d17c54059c847
             env:
               SAMBA_HOSTS_ALLOW: "127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 192.168.99.0/24"
+              SAMBA_LOG_LEVEL: 10
               # SAMBA_SERVER_STRING: &serverstring "smb.${SECRET_MAIN_DOMAIN_NAME}"
               # WSDD2_ENABLE: "1"
             resources:
