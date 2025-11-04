@@ -7,7 +7,7 @@ metadata:
 spec:
   restartPolicy: Never
   containers:
-    - name: curl
-      image: curlimages/curl:latest
+    - name: alpine-curl
+      image: alpine:latest
       command: ["/bin/sh", "-c"]
-      args: ["curl https://ifconfig.me; sleep 3600"]
+      args: ["apk add --no-cache curl && curl https://ifconfig.me; sleep 3600"]
