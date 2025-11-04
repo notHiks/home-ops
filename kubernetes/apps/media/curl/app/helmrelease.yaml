@@ -1,19 +1,13 @@
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
+# flux/apps/curl-test-pod.yaml
+apiVersion: v1
+kind: Pod
 metadata:
-  name: debugger
+  name: curl-test
+  namespace: default
 spec:
-  chartRef:
-    kind: OCIRepository
-    name: debugger
-  interval: 1h
-  values:
-    controllers:
-      echo:
-        strategy: RollingUpdate
-        containers:
-          app:
-            image:
-              repository: curlimages/curl
-              tag: 8.16.0
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: curlimages/curl:latest
+      command: ["/bin/sh", "-c"]
+      args: ["curl https://ifconfig.me; sleep 3600"]
