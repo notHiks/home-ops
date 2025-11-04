@@ -1,13 +1,9 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
+kind: HelmRepository
 metadata:
-  name: nfs-ganesha-server
+  name: nfs-provisioner-charts
 spec:
-  interval: 15m
-  layerSelector:
-    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
-    operation: copy
-  ref:
-    tag: 4.4.0
-  url: oci://ghcr.io/bjw-s-labs/helm/app-template
+  interval: 30m
+  url: https://kubernetes-sigs.github.io/nfs-ganesha-server-and-external-provisioner/
+  timeout: 3m
