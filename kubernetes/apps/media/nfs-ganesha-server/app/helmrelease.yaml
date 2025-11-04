@@ -6,7 +6,7 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: nfs-server-provisioners
+      chart: nfs-server-provisioner
       version: 1.8.0
       sourceRef:
         kind: HelmRepository
