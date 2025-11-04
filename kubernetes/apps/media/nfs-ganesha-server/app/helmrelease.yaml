@@ -28,5 +28,11 @@ spec:
       enabled: true
       storageClass: linbit-local
       size: 20Gi
-    storageClass:
-      defaultClass: true
+
+    #Schedule NFS pod on specific node only
+    nodeSelector:
+      kubernetes.io/hostname: fuu-01
+
+    # Optional: keep commented defaultClass for later
+    # storageClass:
+    #   defaultClass: true
