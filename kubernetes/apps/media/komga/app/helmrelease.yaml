@@ -1,0 +1,57 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: komga
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: komga
+  dependsOn: []
+  interval: 15m
+  values:
+    controllers:
+      komga:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/gotson/komga
+              tag: 1.23.5@sha256:85f0be8920742341217f2b2bdafef64da1f6062ae472dcf74426a9fa549c8a05
+            env:
+              TZ: Europe/London
+              SERVER_PORT: &port 80
+            resources:
+              requests:
+                cpu: 15m
+                memory: 1Gi
+              limits:
+                memory: 4Gi
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.musai.ovh"]
+        parentRefs:
+          - name: envoy-external
+            namespace: network
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        suffix: config
+        size: 1Gi
+        storageClass: linbit-replicated
+        accessMode: ReadWriteOnce
+        globalMounts:
+          - path: /config
+      media:
+        type: persistentVolumeClaim
+        existingClaim: nfs-manga
+        globalMounts:
+        - path: /shares/media
+          subPath: data
