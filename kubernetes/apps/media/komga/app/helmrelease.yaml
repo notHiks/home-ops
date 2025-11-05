@@ -50,8 +50,7 @@ spec:
         globalMounts:
           - path: /config
       media:
-        type: persistentVolumeClaim
         existingClaim: nfs-manga
         globalMounts:
-        - path: /shares/media
-          subPath: data
+         - path: /shares/media
+           subPath: data
