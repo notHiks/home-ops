@@ -84,7 +84,7 @@ spec:
       media:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: nfs
+        existingClaim: nfs-manga
         globalMounts:
-        - path: /mnt
+        - path: /media/manga
           readOnly: false
