@@ -2,8 +2,10 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: media
+namespace: storage
 components:
   - ../../components/common
 resources:
-  - ./nfs-pvcs/ks.yaml
+  - ./samba/ks.yaml
+  - ./nfs-ganesha-server/ks.yaml
+  - ./snapshot-controller/ks.yaml

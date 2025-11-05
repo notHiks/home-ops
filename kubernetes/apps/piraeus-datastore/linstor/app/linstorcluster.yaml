@@ -15,21 +15,6 @@ spec:
       kind: Issuer
   patches:
     - target:
-        kind: Service
-        name: linstor-controller
-      patch: |
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: linstor-controller
-          annotations:
-            external-dns.alpha.kubernetes.io/hostname: linstor-controller.${SECRET_DOMAIN}
-            lbipam.cilium.io/ips:  ${SVC_LINSTOR_CTRL_ADDR:=temp}
-        spec:
-          type: LoadBalancer
-          externalTrafficPolicy: Cluster
-          ipFamilyPolicy: SingleStack
-    - target:
         kind: Deployment
         name: linstor-controller
       patch: |-

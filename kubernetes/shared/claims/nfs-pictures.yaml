@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.1-standalone-strict/persistentvolumeclaim.json
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pictures
+spec:
+  storageClassName: nfs
+  resources:
+    requests:
+      storage: 250Gi
+  accessModes:
+    - ReadWriteMany
