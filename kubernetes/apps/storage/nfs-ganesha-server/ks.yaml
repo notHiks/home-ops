@@ -4,12 +4,12 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app nfs-ganesha-server
-  namespace: &namespace media
+  namespace: &namespace storage
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  path: ./kubernetes/apps/media/nfs-ganesha-server/app
+  path: ./kubernetes/apps/storage/nfs-ganesha-server/app
   prune: true
   sourceRef:
     kind: GitRepository
