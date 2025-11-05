@@ -9,4 +9,4 @@ resources:
   - ./nfs-pvcs/ks.yaml
   - ./samba/ks.yaml
   - ./komga/ks.yaml
-  - ./suwayomi/ks/yaml
+  - ./suwayomi/ks.yaml
