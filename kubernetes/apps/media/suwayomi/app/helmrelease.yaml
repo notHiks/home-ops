@@ -51,7 +51,7 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
-            sectionName: https
+            sectionName: http
     persistence:
       config:
         type: persistentVolumeClaim
