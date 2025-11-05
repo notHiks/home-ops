@@ -53,4 +53,3 @@ spec:
         existingClaim: nfs-manga
         globalMounts:
          - path: /shares/media
-           subPath: Manga
