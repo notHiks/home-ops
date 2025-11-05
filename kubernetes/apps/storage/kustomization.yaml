@@ -6,6 +6,5 @@ namespace: storage
 components:
   - ../../components/common
 resources:
-  - ./samba/ks.yaml
   - ./nfs-ganesha-server/ks.yaml
   - ./snapshot-controller/ks.yaml
