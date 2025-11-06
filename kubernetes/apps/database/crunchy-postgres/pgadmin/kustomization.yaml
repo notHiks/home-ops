@@ -5,3 +5,5 @@ kind: Kustomization
 resources:
   - ./httproute.yaml
   - ./pgadmin.yaml
+  - ./service.yaml
+  - ./secret.sops.yaml
