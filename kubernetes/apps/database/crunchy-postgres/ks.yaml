@@ -32,10 +32,8 @@ spec:
   dependsOn:
     - name: crunchy-postgres-operator
       namespace: database
-    - name: external-secrets-stores
-      namespace: external-secrets
-    - name: openebs-hostpath
-      namespace: storage
+    - name: linstor
+      namespace: flux-system
   interval: 30m
   path: ./kubernetes/apps/database/crunchy-postgres/cluster
   prune: true
@@ -79,13 +77,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/gatus/guarded
   dependsOn:
     - name: crunchy-postgres-cluster
       namespace: database
-    - name: external-secrets-stores
-      namespace: external-secrets
   interval: 30m
   path: ./kubernetes/apps/database/crunchy-postgres/pgadmin
   postBuild:

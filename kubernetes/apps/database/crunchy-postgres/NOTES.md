@@ -4,10 +4,10 @@ After you create the cluster you need to login to psql and go into each database
 
 ```
 -- Connect to the database
-\c sonarr_main;
+\c suwayomi_main;
 
 -- Grant all privileges to the dashbrr user
-GRANT ALL ON SCHEMA public TO sonabrr;
+GRANT ALL ON SCHEMA public TO suwayomi;
 ```
 
 This is because by default users don't have permissions on the public schema
