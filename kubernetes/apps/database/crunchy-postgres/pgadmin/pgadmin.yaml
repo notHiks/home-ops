@@ -1,0 +1,24 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/postgres-operator.crunchydata.com/pgadmin_v1beta1.json
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: pgadmin
+metadata:
+  name: &name pgadmin
+spec:
+  users:
+  - username: admin@homelab.io
+    role: Administrator
+    passwordRef:
+      name: pgadmin-secret
+      key: PGADMIN_PASSWORD
+  dataVolumeClaimSpec:
+    storageClassName: linbit-local
+    accessModes:
+      - "ReadWriteOnce"
+    resources:
+      requests:
+        storage: 500Mi
+  serverGroups:
+    - name: Crunchy Postgres
+      postgresClusterSelector: {}
+  serviceName: *name
