@@ -63,8 +63,13 @@ spec:
           - path: /home/suwayomi/.local/share/Tachidesk
       downloads:
         existingClaim: nfs-pictures
-        globalMounts:
-          - path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
+        advancedMounts:
+          - name: mangas
+            path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
+            subPath: mangas
+          - name: thumbnails
+            mountPath: /home/suwayomi/.local/share/Tachidesk/downloads/thumbnails
+            subPath: thumbnails
       tmpfs:
         type: emptyDir
         advancedMounts:
