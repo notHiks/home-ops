@@ -85,7 +85,7 @@ spec:
           enabled: false
     # all namespaces that will utilize the vpn should be added here
     routed_namespaces: &routedNamespaces
-      - media
+      - downloads
     webhook:
       image:
         repository: ghcr.io/angelnu/gateway-admision-controller
