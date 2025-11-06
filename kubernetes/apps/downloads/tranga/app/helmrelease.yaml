@@ -11,6 +11,25 @@ spec:
   interval: 15m
   values:
     controllers:
+      tranga-api:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: glax/tranga-api
+              tag: Server-V2
+            env:
+              POSTGRES_HOST: tranga-pg
+              POSTGRES_USER: postgres
+              POSTGRES_PASSWORD: postgres
+            ports:
+              - name: http
+                containerPort: 6531
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
       tranga-website:
         containers:
           app:
@@ -21,7 +40,7 @@ spec:
               - name: http
                 containerPort: 80
             env:
-              API_URL: http://tranga-api:6531
+              API_URL: http://192.168.88.236:6531
 
     service:
       tranga-website:
