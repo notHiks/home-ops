@@ -21,12 +21,6 @@ spec:
               tag: "v2.1.1997"
             env:
               BIND_PORT: &port 4567
-              WEB_UI_CHANNEL: "preview"
-              AUTO_DOWNLOAD_CHAPTERS: "true"
-              DOWNLOAD_AS_CBZ: "true"
-              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
-              FLARESOLVERR_ENABLED: "true"
-              FLARESOLVERR_URL: "http://flaresolverr.downloads"
             resources:
               requests:
                 memory: 250Mi
