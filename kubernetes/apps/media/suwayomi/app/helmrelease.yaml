@@ -19,16 +19,16 @@ spec:
             image:
               repository: ghcr.io/suwayomi/tachidesk
               tag: v2.1.1997
-            env:
-              TZ: "Europe/London"
-              BIND_PORT: &port 4567
-              WEB_UI_CHANNEL: "preview"
-              AUTO_DOWNLOAD_CHAPTERS: "true"
-              UPDATE_EXCLUDE_UNREAD: "false"
-              UPDATE_EXCLUDE_STARTED: "false"
-              UPDATE_EXCLUDE_COMPLETED: "false"
-              DOWNLOAD_AS_CBZ: "true"
-              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
+#            env:
+#              TZ: "Europe/London"
+#              BIND_PORT: &port 4567
+#              WEB_UI_CHANNEL: "preview"
+#              AUTO_DOWNLOAD_CHAPTERS: "true"
+#              UPDATE_EXCLUDE_UNREAD: "false"
+#              UPDATE_EXCLUDE_STARTED: "false"
+#              UPDATE_EXCLUDE_COMPLETED: "false"
+#              DOWNLOAD_AS_CBZ: "true"
+#              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
           #  envFrom:
           #    - secretRef:
           #        name: suwayomi-config
@@ -49,7 +49,7 @@ spec:
         controller: *app
         ports:
           http:
-            port: *port
+            port: 4567
     route:
       app:
         hostnames:
