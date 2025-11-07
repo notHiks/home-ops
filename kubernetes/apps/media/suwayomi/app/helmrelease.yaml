@@ -12,8 +12,6 @@ spec:
   values:
     controllers:
       suwayomi:
-        labels:
-          nfsMount: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
