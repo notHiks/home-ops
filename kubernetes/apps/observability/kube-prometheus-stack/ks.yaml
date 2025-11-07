@@ -3,19 +3,17 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app suwayomi
-  namespace: &namespace media
+  name: kube-prometheus-stack
 spec:
-  targetNamespace: *namespace
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
-  path: ./kubernetes/apps/media/suwayomi/app
+  dependsOn:
+  - name: linstor
+    namespace: flux-system
+  interval: 1h
+  path: ./kubernetes/apps/observability/kube-prometheus-stack/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
+  targetNamespace: observability
+  wait: false
