@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/suwayomi/tachidesk
-              tag: "v2.1.1997"
+              tag: v2.1.1997
             resources:
               requests:
                 memory: 250Mi
