@@ -23,9 +23,18 @@ spec:
               BIND_PORT: &port 4567
               TZ: "Europe/London"
               WEB_UI_CHANNEL: "preview"
-            envFrom:
-              - secretRef:
-                  name: suwayomi-config
+              AUTO_DOWNLOAD_CHAPTERS: "true"
+              UPDATE_EXCLUDE_UNREAD: "false"
+              UPDATE_EXCLUDE_STARTED: "false"
+              UPDATE_EXCLUDE_COMPLETED: "false"
+              UPDATE_MANGA_INFO: "false"
+              DOWNLOAD_AS_CBZ: "true"
+              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
+              FLARESOLVERR_ENABLED: "false"
+              FLARESOLVERR_URL: "http://flaresolverr.downloads"
+          #  envFrom:
+          #    - secretRef:
+          #        name: suwayomi-config
             resources:
               requests:
                 memory: 250Mi
