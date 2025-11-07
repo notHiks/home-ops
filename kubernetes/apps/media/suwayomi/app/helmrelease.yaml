@@ -54,7 +54,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - test.google.com
         parentRefs:
           - name: internal
             namespace: kube-system
