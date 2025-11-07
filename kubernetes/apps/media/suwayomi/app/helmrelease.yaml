@@ -19,6 +19,11 @@ spec:
             image:
               repository: ghcr.io/suwayomi/tachidesk
               tag: v2.1.1997
+            env:
+              BIND_PORT: 4567
+            envFrom:
+              - secretRef:
+                  name: suwayomi-config
             resources:
               requests:
                 memory: 250Mi
