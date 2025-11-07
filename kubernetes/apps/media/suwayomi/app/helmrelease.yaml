@@ -18,7 +18,7 @@ spec:
           app:
             image:
               repository: ghcr.io/suwayomi/tachidesk
-              tag: v2.1.1997
+              tag: v2.1.1999@sha256:831f4ded150c83dfb63e6a8b9ff0c71fdb7d1eeb6e931a5e2bd16f62cc5ded1b
             envFrom:
               - secretRef:
                   name: suwayomi-config
