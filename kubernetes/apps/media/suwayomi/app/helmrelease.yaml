@@ -41,8 +41,6 @@ spec:
               limits:
                 memory: 1500Mi
     defaultPodOptions:
-      labels:
-        use-vpn-gateway: "false"
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
