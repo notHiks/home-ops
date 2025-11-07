@@ -5,10 +5,10 @@ kind: HelmRelease
 metadata:
   name: suwayomi
 spec:
-  interval: 30m
   chartRef:
     kind: OCIRepository
     name: suwayomi
+  interval: 15m
   values:
     controllers:
       suwayomi:
@@ -20,29 +20,36 @@ spec:
               repository: ghcr.io/suwayomi/tachidesk
               tag: "v2.1.1997"
             env:
-              TZ: "Europe/Paris"
-              BIND_PORT: "4567"  # ✅ quote this
+              BIND_PORT: &port 4567
               WEB_UI_CHANNEL: "preview"
-              AUTO_DOWNLOAD_CHAPTERS: "true"  # ✅ quote booleans for safety
-              UPDATE_EXCLUDE_UNREAD: "false"
-              UPDATE_EXCLUDE_STARTED: "false"
-              UPDATE_EXCLUDE_COMPLETED: "false"
+              AUTO_DOWNLOAD_CHAPTERS: "true"
               DOWNLOAD_AS_CBZ: "true"
               EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
               FLARESOLVERR_ENABLED: "true"
               FLARESOLVERR_URL: "http://flaresolverr.downloads"
             resources:
               requests:
-                memory: "250Mi"
-                cpu: "500m"
+                memory: 250Mi
+                cpu: 500m
               limits:
-                memory: "1500Mi"
+                memory: 1500Mi
     defaultPodOptions:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.musai.ovh"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
     persistence:
       config:
         type: "persistentVolumeClaim"
