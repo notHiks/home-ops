@@ -33,12 +33,6 @@ spec:
                 cpu: 500m
               limits:
                 memory: 1500Mi
-    defaultPodOptions:
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: "OnRootMismatch"
     service:
       app:
         ports:
@@ -50,15 +44,20 @@ spec:
         parentRefs:
           - name: envoy-internal
             namespace: network
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       config:
-        type: "persistentVolumeClaim"
-        suffix: "config"
-        size: "2Gi"
-        storageClass: "linbit-replicated"
-        accessMode: "ReadWriteOnce"
+        type: persistentVolumeClaim
+        suffix: config
+        size: 2Gi
+        storageClass: linbit-replicated
+        accessMode: ReadWriteOnce
         globalMounts:
-          - path: "/home/suwayomi/.local/share/Tachidesk"
+          - path: /home/suwayomi/.local/share/Tachidesk
    #   downloads:
    #     existingClaim: nfs-pictures
    #     advancedMounts:
