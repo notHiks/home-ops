@@ -23,7 +23,7 @@ spec:
               tag: v2.1.1997
             env:
               TZ: Europe/Paris
-              BIND_PORT: &port "4567"
+              BIND_PORT: 4567
               WEB_UI_CHANNEL: "preview"
               AUTO_DOWNLOAD_CHAPTERS: true
               UPDATE_EXCLUDE_UNREAD: "false"
@@ -62,7 +62,7 @@ spec:
         rules:
           - backendRefs:
               - identifier: app
-                port: *port
+                port: 4567
     persistence:
       config:
         type: persistentVolumeClaim
