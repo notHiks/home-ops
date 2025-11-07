@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app suwayomi
+  name: suwayomi
 spec:
   interval: 30m
   chartRef:
@@ -47,7 +47,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
     service:
       app:
-        controller: *app
+        controller: suwayomi
         ports:
           http:
             port: 4567
