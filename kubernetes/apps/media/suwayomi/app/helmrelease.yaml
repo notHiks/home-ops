@@ -45,12 +45,6 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: "OnRootMismatch"
-    service:
-      app:
-        controller: "suwayomi"   # ✅ explicitly quoted
-        ports:
-          http:
-            port: "4567"          # ✅ explicitly quoted
     persistence:
       config:
         type: "persistentVolumeClaim"
