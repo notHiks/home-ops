@@ -64,12 +64,12 @@ spec:
       downloads:
         existingClaim: nfs-pictures
         advancedMounts:
-          - name: "mangas"
-            path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
-            subPath: mangas
-          - name: "thumbnails"
-            mountPath: /home/suwayomi/.local/share/Tachidesk/downloads/thumbnails
-            subPath: thumbnails
+          suwayomi:
+            app:
+              - path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
+                subPath: mangas
+              - path: /home/suwayomi/.local/share/Tachidesk/downloads/thumbnails
+                subPath: thumbnails
       tmpfs:
         type: emptyDir
         advancedMounts:
