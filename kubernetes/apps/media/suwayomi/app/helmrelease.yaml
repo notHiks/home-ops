@@ -61,15 +61,15 @@ spec:
         accessMode: ReadWriteOnce
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
-      downloads:
-        existingClaim: nfs-pictures
-        advancedMounts:
-          suwayomi:
-            app:
-              - path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
-                subPath: mangas
-              - path: /home/suwayomi/.local/share/Tachidesk/downloads/thumbnails
-                subPath: thumbnails
+ #     downloads:
+ #       existingClaim: nfs-pictures
+ #       advancedMounts:
+ #         suwayomi:
+ #           app:
+ #             - path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
+ #               subPath: mangas
+ #             - path: /home/suwayomi/.local/share/Tachidesk/downloads/thumbnails
+ #               subPath: thumbnails
       tmpfs:
         type: emptyDir
         advancedMounts:
