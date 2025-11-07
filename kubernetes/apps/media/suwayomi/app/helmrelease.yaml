@@ -21,6 +21,7 @@ spec:
               tag: v2.1.1997
             env:
               BIND_PORT: &port 4567
+              WEB_UI_CHANNEL: "preview"
             envFrom:
               - secretRef:
                   name: suwayomi-config
