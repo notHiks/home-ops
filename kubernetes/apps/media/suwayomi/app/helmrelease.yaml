@@ -12,6 +12,8 @@ spec:
   values:
     controllers:
       suwayomi:
+        labels:
+          nfsMount: "true"
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
@@ -19,19 +21,18 @@ spec:
             image:
               repository: ghcr.io/suwayomi/tachidesk
               tag: v2.1.1997
-#            env:
-#              TZ: "Europe/London"
-#              BIND_PORT: &port 4567
-#              WEB_UI_CHANNEL: "preview"
-#              AUTO_DOWNLOAD_CHAPTERS: "true"
-#              UPDATE_EXCLUDE_UNREAD: "false"
-#              UPDATE_EXCLUDE_STARTED: "false"
-#              UPDATE_EXCLUDE_COMPLETED: "false"
-#              DOWNLOAD_AS_CBZ: "true"
-#              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
-          #  envFrom:
-          #    - secretRef:
-          #        name: suwayomi-config
+            env:
+              TZ: Europe/Paris
+              BIND_PORT: &port 4567
+              WEB_UI_CHANNEL: "preview"
+              AUTO_DOWNLOAD_CHAPTERS: true
+              UPDATE_EXCLUDE_UNREAD: "false"
+              UPDATE_EXCLUDE_STARTED: "false"
+              UPDATE_EXCLUDE_COMPLETED: "false"
+              DOWNLOAD_AS_CBZ: "true"
+              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
+              FLARESOLVERR_ENABLED: true
+              FLARESOLVERR_URL: http://flaresolverr.downloads
             resources:
               requests:
                 memory: 250Mi
@@ -49,15 +50,25 @@ spec:
         controller: *app
         ports:
           http:
-            port: 4567
+            port: *port
     route:
       app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Books
+          gethomepage.dev/name: Suwayomi
+          gethomepage.dev/icon: https://raw.githubusercontent.com/Suwayomi/Suwayomi-Server/master/server/src/main/resources/icon/faviconlogo.png
+          gethomepage.dev/description: Manga Web Reader/Downloader
         hostnames:
-          - "{{ .Release.Name }}.musai.ovh"
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
         parentRefs:
-          - name: envoy-internal
-            namespace: network
+          - name: internal
+            namespace: kube-system
             sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       config:
         type: persistentVolumeClaim
