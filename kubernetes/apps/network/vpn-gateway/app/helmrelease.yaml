@@ -116,3 +116,34 @@ spec:
       #   must match the gatewayLabelValue or setGatewayAnnotationValue instead of the default 'true'.
       gatewayLabelValue:
       gatewayAnnotationValue:
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Service
+              name: *app
+            patch: |
+              - op: add
+                path: /spec/ports/-
+                value:
+                  name: gluetun
+                  port: 80
+                  protocol: TCP
+                  targetPort: 80
+          - target:
+              kind: Deployment
+              name: *app
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/1/ports
+                value: []
+          - target:
+              kind: Deployment
+              name: *app
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/1/ports/-
+                value:
+                  containerPort: 80
+                  name: gluetun
+                  protocol: TCP
