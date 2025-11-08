@@ -114,8 +114,8 @@ spec:
         globalMounts:
           - path: /app/config
       services:
-        type: secret
-        name: *app
+      #  type: secret
+      #  name: *app
         globalMounts:
           - subPath: services.yaml
             path: /app/config/services.yaml
