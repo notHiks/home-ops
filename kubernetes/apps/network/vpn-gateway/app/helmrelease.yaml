@@ -85,6 +85,15 @@ spec:
         # network policy is disabled because we need 2 CiliumNetworkPolicies
         networkPolicy:
           enabled: false
+      persistence:
+      config:
+        enabled: true
+        type: secret
+        name: gluetun
+        globalMounts:
+          - path: /gluetun/auth/config.toml
+            subPath: config.toml
+            readOnly: true
     # all namespaces that will utilize the vpn should be added here
     routed_namespaces: &routedNamespaces
       - downloads
