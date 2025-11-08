@@ -30,10 +30,10 @@ spec:
               tag: v1.6.1@sha256:8c7ec6a3c9094af7ac0686aa361fed3129264a8ed2c17594d5114a5e8342f7c9
             env:
               TZ: Europe/London
-              HOMEPAGE_ALLOWED_HOSTS: &host "{{ .Release.Name }}.zinn.ca"
-            envFrom:
-              - secretRef:
-                  name: homepage-secret
+              HOMEPAGE_ALLOWED_HOSTS: homepage.${SECRET_DOMAIN}
+          #  envFrom:
+          #    - secretRef:
+          #        name: homepage-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
@@ -96,7 +96,7 @@ spec:
               namespace: default
     route:
       app:
-        hostnames: [*host]
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
         parentRefs:
           - name: envoy-internal
             namespace: network
