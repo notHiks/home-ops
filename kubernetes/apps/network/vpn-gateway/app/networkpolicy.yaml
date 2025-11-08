@@ -69,3 +69,22 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+---
+# This policy allows inbound connections to the vpn-gateway on port 80 to gluetun http_control_server
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vpn-gateway-http-control
+  labels:
+    app.kubernetes.io/instance: &instance vpn-gateway
+    app.kubernetes.io/name: &name pod-gateway
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: *instance
+      app.kubernetes.io/name: *name
+  ingress:
+    - toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
