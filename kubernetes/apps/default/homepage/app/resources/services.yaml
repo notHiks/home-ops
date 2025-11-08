@@ -1,0 +1,10 @@
+- Observability:
+    - Gluetun:
+        icon: gluetun
+        description: Gluetun VPN Gateway
+        namespace: network
+        app: pod-gateway
+        widget:
+          type: gluetun
+          url: http://vpn-gateway.network
+          fields: ["public_ip", "region"]
