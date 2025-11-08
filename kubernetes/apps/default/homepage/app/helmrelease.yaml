@@ -113,11 +113,6 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /app/config
-      services:
-        globalMounts:
-          - subPath: services.yaml
-            path: /app/config/services.yaml
-            readOnly: true
       configmap:
         type: configMap
         name: *app
@@ -136,4 +131,7 @@ spec:
             readOnly: true
           - subPath: widgets.yaml
             path: /app/config/widgets.yaml
+            readOnly: true
+          - subPath: services.yaml
+            path: /app/config/services.yaml
             readOnly: true
