@@ -1,0 +1,61 @@
+---
+# Note: Gatus vars should be escaped with $${VAR_NAME} to avoid interpolation by Flux
+
+alerting:
+  discord:
+    title: Gatus (Kubernetes)
+    webhook-url: $${DISCORD_TOKEN}
+    priority: 1
+    default-alert:
+      description: health-check failed
+      send-on-resolved: true
+      failure-threshold: 3
+      success-threshold: 3
+
+connectivity:
+  checker:
+    target: 1.1.1.1:53
+    interval: 1m
+
+endpoints:
+  - name: Cloudflare
+    group: connectivity
+    url: icmp://1.1.1.1
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: Google
+    group: connectivity
+    url: icmp://8.8.8.8
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: Quad9
+    group: connectivity
+    url: icmp://9.9.9.9
+    interval: 1m
+    conditions:
+      - "[CONNECTED] == true"
+
+metrics: true
+
+storage:
+  type: postgres
+  path: postgres://$${INIT_POSTGRES_USER}:$${INIT_POSTGRES_PASS}@$${INIT_POSTGRES_HOST}:5432/$${INIT_POSTGRES_DBNAME}?sslmode=disable
+  caching: true
+
+ui:
+  title: Status | Gatus
+  header: Status
+  logo: https://avatars.githubusercontent.com/u/66910081
+  link: https://github.com/notHiks
+  buttons:
+    - name: Github
+      link: https://github.com/notHiks
+    - name: Homelab
+      link: https://github.com/notHiks/home-ops
+
+web:
+  port: ${GATUS_WEB_PORT}
