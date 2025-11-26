@@ -14,7 +14,8 @@ metadata:
         pgadmin
       )
 spec:
-  hostnames: ["pgadmin.${SECRET_DOMAIN}"]
+  hostnames:
+    - pgadmin.musai.ovh
   parentRefs:
     - name: envoy-internal
       namespace: network
