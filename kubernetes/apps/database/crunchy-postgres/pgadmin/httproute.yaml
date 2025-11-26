@@ -14,7 +14,7 @@ metadata:
         pgadmin
       )
 spec:
-  hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+  hostnames: ["pgadmin.${SECRET_DOMAIN}"]
   parentRefs:
     - name: envoy-internal
       namespace: network
