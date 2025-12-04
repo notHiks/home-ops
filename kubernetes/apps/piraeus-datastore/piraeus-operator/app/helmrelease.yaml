@@ -27,12 +27,12 @@ spec:
       certManagerIssuerRef:
         name: selfsigned-issuer
         kind: ClusterIssuer
-    imageConfigOverride:
-      - base: quay.io/piraeusdatastore
-        components:
-          linstor-controller:
-            tag: v1.32.2
-            image: piraeus-server
-          linstor-satellite:
-            tag: v1.32.2
-            image: piraeus-server
+#    imageConfigOverride:
+#      - base: quay.io/piraeusdatastore
+#        components:
+#          linstor-controller:
+#            tag: v1.32.2
+#            image: piraeus-server
+#          linstor-satellite:
+#            tag: v1.32.2
+#            image: piraeus-server
