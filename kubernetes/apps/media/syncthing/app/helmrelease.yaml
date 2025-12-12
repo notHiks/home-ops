@@ -137,7 +137,7 @@ spec:
           - path: "/config"
       data:
         type: persistentVolumeClaim
-        size: 1000Gi
+        size: 1050Gi
         storageClass: linbit-local
         accessMode: ReadWriteOnce
         globalMounts:
