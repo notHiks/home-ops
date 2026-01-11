@@ -48,10 +48,10 @@ spec:
               namespace: network
       prometheusSpec:
         externalUrl: https://prometheus.musai.ovh
-        version: v2.55.1 # override 'unsupported Prometheus version' error
+        version: v2.55.1 # override 'unsupported Prometheus version' error for prompp
         image:
           registry: docker.io
-          repository: prompp/prompp
+          repository: mirror.gcr.io
           tag: 0.7.2
         securityContext:
           runAsNonRoot: true
