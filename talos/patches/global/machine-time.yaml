@@ -1,5 +1,5 @@
 machine:
   time:
-    bootTimeout: 2m
     servers:
-      - /dev/ptp0
+      - 162.159.200.1
+      - 162.159.200.123
