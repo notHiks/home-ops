@@ -10,7 +10,7 @@
     ":semanticCommits",
   ],
   dependencyDashboard: true,
-  dependencyDashboardTitle: "Renovate Dashboard 🤖",
+  dependencyDashboardTitle: "Renovate Dashboard :robot:",
   schedule: ["every weekend"],
   ignorePaths: ["**/*.sops.*"],
   flux: {
@@ -52,14 +52,6 @@
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
       minimumReleaseAge: "3 days",
-      ignoreTests: true,
-    },
-    {
-      description: "Auto-merge Mise Tools",
-      matchManagers: ["mise"],
-      automerge: true,
-      automergeType: "branch",
-      matchUpdateTypes: ["minor", "patch"],
       ignoreTests: true,
     },
     {
