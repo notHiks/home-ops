@@ -5,7 +5,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: nfs-pictures
 spec:
-  storageClassName: nfs
+  storageClassName: linbit-local
   resources:
     requests:
       storage: 250Gi
