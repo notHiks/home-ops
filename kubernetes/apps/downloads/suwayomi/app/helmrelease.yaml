@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: suwayomi
+  name: &app suwayomi
 spec:
   chartRef:
     kind: OCIRepository
@@ -17,4 +17,58 @@ spec:
             image:
               repository: ghcr.io/suwayomi/tachidesk
               tag: v2.1.1999@sha256:831f4ded150c83dfb63e6a8b9ff0c71fdb7d1eeb6e931a5e2bd16f62cc5ded1b
-
+            env:
+              TZ: Europe/Paris
+              BIND_PORT: &port 4567
+              WEB_UI_CHANNEL: "preview"
+              AUTO_DOWNLOAD_CHAPTERS: true
+              UPDATE_EXCLUDE_UNREAD: "false"
+              UPDATE_EXCLUDE_STARTED: "false"
+              UPDATE_EXCLUDE_COMPLETED: "false"
+              DOWNLOAD_AS_CBZ: "true"
+              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
+   #           FLARESOLVERR_ENABLED: true
+   #           FLARESOLVERR_URL: http://flaresolverr.downloads
+            resources:
+              requests:
+                memory: 250Mi
+                cpu: 500m
+              limits:
+                memory: 1500Mi
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: *app
+        ports:
+          http:
+            port: *port
+    route:
+      app:
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Books
+          gethomepage.dev/name: Suwayomi
+          gethomepage.dev/icon: https://raw.githubusercontent.com/Suwayomi/Suwayomi-Server/master/server/src/main/resources/icon/faviconlogo.png
+          gethomepage.dev/description: Manga Web Reader/Downloader
+        hostnames:
+          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+    persistence:
+      config:
+        existingClaim: *app
+        globalMounts:
+          - path: /home/suwayomi/.local/share/Tachidesk
+  #    downloads:
+  #      type: nfs
+  #      server: ${NFS_ADDR:=temp}
+  #      path: /mnt/tank/shared
+  #      globalMounts:
+  #        - path: /home/suwayomi/.local/share/Tachidesk/downloads/mangas
+  #          subPath: Literature/Manga/Sources
