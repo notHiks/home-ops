@@ -67,6 +67,9 @@ spec:
       databases: [*db]
       password: *pw
 
+    - name: &db suwayomi
+      databases: [*db]
+      password: *pw
 
 #  backups:
 #    pgbackrest:
