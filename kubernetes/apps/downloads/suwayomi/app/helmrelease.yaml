@@ -39,8 +39,13 @@ spec:
                 cpu: 500m
               limits:
                 memory: 1500Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: {drop: ["ALL"]}
+              readOnlyRootFileSystem: true
     defaultPodOptions:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
