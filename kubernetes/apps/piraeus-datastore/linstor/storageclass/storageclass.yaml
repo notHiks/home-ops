@@ -23,6 +23,11 @@ parameters:
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
+allowedTopologies:
+  - matchLabelExpressions:
+      - key: storage
+        values:
+          - nfs
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
