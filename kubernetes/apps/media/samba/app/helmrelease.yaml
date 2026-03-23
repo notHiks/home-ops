@@ -19,6 +19,9 @@ spec:
   values:
     controllers:
       samba:
+        pod:
+          nodeSelector:
+            kubernetes.io/hostname: fuu-01
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
