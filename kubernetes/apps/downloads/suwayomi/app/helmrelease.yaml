@@ -41,7 +41,8 @@ spec:
                 memory: 1500Mi
             securityContext:
               allowPrivilegeEscalation: false
-              capabilities: {drop: ["ALL"]}
+              capabilities:
+                drop: ["ALL"]
               readOnlyRootFileSystem: true
     defaultPodOptions:
       securityContext:
