@@ -11,7 +11,6 @@ spec:
     name: piraeus-operator
   timeout: 10m       # give more time for CRDs to register
   install:
-#    replace: true --- IGNORE ---
     remediation:
       retries: 3
   upgrade:
