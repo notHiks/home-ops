@@ -25,9 +25,9 @@ volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 allowedTopologies:
   - matchLabelExpressions:
-      - key: storage
+      - key: linbit.com/hostname
         values:
-          - nfs
+          - fuu-01
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
