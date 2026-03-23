@@ -9,7 +9,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: piraeus-operator
-  timeout: 10m       # give more time for CRDs to register
   install:
     remediation:
       retries: 3
