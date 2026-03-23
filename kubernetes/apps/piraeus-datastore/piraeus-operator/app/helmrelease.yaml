@@ -10,7 +10,7 @@ spec:
     kind: OCIRepository
     name: piraeus-operator
   install:
-    replace: true
+#    replace: true --- IGNORE ---
     remediation:
       retries: 3
   upgrade:
