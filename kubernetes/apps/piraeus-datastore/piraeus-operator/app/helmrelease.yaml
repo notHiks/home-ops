@@ -9,6 +9,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: piraeus-operator
+  timeout: 10m       # give more time for CRDs to register
   install:
 #    replace: true --- IGNORE ---
     remediation:
@@ -17,6 +18,7 @@ spec:
     force: true
     preserveValues: true
     cleanupOnFail: true
+    wait: true        # ensures CRDs exist before proceeding
     remediation:
       strategy: rollback
       retries: 3
