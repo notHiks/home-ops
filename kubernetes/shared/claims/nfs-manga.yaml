@@ -5,7 +5,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: nfs-manga
 spec:
-  storageClassName: linbit-local
+  storageClassName: linbit-nfs
   resources:
     requests:
       storage: 250Gi
