@@ -18,7 +18,6 @@ spec:
     force: true
     preserveValues: true
     cleanupOnFail: true
-    wait: true        # ensures CRDs exist before proceeding
     remediation:
       strategy: rollback
       retries: 3
