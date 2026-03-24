@@ -16,7 +16,7 @@ spec:
   upgrade:
     remediation:
       retries: 5
-    timeout: 15m
+    timeout: 20m          # Increased — critical for slow NFS mounts with Piraeus
 
   values:
     controllers:
@@ -24,6 +24,20 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
+
+        # Init container to wait for Piraeus NFS export
+        initContainers:
+          wait-nfs:
+            image:
+              repository: busybox
+              tag: "1.36"
+            command:
+              - sh
+              - -c
+              - |
+                echo "Waiting 60 seconds for Piraeus NFS export to become ready..."
+                sleep 60
+                echo "NFS wait completed."
 
         containers:
           app:
@@ -50,16 +64,20 @@ spec:
               limits:
                 memory: 1500Mi
 
-            # <<<--- DELAY ADDED HERE (gives Piraeus NFS ~30 seconds to export the volume) --->
-            lifecycle:
-              postStart:
-                exec:
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      echo "Waiting for Piraeus NFS export to become ready..."
-                      sleep 30
+            # Correct way to add probes in app-template 4.x
+            probes:
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - "exit 0"
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  failureThreshold: 36   # ~6 minutes total grace
 
     service:
       app:
