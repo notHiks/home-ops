@@ -19,15 +19,10 @@ metadata:
 provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
-  linstor.csi.linbit.com/layerList: "storage"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
+  autoPlace: "1"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
-allowedTopologies:
-  - matchLabelExpressions:
-      - key: linbit.com/hostname
-        values:
-          - fuu-01
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
