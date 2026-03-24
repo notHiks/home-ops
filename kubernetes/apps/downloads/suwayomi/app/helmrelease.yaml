@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -10,7 +10,7 @@ spec:
     name: suwayomi
   interval: 1h
 
-install:
+  install:
     remediation:
       retries: 3
   upgrade:
@@ -23,35 +23,6 @@ install:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
-
-        # <<<--- PERSISTENCE MOVED HERE (per-controller) --->
-        persistence:
-          config:
-            enabled: true
-            type: persistentVolumeClaim
-            existingClaim: *app
-            globalMounts:
-              - path: /home/suwayomi/.local/share/Tachidesk
-
-          downloads:
-            enabled: true
-            type: persistentVolumeClaim
-            existingClaim: nfs-pictures
-            globalMounts:
-              - path: /home/suwayomi/.local/share/Tachidesk/downloads
-                subPath: downloads
-
-          local:
-            enabled: true
-            type: persistentVolumeClaim
-            existingClaim: nfs-pictures
-            globalMounts:
-              - path: /home/suwayomi/.local/share/Tachidesk/local
-                subPath: local
-
-          tmpfs:
-            enabled: true
-            type: emptyDir
 
         containers:
           app:
@@ -101,3 +72,31 @@ install:
           - backendRefs:
               - port: *port
                 name: *app
+
+    persistence:
+      config:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: *app
+        globalMounts:
+          - path: /home/suwayomi/.local/share/Tachidesk
+
+      downloads:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: nfs-pictures
+        globalMounts:
+          - path: /home/suwayomi/.local/share/Tachidesk/downloads
+            subPath: downloads
+
+      local:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: nfs-pictures
+        globalMounts:
+          - path: /home/suwayomi/.local/share/Tachidesk/local
+            subPath: local
+
+      tmpfs:
+        enabled: true
+        type: emptyDir
