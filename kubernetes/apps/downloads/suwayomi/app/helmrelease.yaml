@@ -27,6 +27,9 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
+          securityContext:
+            fsGroup: 1000          # ← most common for suwayomi/tachidesk images
+            fsGroupChangePolicy: OnRootMismatch
 
         # Init container to wait for Piraeus NFS export
         initContainers:
