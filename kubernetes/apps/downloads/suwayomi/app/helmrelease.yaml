@@ -21,6 +21,9 @@ spec:
   values:
     controllers:
       suwayomi:
+        type: deployment
+        strategy: Recreate           # safer when volume mounts are slow
+
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
@@ -88,6 +91,7 @@ spec:
 
     service:
       app:
+        controller: suwayomi
         ports:
           http:
             port: *port
