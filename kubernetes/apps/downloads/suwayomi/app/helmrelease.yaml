@@ -81,19 +81,13 @@ spec:
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
 
-      downloads:
+      nfs-data:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: nfs-pictures
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk/downloads
             subPath: downloads
-
-      local:
-        enabled: true
-        type: persistentVolumeClaim
-        existingClaim: nfs-pictures
-        globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk/local
             subPath: local
 
