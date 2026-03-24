@@ -8,7 +8,7 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: samba
+    name: samba-1
   install:
     remediation:
       retries: -1
@@ -18,7 +18,7 @@ spec:
       retries: 3
   values:
     controllers:
-      samba:
+      samba-1:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
@@ -79,7 +79,7 @@ spec:
       config:
         enabled: true
         type: secret
-        name: samba
+        name: samba-1
         globalMounts:
           - path: /data/config.yml
             subPath: samba.yaml
