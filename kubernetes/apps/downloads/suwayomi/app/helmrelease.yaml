@@ -27,6 +27,9 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
+          labels:
+            use-vpn-gateway: "true"
+
           securityContext:
             fsGroup: 1000          # ← most common for suwayomi/tachidesk images
             fsGroupChangePolicy: OnRootMismatch
