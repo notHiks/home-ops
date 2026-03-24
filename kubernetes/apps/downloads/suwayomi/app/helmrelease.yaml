@@ -15,7 +15,8 @@ spec:
       retries: 3
   upgrade:
     remediation:
-      retries: 3
+      retries: 5
+    timeout: 15m
 
   values:
     controllers:
@@ -48,6 +49,17 @@ spec:
                 cpu: 500m
               limits:
                 memory: 1500Mi
+
+            # <<<--- DELAY ADDED HERE (gives Piraeus NFS ~30 seconds to export the volume) --->
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      echo "Waiting for Piraeus NFS export to become ready..."
+                      sleep 30
 
     service:
       app:
