@@ -21,6 +21,7 @@ parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
   autoPlace: "1"
+  csi.storage.k8s.io/mount-timeout: "10m"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 ---
