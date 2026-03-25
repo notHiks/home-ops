@@ -117,14 +117,14 @@ spec:
 
       # Persistence for gluetun config
       persistence:
-        config:
-          enabled: true
-          type: secret
-          name: gluetun
-          globalMounts:
-            - path: /gluetun/auth/config.toml
-              subPath: config.toml
-              readOnly: true
+      config:
+        enabled: true
+        type: secret
+        name: gluetun
+        globalMounts:
+          - path: /gluetun/auth/config.toml
+            subPath: config.toml
+            readOnly: true
 
     # Expose the control port if needed
     service:
