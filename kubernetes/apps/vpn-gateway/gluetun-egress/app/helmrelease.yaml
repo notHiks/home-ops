@@ -114,7 +114,7 @@ spec:
             #    limits:
             #      memory: 64Mi
 
-          # Persistence for gluetun config
+    # Persistence for gluetun config
     persistence:
       config:
         enabled: true
