@@ -16,22 +16,22 @@ spec:
   upgrade:
     remediation:
       retries: 5
-    timeout: 20m          # Increased — critical for slow NFS mounts with Piraeus
+    timeout: 20m
 
   values:
     controllers:
       suwayomi:
         type: deployment
-        strategy: Recreate           # safer when volume mounts are slow
+        strategy: Recreate
 
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
           labels:
-            use-vpn-gateway: "true"
+            use-vpn: "true"
 
           securityContext:
-            fsGroup: 1000          # ← most common for suwayomi/tachidesk images
+            fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
 
         # Init container to wait for Piraeus NFS export
@@ -80,21 +80,42 @@ spec:
               limits:
                 memory: 1500Mi
 
-            # Correct way to add probes in app-template 4.x
             probes:
+              # Readiness: App is ready to serve traffic
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/ping
+                    port: 4567
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  failureThreshold: 5
+
+              # Liveness: App is still alive
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/ping
+                    port: 4567
+                  initialDelaySeconds: 60
+                  periodSeconds: 60
+                  failureThreshold: 8
+
+              # Startup: Give time for database + NFS mount
               startup:
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - sh
-                      - -c
-                      - "exit 0"
-                  initialDelaySeconds: 10
+                  httpGet:
+                    path: /api/v1/ping
+                    port: 4567
+                  initialDelaySeconds: 45
                   periodSeconds: 10
-                  failureThreshold: 36   # ~6 minutes total grace
-
+                  failureThreshold: 60   # ~10 minutes total
     service:
       app:
         controller: suwayomi
