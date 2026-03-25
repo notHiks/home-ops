@@ -17,8 +17,26 @@ spec:
         - ports:
             - port: "51820"
               protocol: UDP
+
+    # 2. Allow DNS resolution (critical for bootstrap)
+    - toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+            - port: "853"      # DNS over TLS (DoT)
+              protocol: TCP
+            - port: "443"      # DNS over HTTPS (DoH) + general HTTPS for healthchecks
+              protocol: TCP
+      toEntities:
+        - world
+
+    # 3. Allow general outbound after tunnel is up
     - toEntities:
         - world
+
+    # 4. Allow internal cluster communication
     - toEntities:
         - cluster
 ---
