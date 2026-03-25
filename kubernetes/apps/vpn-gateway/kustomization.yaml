@@ -8,4 +8,4 @@ components:
 
 resources:
   - ./namespace.yaml
-  - ./vpn-gateway/ks.yaml
+  - ./gluetun-egress/ks.yaml
