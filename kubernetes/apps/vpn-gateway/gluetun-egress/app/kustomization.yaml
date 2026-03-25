@@ -7,3 +7,4 @@ resources:
   - ./secret.sops.yaml
   - ./networkpolicy.yaml
   - ./ocirepository.yaml
+  - ./device-plugin.yaml
