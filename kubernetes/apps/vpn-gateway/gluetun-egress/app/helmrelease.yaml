@@ -46,11 +46,10 @@ spec:
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
               DOT: off
-              DNS_ADDRESS: "100.64.0.7"
               DNS_KEEP_NAMESERVERS: "true"
               FIREWALL_INPUT_PORTS: "8000"  # Expose control port for health checks
               HTTP_CONTROL_SERVER_ADDRESS: ":8000"
-              HTTP_CONTROL_SERVER_LOG: off
+              HTTP_CONTROL_SERVER_LOG: on
               PUBLICIP_API: ip2location
               UPDATER_PERIOD: 12h
               LOG_LEVEL: info
