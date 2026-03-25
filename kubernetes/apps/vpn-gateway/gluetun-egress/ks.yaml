@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app vpn-gateway
-  namespace: &namespace network
+  name: &app gluetun-egress
+  namespace: &namespace vpn-gateway
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   interval: 30m
-  path: ./kubernetes/apps/network/vpn-gateway/app
+  path: ./kubernetes/apps/vpn-gateway/gluetun-egress/app
   prune: true
   sourceRef:
     kind: GitRepository

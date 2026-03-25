@@ -1,0 +1,136 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vpn-gateway
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: vpn-gateway
+  interval: 30m
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 5
+    timeout: 15m
+
+  values:
+    controllers:
+      main:
+        type: deployment
+        replicas: 1
+        strategy: Recreate
+
+        pod:
+          labels:
+            app: gluetun-egress
+            egress-gateway: "true"  # Required for Cilium Egress Gateway
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41.1
+              digest: sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+
+            securityContext:
+              privileged: true  # Required for WireGuard tunnel creation
+              capabilities:
+                add: ["NET_ADMIN"]
+
+            env:
+              VPN_TYPE: wireguard
+              VPN_INTERFACE: wg0
+              WIREGUARD_MTU: 1320
+              FIREWALL_ENABLED_DISABLING_IT_SHOOTS_YOU_IN_YOUR_FOOT: off
+              FIREWALL_INPUT_PORTS: "8000"  # Expose control port for health checks
+              DOT: off
+              HTTP_CONTROL_SERVER_ADDRESS: ":8000"
+              HTTP_CONTROL_SERVER_LOG: off
+              PUBLICIP_API: ip2location
+              UPDATER_PERIOD: 12h
+              LOG_LEVEL: info
+
+            envFrom:
+              - secretRef:
+                  name: vpn-gateway-config
+
+            resources:
+              requests:
+                cpu: 5m
+                memory: 64M
+              limits:
+                memory: 128M
+                squat.ai/tun: "1"
+
+            ports:
+              - containerPort: 8000
+                name: control
+                protocol: TCP
+
+            probes:
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /v1/publicip/ip
+                    port: 8000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  failureThreshold: 3
+                  timeoutSeconds: 5
+
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /v1/publicip/ip
+                    port: 8000
+                  initialDelaySeconds: 60
+                  periodSeconds: 60
+                  failureThreshold: 5
+                  timeoutSeconds: 10
+
+            # ── Prometheus exporter sidecar ─────────────────────────────
+            #exporter:
+            #  image:
+            #    repository: ghcr.io/thecfu/gluetun-exporter
+            #    tag: latest
+            #  ports:
+            #    - containerPort: 9571
+            #      name: metrics
+            #  env:
+            #    - name: GLUETUN_URL
+            #      value: "http://localhost:8000"
+            #  resources:
+            #    requests:
+            #      cpu: 10m
+            #      memory: 32Mi
+            #    limits:
+            #      memory: 64Mi
+
+          # Persistence for gluetun config
+    persistence:
+      config:
+        enabled: true
+        type: secret
+        name: gluetun
+        globalMounts:
+          - path: /gluetun/auth/config.toml
+            subPath: config.toml
+            readOnly: true
+
+    # Expose the control port if needed
+    service:
+      main:
+        ports:
+          http:
+            port: 8000
+            targetPort: 8000
+            protocol: TCP

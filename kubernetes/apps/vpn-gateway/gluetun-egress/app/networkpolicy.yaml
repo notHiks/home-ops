@@ -1,0 +1,69 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# This policy allows the vpn-gateway to go out to the internet on port 51820 and also to talk to any cluster entities
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vpn-gateway-egress
+  namespace: vpn-gateway
+spec:
+  endpointSelector:
+    matchLabels:
+      app: gluetun-egress
+  egress:
+    - toCIDRSet:
+        - cidr: "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "51820"
+              protocol: UDP
+    - toEntities:
+        - world
+    - toEntities:
+        - cluster
+---
+apiVersion: cilium.io/v2
+kind: CiliumEgressGatewayPolicy
+metadata:
+  name: vpn-egress-policy
+spec:
+  selectors:
+    - podSelector:
+        matchLabels:
+          use-vpn: "true"
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: downloads
+
+  destinationCIDRs:
+    - "0.0.0.0/0"
+
+  excludedCIDRs:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+    - "10.42.0.0/16"
+    - "10.43.0.0/16"
+
+  egressGateway:
+    nodeSelector:
+      matchLabels:
+        egress-gateway: "true"
+---
+# This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vpn-gateway-control-server
+  namespace: vpn-gateway
+spec:
+  endpointSelector:
+    matchLabels:
+      app: gluetun-egress
+  ingress:
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
