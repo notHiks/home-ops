@@ -30,6 +30,9 @@ spec:
           labels:
             use-vpn: "true"
 
+          annotations:
+            rollout-trigger: "2026-03-25-2308"
+
           securityContext:
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
