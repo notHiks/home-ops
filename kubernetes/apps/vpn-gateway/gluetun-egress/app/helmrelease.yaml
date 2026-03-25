@@ -58,6 +58,8 @@ spec:
             envFrom:
               - secretRef:
                   name: vpn-gateway-config
+              - secretRef:
+                  name: gluetun-auth
 
             resources:
               requests:
@@ -80,6 +82,9 @@ spec:
                   httpGet:
                     path: /v1/publicip/ip
                     port: 8000
+                    httpHeaders:
+                     - name: X-API-Key
+                       value: "$(API_KEY)"
                   initialDelaySeconds: 30
                   periodSeconds: 30
                   failureThreshold: 3
@@ -92,6 +97,9 @@ spec:
                   httpGet:
                     path: /v1/publicip/ip
                     port: 8000
+                    httpHeaders:
+                     - name: X-API-Key
+                       value: "$(API_KEY)"
                   initialDelaySeconds: 60
                   periodSeconds: 60
                   failureThreshold: 5
