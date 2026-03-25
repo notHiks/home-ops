@@ -28,7 +28,7 @@ spec:
         pod:
           labels:
             app: gluetun-egress
-            egress-gateway: "true"           # Required for Cilium Egress Gateway
+            egress-gateway: "true"  # Required for Cilium Egress Gateway
 
         containers:
           app:
@@ -38,7 +38,7 @@ spec:
               digest: sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
 
             securityContext:
-              privileged: true               # Required for WireGuard tunnel creation
+              privileged: true  # Required for WireGuard tunnel creation
               capabilities:
                 add: ["NET_ADMIN"]
 
@@ -85,17 +85,17 @@ spec:
                   failureThreshold: 3
                   timeoutSeconds: 5
 
-            liveness:
-              enabled: true
-              custom: true
-              spec:
-                httpGet:
-                  path: /v1/publicip/ip
-                  port: 8000
-                initialDelaySeconds: 60
-                periodSeconds: 60
-                failureThreshold: 5
-                timeoutSeconds: 10
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /v1/publicip/ip
+                    port: 8000
+                  initialDelaySeconds: 60
+                  periodSeconds: 60
+                  failureThreshold: 5
+                  timeoutSeconds: 10
 
             # ── Prometheus exporter sidecar ─────────────────────────────
             #exporter:
@@ -115,7 +115,7 @@ spec:
             #    limits:
             #      memory: 64Mi
 
-# Persistence for gluetun config
+        # Persistence for gluetun config
         persistence:
           config:
             enabled: true
