@@ -11,6 +11,7 @@ spec:
     matchLabels:
       app: gluetun-egress
   egress:
+    # WireGuard handshake
     - toCIDRSet:
         - cidr: "0.0.0.0/0"
       toPorts:
@@ -18,16 +19,16 @@ spec:
             - port: "51820"
               protocol: UDP
 
-    # 2. Allow DNS resolution (critical for bootstrap)
+    # Critical: Allow DNS resolution (UDP 53 + TCP 53 + DoT + DoH)
     - toPorts:
         - ports:
             - port: "53"
               protocol: UDP
             - port: "53"
               protocol: TCP
-            - port: "853"      # DNS over TLS (DoT)
+            - port: "853"
               protocol: TCP
-            - port: "443"      # DNS over HTTPS (DoH) + general HTTPS for healthchecks
+            - port: "443"
               protocol: TCP
       toEntities:
         - world
