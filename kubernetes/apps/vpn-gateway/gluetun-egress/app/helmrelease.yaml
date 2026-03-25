@@ -115,16 +115,16 @@ spec:
             #    limits:
             #      memory: 64Mi
 
-      # Persistence for gluetun config
-      persistence:
-      config:
-        enabled: true
-        type: secret
-        name: gluetun
-        globalMounts:
-          - path: /gluetun/auth/config.toml
-            subPath: config.toml
-            readOnly: true
+          # Persistence for gluetun config
+          persistence:
+          config:
+            enabled: true
+            type: secret
+            name: gluetun
+            globalMounts:
+              - path: /gluetun/auth/config.toml
+                subPath: config.toml
+                readOnly: true
 
     # Expose the control port if needed
     service:
