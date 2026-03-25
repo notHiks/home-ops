@@ -42,43 +42,43 @@ spec:
               capabilities:
                 add: ["NET_ADMIN"]
 
-        env:
-          VPN_TYPE: wireguard
-          VPN_INTERFACE: wg0
-          WIREGUARD_MTU: 1320
-          FIREWALL_ENABLED_DISABLING_IT_SHOOTS_YOU_IN_YOUR_FOOT: off
-          FIREWALL_INPUT_PORTS: "8000"  # Expose control port for health checks
-          DOT: off
-          HTTP_CONTROL_SERVER_ADDRESS: ":8000"
-          HTTP_CONTROL_SERVER_LOG: off
-          PUBLICIP_API: ip2location
-          UPDATER_PERIOD: 12h
-          LOG_LEVEL: info
+          env:
+            VPN_TYPE: wireguard
+            VPN_INTERFACE: wg0
+            WIREGUARD_MTU: 1320
+            FIREWALL_ENABLED_DISABLING_IT_SHOOTS_YOU_IN_YOUR_FOOT: off
+            FIREWALL_INPUT_PORTS: "8000"  # Expose control port for health checks
+            DOT: off
+            HTTP_CONTROL_SERVER_ADDRESS: ":8000"
+            HTTP_CONTROL_SERVER_LOG: off
+            PUBLICIP_API: ip2location
+            UPDATER_PERIOD: 12h
+            LOG_LEVEL: info
 
-        envFrom:
-          - secretRef:
-              name: vpn-gateway-config
-        resources:
-          requests:
-            cpu: 5m
-            memory: 64M
-          limits:
-            memory: 128M
-            squat.ai/tun: "1"
+          envFrom:
+            - secretRef:
+                name: vpn-gateway-config
+          resources:
+            requests:
+              cpu: 5m
+              memory: 64M
+            limits:
+              memory: 128M
+              squat.ai/tun: "1"
 
-        ports:
-              - containerPort: 8000
-                name: control
-                protocol: TCP
+          ports:
+                - containerPort: 8000
+                  name: control
+                  protocol: TCP
 
-        probes:
-          readiness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /v1/publicip/ip
-                port: 8000
+          probes:
+            readiness:
+              enabled: true
+              custom: true
+              spec:
+                httpGet:
+                  path: /v1/publicip/ip
+                  port: 8000
                 initialDelaySeconds: 30
                 periodSeconds: 30
                 failureThreshold: 3
@@ -91,10 +91,10 @@ spec:
               httpGet:
                 path: /v1/publicip/ip
                 port: 8000
-                initialDelaySeconds: 60
-                periodSeconds: 60
-                failureThreshold: 5
-                timeoutSeconds: 10
+              initialDelaySeconds: 60
+              periodSeconds: 60
+              failureThreshold: 5
+              timeoutSeconds: 10
 
           # ── Prometheus exporter sidecar ─────────────────────────────
           #exporter:
