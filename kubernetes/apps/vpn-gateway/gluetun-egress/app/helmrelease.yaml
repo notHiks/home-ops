@@ -30,6 +30,9 @@ spec:
             app: gluetun-egress
             egress-gateway: "true"  # Required for Cilium Egress Gateway
 
+          nodeSelector:
+            kubernetes.io/hostname: fuu-01
+
         containers:
           app:
             image:
