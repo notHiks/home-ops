@@ -21,13 +21,16 @@ spec:
     remediation:
       strategy: rollback
       retries: 3
+
   #See https://github.com/angelnu/helm-charts/blob/main/charts/apps/pod-gateway/values.yaml
   values:
     global:
       fullnameOverride: *app
+
     image:
       repository: ghcr.io/angelnu/pod-gateway
       tag: v1.13.0@sha256:a5b032e15f7570493977b330a5a86dcffebb807d35685ad803e47afb62d105f2
+
     settings:
       NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
       VPN_BLOCK_OTHER_TRAFFIC: true
@@ -36,9 +39,11 @@ spec:
       VXLAN_PORT: 4789
       # DNS queries to these domains will be resolved by K8S DNS instead of the default (typcally the VPN client changes it)
       #DNS_LOCAL_CIDRS: "local cluster.local ${DOMAIN} ${SECRET_MAIN_DOMAIN_NAME}"
+
     podAnnotations:
       configmap.reloader.stakater.com/reload: *app
       secret.reloader.stakater.com/reload: *app
+
     # -- settings to expose ports, usually through a VPN provider.
     # NOTE: if you change it you will need to manually restart the gateway POD
     #publicPorts:
@@ -49,6 +54,7 @@ spec:
     #        port: 60112
     #      - type: tcp
     #        port: 60112
+
     addons:
       vpn:
         enabled: true
@@ -57,6 +63,7 @@ spec:
           image:
             repository: ghcr.io/qdm12/gluetun
             tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+
         env:
           VPN_TYPE: wireguard
           VPN_INTERFACE: wg0
@@ -65,20 +72,24 @@ spec:
           HTTP_CONTROL_SERVER_ADDRESS: ":80"
           HTTP_CONTROL_SERVER_LOG: off
           PUBLICIP_API: ip2location
+
         envFrom:
           - secretRef:
               name: vpn-gateway-config
+
         resources:
           requests:
             cpu: 5m
-            memory: 64M
+            memory: 64Mi
           limits:
-            memory: 128M
+            memory: 128Mi
             squat.ai/tun: "1"
+
         securityContext:
-          privileged: true # Required for mknod/device access
-          capabilities: { add: ["NET_ADMIN"] }
-        # network policy is disabled because we need 2 CiliumNetworkPolicies
+          privileged: true
+          capabilities:
+            add: ["NET_ADMIN"]
+
         networkPolicy:
           enabled: false
 
@@ -100,30 +111,29 @@ spec:
 
         persistence:
           config:
-          enabled: true
-          type: secret
-          name: gluetun
-          globalMounts:
-            - path: /gluetun/auth/config.toml
-              subPath: config.toml
-              readOnly: true
+            enabled: true
+            type: secret
+            name: gluetun
+            globalMounts:
+              - path: /gluetun/auth/config.toml
+                subPath: config.toml
+                readOnly: true
 
     # all namespaces that will utilize the vpn should be added here
     routed_namespaces: &routedNamespaces
       - downloads
+
     webhook:
       image:
         repository: ghcr.io/angelnu/gateway-admision-controller
         tag: v3.12.0@sha256:6f6ab596afd5fef0ca4648eadfb21cd37ba86fa5afa8b85edcc072976a61fbed
 
-      # -- string: Selector for namespace. boolean
-      # All the routed_namespaces will be matched
       namespaceSelector:
         type: custom
         custom:
           matchExpressions:
             - key: kubernetes.io/metadata.name
-              operator: "In"
+              operator: In
               values: *routedNamespaces
 
       # -- boolean: Default behaviour for new PODs in the evaluated namespace
@@ -134,13 +144,7 @@ spec:
       # -- boolean: gatewayLabel and gatewayAnnotation controls the label/annotation key of which the value,
       #   by default, must be 'true' on the pod in order for the gateway sidecar to be injected.
       gatewayLabel: use-vpn-gateway
-      # gatewayAnnotation: use-vpn-gateway
 
-      # -- string: When a value is configured for the gatewayLabelValue or setGatewayAnnotationValue,
-      #   the value of the label and/or annotation set on the gatewayLabel or gatewayAnnotation
-      #   must match the gatewayLabelValue or setGatewayAnnotationValue instead of the default 'true'.
-      gatewayLabelValue:
-      gatewayAnnotationValue:
   postRenderers:
     - kustomize:
         patches:
