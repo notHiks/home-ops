@@ -44,6 +44,21 @@ spec:
               capabilities:
                 add: ["NET_ADMIN"]
 
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - /scripts/setup-nat.sh
+
+              preStop:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - /scripts/cleanup-nat.sh
+
             env:
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
@@ -59,6 +74,8 @@ spec:
             envFrom:
               - secretRef:
                   name: vpn-gateway-config
+              - secretRef:
+                  name: gluetun-auth
 
             resources:
               requests:
@@ -132,6 +149,16 @@ spec:
           - path: /gluetun/auth/config.toml
             subPath: config.toml
             readOnly: true
+      nat-script:
+        enabled: true
+        type: configMap
+        name: gluetun-nat-script
+        defaultMode: 0755
+        globalMounts:
+          - path: /scripts/setup-nat.sh
+            subPath: setup-nat.sh
+          - path: /scripts/cleanup-nat.sh
+            subPath: cleanup-nat.sh
 
     # Expose the control port if needed
     service:
