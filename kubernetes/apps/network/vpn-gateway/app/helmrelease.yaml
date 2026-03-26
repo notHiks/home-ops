@@ -98,15 +98,15 @@ spec:
               failureThreshold: 5
               timeoutSeconds: 5
 
-persistence:
-  config:
-    enabled: true
-    type: secret
-    name: gluetun
-    globalMounts:
-      - path: /gluetun/auth/config.toml
-        subPath: config.toml
-        readOnly: true
+        persistence:
+          config:
+          enabled: true
+          type: secret
+          name: gluetun
+          globalMounts:
+            - path: /gluetun/auth/config.toml
+              subPath: config.toml
+              readOnly: true
 
     # all namespaces that will utilize the vpn should be added here
     routed_namespaces: &routedNamespaces
