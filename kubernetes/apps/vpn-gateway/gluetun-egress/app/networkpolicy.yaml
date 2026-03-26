@@ -42,33 +42,19 @@ spec:
         - cluster
 ---
 apiVersion: cilium.io/v2
-kind: CiliumEgressGatewayPolicy
+kind: CiliumNetworkPolicy
 metadata:
-  name: vpn-egress-policy
+  name: vpn-l3-redirect
+  namespace: vpn-gateway
 spec:
-  selectors:
-    - podSelector:
-        matchLabels:
-          use-vpn: "true"
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: downloads
-
-  destinationCIDRs:
-    - "0.0.0.0/0"
-
-  excludedCIDRs:
-    - "10.0.0.0/8"
-    - "172.16.0.0/12"
-    - "192.168.0.0/16"
-    - "10.42.0.0/16"
-    - "10.43.0.0/16"
-
-  egressGateway:
-    nodeSelector:
-      matchLabels:
-        egress-gateway: "true"
-    egressIP: "192.168.99.21"
+  endpointSelector:
+    matchLabels:
+      use-vpn: "true"
+  egressRedirect:
+    service:
+      name: vpn-gateway
+      namespace: vpn-gateway
+    redirectPort: 0
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
