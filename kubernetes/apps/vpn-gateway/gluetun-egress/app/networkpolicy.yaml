@@ -1,46 +1,4 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
-# This policy allows the vpn-gateway to go out to the internet on port 51820 and also to talk to any cluster entities
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: vpn-gateway-egress
-  namespace: vpn-gateway
-spec:
-  endpointSelector:
-    matchLabels:
-      app: gluetun-egress
-  egress:
-    # WireGuard handshake
-    - toCIDRSet:
-        - cidr: "0.0.0.0/0"
-      toPorts:
-        - ports:
-            - port: "51820"
-              protocol: UDP
-
-    # Critical: Allow DNS resolution (UDP 53 + TCP 53 + DoT + DoH)
-    - toPorts:
-        - ports:
-            - port: "53"
-              protocol: UDP
-            - port: "53"
-              protocol: TCP
-            - port: "853"
-              protocol: TCP
-            - port: "443"
-              protocol: TCP
-      toEntities:
-        - world
-
-    # 3. Allow general outbound after tunnel is up
-    - toEntities:
-        - world
-
-    # 4. Allow internal cluster communication
-    - toEntities:
-        - cluster
----
 # This policy redirect traffic to the egress node for pods that have the label use-vpn: "true"
 apiVersion: cilium.io/v2
 kind: CiliumEgressGatewayPolicy
@@ -70,14 +28,6 @@ spec:
     nodeSelector:
      matchLabels:
       egress-gateway: "true"
-
-    # Specify the IP address used to SNAT traffic matched by the policy.
-    # egressIP: "192.168.99.25"
-
-    # Alternatively it's possible to specify the interface to be used for egress traffic.
-    # In this case the first IPv4 and IPv6 addresses assigned to that interface will be used
-    # as egress IP.
-    interface: eth1
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
@@ -96,3 +46,18 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumLocalRedirectPolicy
+metadata:
+  name: vpn-lrp
+  namespace: vpn-gateway
+spec:
+  redirectFrontend:
+    serviceMatcher:
+      namespace: vpn-gateway
+      serviceName: vpn-forwarder
+  redirectBackend:
+    localEndpointSelector:
+      matchLabels:
+        app: vpn-gateway
