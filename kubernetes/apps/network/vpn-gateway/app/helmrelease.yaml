@@ -16,43 +16,56 @@ spec:
   timeout: 20m
   install:
     remediation:
-      retries: 3
+      retries: -1
   upgrade:
     cleanupOnFail: true
     remediation:
       strategy: rollback
       retries: 3
-
+  #See https://github.com/angelnu/helm-charts/blob/main/charts/apps/pod-gatewa/values.yaml
   values:
-    # VPN service configuration
-    service:
-      vpn:
-        enabled: true
-        type: LoadBalancer
-        controller: main
-        ports:
-          gluetun:
-            enabled: true
-            port: 80
+    controllers:
+      main:
+        # Configure the main controller - this runs the VPN server
         containers:
+          main:
+            image:
+              repository: ghcr.io/angelnu/pod-gateway
+              # I am using dev version for testing - others should be using the default from the chart
+              pullPolicy: Always
+              tag: dev
           gluetun:
             enabled: true
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            type: gluetun
+            gluetun:
+              image:
+                repository: ghcr.io/qdm12/gluetun
+                tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+
             env:
-              - name: VPN_TYPE
-                value: wireguard
-              - name: VPN_INTERFACE
-                value: wg0
+            - name:  VPN_TYPE
+              value: wireguard
+            - name:  VPN_INTERFACE
+              value: wg0
+            - name:  FIREWALL
+              value: "off"
+            - name:  DOT
+              value: "off"
+            - name: VPN_ENDPOINT_IP_VERSION
+              value: "v4"       # Forces Gluetun to pick an IPv4 address for the VPN server
+            - name: DOT_IPV6
+              value: "off"      # Disables IPv6 for the internal DNS over TLS (Unbound)
+
             envFrom:
               - secretRef:
                   name: vpn-gateway-config
+
             securityContext:
-              privileged: true
+              privileged: true # Required for mknod/device access
               capabilities:
                 add:
                   - NET_ADMIN
+
             probes:
               liveness:
                 enabled: true
@@ -63,77 +76,78 @@ spec:
                     command:
                       - sh
                       - -c
-                      - |
-                        COUNTRY=$(wget -q -O- https://ipinfo.io/country)
-                        echo $COUNTRY
-                        if [ "$COUNTRY" == "BE" ]; then exit 0; else exit 1; fi
+                      - COUNTRY=$(wget -q -O- https://ipinfo.io/country); echo $COUNTRY; if [ "$COUNTRY" == "BE" ]; then exit 0; else exit 255; fi
                   initialDelaySeconds: 30
                   periodSeconds: 60
                   failureThreshold: 5
                   timeoutSeconds: 5
+      webhook:
+        serviceAccount:
+          identifier: default
+        pod:
+          # The sidecar containers inserted by the webhook will use this DNS config
+          dnsConfig:
+            options:
+              - name: ndots
+                value: '1'
+        # Configure the main controller - this runs the VPN server
+        containers:
+          main:
+            image:
+              repository: ghcr.io/angelnu/gateway-admision-controller
+              # I am using dev version for testing - others should be using the default from the chart
+              pullPolicy: Always
+              tag: dev
+    serviceAccount:
+      default:
+        enabled: true
+    rbac:
+      bindings:
+        default:
+          type: RoleBinding
+          roleRef:
+            name: system:openshift:scc:privileged  # For network - TBD, try with less
+            kind: ClusterRole
+          subjects:
+            - identifier: default
 
-    # Routing configuration
+    networkpolicies:
+      main:
+        enabled: true
+        controller: main
+        policyTypes:
+          - Egress
+        rules:
+          egress:
+            # Allow only VPN traffic to Internet
+            - to:
+                - ipBlock:
+                    cidr: 0.0.0.0/0
+              ports:
+                # VPN traffic
+                - port: &vpn_port 1637
+                  protocol: UDP
+            # Allow any traffic within k8s
+            - to:
+                - ipBlock:
+                    # Cluster Pod IPs
+                    cidr: 10.0.0.0/8
+                - ipBlock:
+                    # Cluster Service IPs
+                    cidr: 172.16.0.0/12
+                - ipBlock:
+                    # Local Network
+                    cidr: 192.168.0.0/16
+
     routed_namespaces:
-      - downloads
+    - vpn
 
-    # Pod-gateway VPN settings
     settings:
+      # -- If using a VPN, interface name created by it
       VPN_INTERFACE: wg0
+      # -- Prevent non VPN traffic to leave the gateway
       VPN_BLOCK_OTHER_TRAFFIC: true
-      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
-      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
-      VXLAN_PORT: 4789
-
-    # Pod annotations for secret/config reload
-    podAnnotations:
-      configmap.reloader.stakater.com/reload: vpn-gateway
-      secret.reloader.stakater.com/reload: vpn-gateway-config
-
-    # Webhook configuration for sidecar injection
-    webhook:
-      image:
-        repository: ghcr.io/angelnu/gateway-admision-controller
-        tag: v3.12.0@sha256:6f6ab596afd5fef0ca4648eadfb21cd37ba86fa5afa8b85edcc072976a61fbed
-      namespaceSelector:
-        type: custom
-        custom:
-          matchExpressions:
-            - key: kubernetes.io/metadata.name
-              operator: In
-              values:
-                - downloads
-      gatewayDefault: false
-      gatewayLabel: use-vpn-gateway
-
-  # Post-render patches for ports
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Service
-              name: vpn-gateway
-            patch: |
-              - op: add
-                path: /spec/ports/-
-                value:
-                  name: gluetun
-                  port: 80
-                  protocol: TCP
-                  targetPort: 80
-          - target:
-              kind: Deployment
-              name: vpn-gateway
-            patch: |
-              - op: add
-                path: /spec/template/spec/containers/1/ports
-                value: []
-          - target:
-              kind: Deployment
-              name: vpn-gateway
-            patch: |
-              - op: add
-                path: /spec/template/spec/containers/1/ports/-
-                value:
-                  containerPort: 80
-                  name: gluetun
-                  protocol: TCP
+      # -- If VPN_BLOCK_OTHER_TRAFFIC is true, allow VPN traffic over this port
+      VPN_TRAFFIC_PORT: *vpn_port
+      # -- Traffic to these IPs will be send through the K8S gateway
+      VPN_LOCAL_CIDRS: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
