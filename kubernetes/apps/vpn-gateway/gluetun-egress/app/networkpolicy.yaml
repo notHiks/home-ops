@@ -47,13 +47,14 @@ kind: CiliumEgressGatewayPolicy
 metadata:
   name: vpn-egress-policy
 spec:
-  selector:
-    podSelector:
+  selectors:
+  - podSelector:
       matchLabels:
         use-vpn: "true"
 
   destinationCIDRs:
     - "0.0.0.0/0"
+    - "::/0"
 
   excludedCIDRs:
     - "10.0.0.0/8"
@@ -63,10 +64,12 @@ spec:
     - "10.43.0.0/16"
 
   egressGateways:
-    - nodeSelector:
-        matchLabels:
-          egress-gateway: "true"
-      egressIP: "192.168.99.21"
+    nodeSelector:
+     matchLabels:
+      egress-gateway: "true"
+
+    # Specify the IP address used to SNAT traffic matched by the policy.
+    egressIP: "192.168.99.21"
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
