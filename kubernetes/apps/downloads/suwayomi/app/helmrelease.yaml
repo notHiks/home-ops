@@ -27,11 +27,10 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
-          labels:
-            use-vpn-gateway: "true"
 
           annotations:
-            rollout-trigger: "2026-03-25-2308"
+            app.kubernetes.io/name: *app
+            use-vpn-gateway: "true"
 
           securityContext:
             fsGroup: 1000
@@ -125,6 +124,7 @@ spec:
         ports:
           http:
             port: *port
+            protocol: TCP
 
     route:
       app:
