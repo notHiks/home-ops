@@ -62,11 +62,11 @@ spec:
     - "10.42.0.0/16"
     - "10.43.0.0/16"
 
-  egressGateway:
-    nodeSelector:
-      matchLabels:
-        egress-gateway: "true"
-    egressIP: "192.168.99.21"
+  egressGateways:
+    - nodeSelector:
+        matchLabels:
+          egress-gateway: "true"
+      egressIP: "192.168.99.21"
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
