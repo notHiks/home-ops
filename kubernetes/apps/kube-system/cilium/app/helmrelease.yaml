@@ -8,6 +8,10 @@ spec:
     kind: OCIRepository
     name: cilium
   interval: 1h
+  install:
+    crds: Create
+  upgrade:
+    crds: CreateReplace
   values:
     autoDirectNodeRoutes: true
     bpf:
