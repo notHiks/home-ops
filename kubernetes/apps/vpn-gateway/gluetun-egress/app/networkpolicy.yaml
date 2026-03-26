@@ -69,7 +69,7 @@ spec:
       egress-gateway: "true"
 
     # Specify the IP address used to SNAT traffic matched by the policy.
-    egressIP: "192.168.99.21"
+    egressIP: "192.168.99.25"
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
