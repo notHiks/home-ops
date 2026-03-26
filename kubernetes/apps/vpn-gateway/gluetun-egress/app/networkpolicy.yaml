@@ -47,7 +47,7 @@ kind: CiliumEgressGatewayPolicy
 metadata:
   name: vpn-egress-policy
 spec:
-  selectors:
+  selector:
     - podSelector:
         matchLabels:
           use-vpn: "true"
