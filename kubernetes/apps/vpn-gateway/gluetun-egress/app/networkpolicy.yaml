@@ -51,9 +51,6 @@ spec:
     - podSelector:
         matchLabels:
           use-vpn: "true"
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: downloads
 
   destinationCIDRs:
     - "0.0.0.0/0"
