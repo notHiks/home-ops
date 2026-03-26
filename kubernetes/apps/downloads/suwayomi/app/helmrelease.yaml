@@ -28,7 +28,7 @@ spec:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
           labels:
-            use-vpn: "true"
+            use-vpn-gateway: "true"
 
           annotations:
             rollout-trigger: "2026-03-25-2308"
