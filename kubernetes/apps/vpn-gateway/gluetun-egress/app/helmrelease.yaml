@@ -51,9 +51,14 @@ spec:
                   command:
                     - sh
                     - -c
-                    - |
-                      echo "Adding SNAT rule for egress traffic"
-                      iptables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
+                    - /scripts/setup-nat.sh
+
+              preStop:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - /scripts/cleanup-nat.sh
 
             env:
               VPN_TYPE: wireguard
@@ -145,6 +150,16 @@ spec:
           - path: /gluetun/auth/config.toml
             subPath: config.toml
             readOnly: true
+      nat-script:
+        enabled: true
+        type: configMap
+        name: gluetun-nat-script
+        defaultMode: 0755
+        globalMounts:
+          - path: /scripts/setup-nat.sh
+            subPath: setup-nat.sh
+          - path: /scripts/cleanup-nat.sh
+            subPath: cleanup-nat.sh
 
     # Expose the control port if needed
     service:

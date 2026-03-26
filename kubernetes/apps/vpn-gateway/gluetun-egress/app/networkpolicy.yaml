@@ -68,8 +68,8 @@ spec:
     nodeSelector:
       matchLabels:
         egress-gateway: "true"
-  # egressIP: "192.168.99.21"  # Optional but often helps with return traffic:
-  # egressGatewayInterface: "eth0"   # or the interface name on fuu-01 that has 192.168.99.21
+    egressIP: "192.168.99.21"
+    egressGatewayInterface: "eth0"
 ---
 # This policy allows inbound connections to the vpn-gateway on port 8000 to gluetun http_control_server
 apiVersion: cilium.io/v2
