@@ -135,9 +135,6 @@ spec:
           - target:
               kind: Deployment
               name: vpn-gateway
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: vpn-gateway
             patch: |
               - op: add
                 path: /spec/template/spec/containers/-
