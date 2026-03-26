@@ -4,19 +4,10 @@ kind: HelmRelease
 metadata:
   name: cilium
 spec:
+  chartRef:
+    kind: OCIRepository
+    name: cilium
   interval: 1h
-  chart:
-    spec:
-      chart: cilium
-      version: 1.19.1
-      sourceRef:
-        kind: HelmRepository
-        name: cilium
-        namespace: kube-system
-  install:
-    crds: Create
-  upgrade:
-    crds: CreateReplace
   values:
     autoDirectNodeRoutes: true
     bpf:
