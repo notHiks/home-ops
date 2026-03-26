@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: pod-gateway
-      version: 6.5.1
+      version: 7.1.1
       sourceRef:
         kind: HelmRepository
         name: angelnu-charts
@@ -24,7 +24,7 @@ spec:
       retries: 3
 
   values:
-    # Service configuration for VPN
+    # VPN service configuration
     service:
       vpn:
         enabled: true
@@ -34,59 +34,49 @@ spec:
           gluetun:
             enabled: true
             port: 80
+        containers:
+          gluetun:
+            enabled: true
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            env:
+              - name: VPN_TYPE
+                value: wireguard
+              - name: VPN_INTERFACE
+                value: wg0
+            envFrom:
+              - secretRef:
+                  name: vpn-gateway-config
+            securityContext:
+              privileged: true
+              capabilities:
+                add:
+                  - NET_ADMIN
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                type: custom
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        COUNTRY=$(wget -q -O- https://ipinfo.io/country)
+                        echo $COUNTRY
+                        if [ "$COUNTRY" == "BE" ]; then exit 0; else exit 1; fi
+                  initialDelaySeconds: 30
+                  periodSeconds: 60
+                  failureThreshold: 5
+                  timeoutSeconds: 5
 
-    # Main addon: Gluetun VPN container
-    addons:
-      vpn:
-        enabled: true
-        type: gluetun
-        gluetun:
-          enabled: true
-          image:
-            repository: ghcr.io/qdm12/gluetun
-            tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
-          env:
-            - name: VPN_TYPE
-              value: wireguard
-            - name: VPN_INTERFACE
-              value: wg0
-          envFrom:
-            - secretRef:
-                name: vpn-gateway-config
-          securityContext:
-            privileged: true
-            capabilities:
-              add:
-                - NET_ADMIN
-          probes:
-            liveness:
-              enabled: true
-              custom: true
-              type: custom
-              spec:
-                exec:
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      COUNTRY=$(wget -q -O- https://ipinfo.io/country)
-                      echo $COUNTRY
-                      if [ "$COUNTRY" == "BE" ]; then exit 0; else exit 1; fi
-                initialDelaySeconds: 30
-                periodSeconds: 60
-                failureThreshold: 5
-                timeoutSeconds: 5
-
-    # Pod annotations for reloading on secret/config changes
-    podAnnotations:
-      configmap.reloader.stakater.com/reload: vpn-gateway
-      secret.reloader.stakater.com/reload: vpn-gateway-config
-
-    # Network routing
+    # Routing configuration
     routed_namespaces:
       - downloads
 
-    # Pod-gateway settings
+    # Pod-gateway VPN settings
     settings:
       VPN_INTERFACE: wg0
       VPN_BLOCK_OTHER_TRAFFIC: true
@@ -94,7 +84,12 @@ spec:
       NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
       VXLAN_PORT: 4789
 
-    # Webhook for injecting sidecars in routed namespaces
+    # Pod annotations for secret/config reload
+    podAnnotations:
+      configmap.reloader.stakater.com/reload: vpn-gateway
+      secret.reloader.stakater.com/reload: vpn-gateway-config
+
+    # Webhook configuration for sidecar injection
     webhook:
       image:
         repository: ghcr.io/angelnu/gateway-admision-controller
@@ -110,11 +105,10 @@ spec:
       gatewayDefault: false
       gatewayLabel: use-vpn-gateway
 
-  # Post-render patches for Kustomize
+  # Post-render patches for ports
   postRenderers:
     - kustomize:
         patches:
-          # Add gluetun port to Service
           - target:
               kind: Service
               name: vpn-gateway
@@ -126,7 +120,6 @@ spec:
                   port: 80
                   protocol: TCP
                   targetPort: 80
-          # Ensure container 1 (Glutun) has port 80
           - target:
               kind: Deployment
               name: vpn-gateway
