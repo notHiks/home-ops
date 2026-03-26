@@ -140,7 +140,7 @@ spec:
                     cidr: 192.168.0.0/16
 
     routed_namespaces:
-    - vpn
+    - downloads
 
     settings:
       # -- If using a VPN, interface name created by it
