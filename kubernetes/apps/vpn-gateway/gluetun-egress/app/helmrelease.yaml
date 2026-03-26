@@ -45,6 +45,16 @@ spec:
               capabilities:
                 add: ["NET_ADMIN"]
 
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      echo "Adding SNAT rule for egress traffic"
+                      iptables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
+
             env:
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
