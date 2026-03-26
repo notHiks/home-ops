@@ -28,7 +28,7 @@ spec:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
 
-          annotations:
+          labels:
             app.kubernetes.io/name: *app
             use-vpn-gateway: "true"
 
