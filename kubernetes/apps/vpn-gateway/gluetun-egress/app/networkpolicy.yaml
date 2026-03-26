@@ -57,7 +57,12 @@ spec:
     serviceMatcher:
       namespace: vpn-gateway
       serviceName: vpn-forwarder
+
   redirectBackend:
     localEndpointSelector:
       matchLabels:
         app: vpn-gateway
+    toPorts:
+      - ports:
+          - port: "8000"
+            protocol: TCP
