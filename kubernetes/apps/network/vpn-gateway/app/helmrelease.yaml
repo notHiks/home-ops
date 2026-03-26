@@ -44,64 +44,65 @@ spec:
       vpn:
         enabled: true
         type: gluetun
-        image:
-          repository: ghcr.io/qdm12/gluetun
-          tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
-        env:
-          - name: VPN_TYPE
-            value: wireguard
-          - name: VPN_INTERFACE
-            value: wg0
-          - name: FIREWALL
-            value: "off"
-          - name: DOT
-            value: "off"
-          - name: HTTP_CONTROL_SERVER_ADDRESS
-            value: ":80"
-          - name: HTTP_CONTROL_SERVER_LOG
-            value: "off"
-          - name: PUBLICIP_API
-            value: ip2location
-          - name: VPN_ENDPOINT_IP_VERSION
-            value: "v4"
-        envFrom:
-          - secretRef:
-              name: vpn-gateway-config
-        resources:
-          requests:
-            cpu: 5m
-            memory: 128Mi
-          limits:
-            memory: 128Mi
-        securityContext:
-          privileged: true
-          capabilities:
-            add:
-              - NET_ADMIN
-        probes:
-          liveness:
-            enabled: true
-            custom: true
-            type: custom
-            spec:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - COUNTRY=$(curl -s https://ipinfo.io/country); echo $COUNTRY; if [ "$COUNTRY" = "BE" ]; then exit 0; else exit 1; fi
-              initialDelaySeconds: 30
-              periodSeconds: 60
-              failureThreshold: 5
-              timeoutSeconds: 5
-        persistence:
-          config:
-            enabled: true
-            type: secret
-            name: gluetun
-            globalMounts:
-              - path: /gluetun/auth/config.toml
-                subPath: config.toml
-                readOnly: true
+        gluetun:
+          image:
+            repository: ghcr.io/qdm12/gluetun
+            tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+          env:
+            - name: VPN_TYPE
+              value: wireguard
+            - name: VPN_INTERFACE
+              value: wg0
+            - name: FIREWALL
+              value: "off"
+            - name: DOT
+              value: "off"
+            - name: HTTP_CONTROL_SERVER_ADDRESS
+              value: ":80"
+            - name: HTTP_CONTROL_SERVER_LOG
+              value: "off"
+            - name: PUBLICIP_API
+              value: ip2location
+            - name: SERVER_COUNTRIES
+              value: Belgium
+          envFrom:
+            - secretRef:
+                name: vpn-gateway-config
+          resources:
+            requests:
+              cpu: 5m
+              memory: 128Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
+          probes:
+            liveness:
+              enabled: true
+              custom: true
+              type: custom
+              spec:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - COUNTRY=$(curl -s https://ipinfo.io/country); echo $COUNTRY; if [ "$COUNTRY" = "BE" ]; then exit 0; else exit 1; fi
+                initialDelaySeconds: 30
+                periodSeconds: 60
+                failureThreshold: 5
+                timeoutSeconds: 5
+          persistence:
+            config:
+              enabled: true
+              type: secret
+              name: gluetun
+              globalMounts:
+                - path: /gluetun/auth/config.toml
+                  subPath: config.toml
+                  readOnly: true
 
     podAnnotations:
       configmap.reloader.stakater.com/reload: vpn-gateway-pod-gateway
