@@ -1,0 +1,191 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name:  vpn-gateway
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: pod-gateway
+      version: 7.1.1
+      sourceRef:
+        kind: HelmRepository
+        name: angelnu-charts
+  timeout: 20m
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+
+  values:
+    controllers:
+      main:
+        # Main controller runs the VPN gateway (Gluetun + WireGuard)
+        containers:
+          main:
+            image:
+              repository: ghcr.io/angelnu/pod-gateway
+              tag: v1.13.0@sha256:a5b032e15f7570493977b330a5a86dcffebb807d35685ad803e47afb62d105f2
+          gluetun:
+            enabled: true
+            type: gluetun
+            gluetun:
+              image:
+                repository: ghcr.io/qdm12/gluetun
+                tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+
+            env:
+            - name:  VPN_TYPE
+              value: wireguard
+            - name:  VPN_INTERFACE
+              value: wg0
+            - name:  DOT
+              value: "off"
+            - name: VPN_ENDPOINT_IP_VERSION
+              value: "v4"       # Forces Gluetun to pick an IPv4 address for the VPN server
+            - name: DOT_IPV6
+              value: "off"      # Disables IPv6 for the internal DNS over TLS (Unbound)
+
+            envFrom:
+              - secretRef:
+                  name: vpn-gateway-config
+
+            securityContext:
+              privileged: true
+              capabilities:
+                add:
+                  - NET_ADMIN
+            resources:
+              requests:
+                cpu: 100m
+                memory: 64Mi
+              limits:
+                cpu: 175m
+                memory: 192Mi
+                squat.ai/tun: "1"
+
+        pod:
+          annotations:
+            configmap.reloader.stakater.com/reload: vpn-gateway
+            secret.reloader.stakater.com/reload: vpn-gateway
+
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                type: custom
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - 'if ip -4 addr show wg0 | grep -q "inet "; then exit 0; else exit 1; fi'
+                  initialDelaySeconds: 30
+                  periodSeconds: 60
+                  failureThreshold: 5
+                  timeoutSeconds: 5
+
+            persistence:
+              config:
+                enabled: true
+                type: secret
+                name: gluetun
+                globalMounts:
+                  - path: /gluetun/auth/config.toml
+                    subPath: config.toml
+                    readOnly: true
+      # Admission webhook
+      webhook:
+        serviceAccount:
+          identifier: default
+        pod:
+          # DNS config for webhook pod + injected sidecars
+          dnsConfig:
+            options:
+              - name: ndots
+                value: '1'
+        containers:
+          main:
+            image:
+              repository: ghcr.io/angelnu/gateway-admision-controller
+              tag: dev@sha256:e9797e7d9fa2be9e246c6d2f0fbef688ea1c14e29e2e84b2c66c6806cf51d1aa
+
+    # Global default service account (used by both main and webhook controllers)
+    serviceAccount:
+      default:
+        enabled: true
+
+    # Disable built-in Kubernetes NetworkPolicy (we use CiliumNetworkPolicy instead)
+    networkpolicies:
+      main:
+        enabled: false
+
+    # Namespaces where pods will get the VPN routing sidecar injected
+    routed_namespaces: &routedNamespaces
+      - downloads
+
+    # Admission controller configuration for selective injection
+    namespaceSelector:
+      type: custom
+      custom:
+        matchExpressions:
+          - key: kubernetes.io/metadata.name
+            operator: In
+            values: *routedNamespaces   # Uses the anchor from routed_namespaces
+
+    # Controls automatic sidecar injection
+    gatewayDefault: false
+    gatewayLabel: use-vpn-gateway
+
+    settings:
+      # -- If using a VPN, interface name created by it
+      VPN_INTERFACE: wg0
+      # -- Prevent non VPN traffic to leave the gateway
+      VPN_BLOCK_OTHER_TRAFFIC: true
+      # -- If VPN_BLOCK_OTHER_TRAFFIC is true, allow VPN traffic over this port
+      VPN_TRAFFIC_PORT: 51820
+      # Traffic to these CIDRs will bypass the VPN (local + cluster internal)
+      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+      # Traffic from routed pods to these CIDRs will NOT go through the gateway
+      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+
+  postRenderers:
+    - kustomize:
+        patches:
+          # Expose Gluetun HTTP dashboard on the service
+          - target:
+              kind: Service
+              name: vpn-gateway
+            patch: |
+              - op: add
+                path: /spec/ports/-
+                value:
+                  name: gluetun
+                  port: 80
+                  protocol: TCP
+                  targetPort: 80
+
+          # Clear existing ports on gluetun container
+          - target:
+              kind: Deployment
+              name: vpn-gateway
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/1/ports
+                value: []
+
+          # Add gluetun port 80 to the container
+          - target:
+              kind: Deployment
+              name: vpn-gateway
+            patch: |
+              - op: add
+                path: /spec/template/spec/containers/1/ports/-
+                value:
+                  containerPort: 80
+                  name: gluetun
+                  protocol: TCP
