@@ -35,7 +35,7 @@ spec:
   dependsOn:
     - name: tranga-api
   interval: 30m
-  path: ./kubernetes/apps/database/crunchy-postgres/website
+  path: ./kubernetes/apps/downloads/tranga/website
   prune: true
   sourceRef:
     kind: GitRepository
