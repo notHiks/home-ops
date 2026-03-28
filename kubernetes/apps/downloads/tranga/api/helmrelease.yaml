@@ -30,6 +30,10 @@ spec:
               runAsUser: 1000
               runAsGroup: 1000
 
+            envFrom:
+              - secretRef:
+                  name: tranga-api
+
     persistence:
       tranga-data:
          enabled: true
