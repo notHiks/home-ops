@@ -41,8 +41,8 @@ spec:
          existingClaim: nfs-manga
          globalMounts:
            - path: /Manga
-           - path: /usr/share/tranga-api
-             subPath: settings
+           - path: /usr/share/tranga-api/settings.json
+             subPath: settings.json
 
     service:
       tranga-api:
