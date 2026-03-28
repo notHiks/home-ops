@@ -11,6 +11,12 @@ spec:
   values:
     controllers:
       tranga-api:
+
+        pod:
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
+
         containers:
           app:
             image:
@@ -26,9 +32,6 @@ spec:
               limits:
                 cpu: 500m
                 memory: 1Gi
-            securityContext:
-              runAsUser: 1000
-              runAsGroup: 1000
 
             envFrom:
               - secretRef:
