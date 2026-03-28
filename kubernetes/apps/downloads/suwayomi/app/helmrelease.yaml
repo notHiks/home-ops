@@ -62,24 +62,17 @@ spec:
               repository: ghcr.io/suwayomi/tachidesk
               tag: v2.1.2087@sha256:bc7164c81b810dfc2804b26243aa768ff0746348675988532dfb734f15350713
             env:
-              TZ: Europe/Paris
               BIND_PORT: &port 4567
               WEB_UI_CHANNEL: "preview"
-              AUTO_DOWNLOAD_CHAPTERS: true
-              UPDATE_EXCLUDE_UNREAD: "false"
-              UPDATE_EXCLUDE_STARTED: "false"
-              UPDATE_EXCLUDE_COMPLETED: "false"
-              DOWNLOAD_AS_CBZ: "true"
-              EXTENSION_REPOS: '["https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"]'
             envFrom:
               - secretRef:
                   name: suwayomi-config
             resources:
               requests:
-                memory: 250Mi
+                memory: 1Gi
                 cpu: 500m
               limits:
-                memory: 1500Mi
+                memory: 3Gi
 
           #  probes:
           #    # Readiness: App is ready to serve traffic
