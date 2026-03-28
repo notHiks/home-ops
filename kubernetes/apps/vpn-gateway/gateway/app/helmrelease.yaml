@@ -147,9 +147,9 @@ spec:
       # -- If VPN_BLOCK_OTHER_TRAFFIC is true, allow VPN traffic over this port
       VPN_TRAFFIC_PORT: 51820
       # Traffic to these CIDRs will bypass the VPN (local + cluster internal)
-      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 172.16.0.0/12 192.168.99.0/24"
       # Traffic from routed pods to these CIDRs will NOT go through the gateway
-      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 172.16.0.0/12 192.168.99.0/24"
 
   # Post-renderers to expose Gluetun HTTP dashboard on port 80
   postRenderers:
