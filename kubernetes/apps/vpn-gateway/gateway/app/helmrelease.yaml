@@ -141,8 +141,8 @@ spec:
             values: *routedNamespaces   # Uses the anchor from routed_namespaces
 
     # Controls automatic sidecar injection
-    gatewayDefault: false
-    gatewayLabel: use-vpn-gateway
+    gatewayDefault: true
+    #  gatewayLabel: use-vpn-gateway
 
     settings:
       # -- If using a VPN, interface name created by it
