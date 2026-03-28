@@ -31,25 +31,63 @@ kind: CiliumNetworkPolicy
 metadata:
   name: vpn-gateway-vxlan
   labels:
-    app.kubernetes.io/instance: &instance vpn-gateway
-    app.kubernetes.io/name: &name pod-gateway
+    app.kubernetes.io/instance: vpn-gateway
+    app.kubernetes.io/name: pod-gateway
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/instance: *instance
-      app.kubernetes.io/name: *name
+      app.kubernetes.io/instance: vpn-gateway
+      app.kubernetes.io/name: pod-gateway
+
   egress:
-    # Allow VXLAN traffic to the dynamic VXLAN subnet
+    # Allow VXLAN traffic to the gateway pod(s)
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: vpn-gateway
+            app.kubernetes.io/name: pod-gateway
+      toPorts:
+        - ports:
+            - port: "4789"
+              protocol: UDP
+    # Allow DHCP broadcast from VXLAN interface
+    - toCIDR:
+        - 255.255.255.255/32
+      toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN subnet traffic itself
     - toCIDR:
         - 172.16.0.0/24
+      toPorts:
+        - ports:
+            - port: "4789"
+              protocol: UDP
+
   ingress:
-    # Allow VXLAN traffic from the dynamic VXLAN subnet
-    - fromCIDR:
-        - 172.16.0.0/24
-    # Allow ICMP echo for basic troubleshooting
+    # Allow VXLAN traffic only from other gateway pods
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: vpn-gateway
+            app.kubernetes.io/name: pod-gateway
+      toPorts:
+        - ports:
+            - port: "4789"
+              protocol: UDP
+    # Allow DHCP replies from DHCP servers in the cluster (UDP 67/68)
+    - fromEntities: ["cluster"]
+      toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+            - port: "68"
+              protocol: UDP
+    # Allow ICMP for heartbeat checks
     - icmps:
         - fields:
-            - type: 8
+            - type: 8   # Echo request
               family: IPv4
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
