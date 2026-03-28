@@ -5,7 +5,7 @@ namespace: downloads
 components:
   - ../../components/common
 resources:
- - ./namespace.yaml
+  - ./namespace.yaml
   - ./nfs-pvcs/ks.yaml
   - ./suwayomi/ks.yaml
   - ./tranga/ks.yaml
