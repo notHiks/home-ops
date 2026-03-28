@@ -30,7 +30,6 @@ spec:
 
           labels:
             app.kubernetes.io/name: *app
-            use-vpn-gateway: "true"
 
           securityContext:
             fsGroup: 1000
@@ -82,42 +81,42 @@ spec:
               limits:
                 memory: 1500Mi
 
-            probes:
-              # Readiness: App is ready to serve traffic
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v1/ping
-                    port: 4567
-                  initialDelaySeconds: 30
-                  periodSeconds: 30
-                  failureThreshold: 5
+          #  probes:
+          #    # Readiness: App is ready to serve traffic
+          #    readiness:
+          #      enabled: true
+          #      custom: true
+          #      spec:
+          #        httpGet:
+          #          path: /api/v1/ping
+          #          port: 4567
+          #        initialDelaySeconds: 30
+          #        periodSeconds: 30
+          #        failureThreshold: 5
 
               # Liveness: App is still alive
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v1/ping
-                    port: 4567
-                  initialDelaySeconds: 60
-                  periodSeconds: 60
-                  failureThreshold: 8
+           #   liveness:
+           #     enabled: true
+           #     custom: true
+           #     spec:
+           #       httpGet:
+           #         path: /api/v1/ping
+           #         port: 4567
+           #       initialDelaySeconds: 60
+           #       periodSeconds: 60
+           #       failureThreshold: 8
 
               # Startup: Give time for database + NFS mount
-              startup:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v1/ping
-                    port: 4567
-                  initialDelaySeconds: 45
-                  periodSeconds: 10
-                  failureThreshold: 60   # ~10 minutes total
+             # startup:
+             #   enabled: true
+             #   custom: true
+             #   spec:
+             #     httpGet:
+             #       path: /api/v1/ping
+             #       port: 4567
+             #     initialDelaySeconds: 45
+             #     periodSeconds: 10
+             #     failureThreshold: 60   # ~10 minutes total
     service:
       app:
         controller: suwayomi
