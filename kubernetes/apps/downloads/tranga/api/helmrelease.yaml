@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tranga-api
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: tranga-api
+  interval: 15m
+  values:
+    controllers:
+      tranga-api:
+        containers:
+          app:
+            image:
+              repository: glax/tranga-api
+              tag: latest
+            ports:
+              - name: api
+                containerPort: 6531
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                cpu: 500m
+                memory: 1Gi
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+
+    persistence:
+      tranga-data:
+         enabled: true
+         type: persistentVolumeClaim
+         existingClaim: nfs-manga
+         globalMounts:
+           - path: /Manga
+           - path: /usr/share/tranga-api
+             subPath: settings
+
+    service:
+      tranga-api:
+        controller: tranga-api
+        ports:
+          api:
+            port: 6531

@@ -1,13 +1,12 @@
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: tranga
+  name: tranga-website
 spec:
   chartRef:
     kind: OCIRepository
-    name: tranga
+    name: tranga-website
   interval: 15m
   values:
     controllers:
@@ -16,12 +15,31 @@ spec:
           app:
             image:
               repository: glax/tranga-website
-              tag: Server-V2
+              tag: latest
             ports:
               - name: http
                 containerPort: 80
             env:
-              API_URL: http://192.168.88.236:6531
+              API_URL: http://tranga-api:6531
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 300m
+                memory: 512Mi
+
+            probes:
+              liveness:
+                enabled: true
+                path: /
+                port: http
+
+              readiness:
+                enabled: true
+                path: /
+                port: http
+
     service:
       tranga-website:
         controller: tranga-website

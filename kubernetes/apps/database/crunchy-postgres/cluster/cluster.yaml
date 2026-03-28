@@ -71,6 +71,10 @@ spec:
       databases: [*db]
       password: *pw
 
+    - name: &db tranga
+      databases: [*db]
+      password: *pw
+
 #  backups:
 #    pgbackrest:
 #      configuration: &backupConfig
