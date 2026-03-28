@@ -21,73 +21,38 @@ spec:
         - ports:
             - port: "51820"
               protocol: UDP
+    # Allow DHCP traffic to the gateway
+    - toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+        - ports:
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN (dynamic port 0) by allowing all UDP to cluster pods
     - toEntities:
         - cluster
         - host
----
-# This policy allows the vpn-gateway to communicate over the default VXLAN port
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: vpn-gateway-vxlan
-  labels:
-    app.kubernetes.io/instance: vpn-gateway
-    app.kubernetes.io/name: pod-gateway
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/instance: vpn-gateway
-      app.kubernetes.io/name: pod-gateway
-
-  egress:
-    # Allow VXLAN traffic to the gateway pod(s)
-    - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/instance: vpn-gateway
-            app.kubernetes.io/name: pod-gateway
-      toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
-    # Allow DHCP broadcast from VXLAN interface
-    - toCIDR:
-        - 255.255.255.255/32
-      toPorts:
-        - ports:
-            - port: "67"
-              protocol: UDP
-            - port: "68"
-              protocol: UDP
-    # Allow VXLAN subnet traffic itself
-    - toCIDR:
-        - 172.16.0.0/24
-      toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
-
+    # Allow ICMP for ping out
+    - toEntities:
+        - cluster
   ingress:
-    # Allow VXLAN traffic only from other gateway pods
-    - fromEndpoints:
-        - matchLabels:
-            app.kubernetes.io/instance: vpn-gateway
-            app.kubernetes.io/name: pod-gateway
-      toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
-    # Allow DHCP replies from DHCP servers in the cluster (UDP 67/68)
-    - fromEntities: ["cluster"]
-      toPorts:
+    # Allow inbound DHCP
+    - toPorts:
         - ports:
             - port: "67"
               protocol: UDP
+        - ports:
             - port: "68"
               protocol: UDP
-    # Allow ICMP for heartbeat checks
+    # Allow VXLAN traffic (any UDP) from cluster pods
+    - fromEntities:
+        - cluster
+        - host
+    # Allow ICMP echo
     - icmps:
         - fields:
-            - type: 8   # Echo request
+            - type: 8
               family: IPv4
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
