@@ -14,42 +14,42 @@ spec:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
   egress:
-    # Allow ONLY VPN (WireGuard) traffic to the internet
+    # Allow WireGuard VPN traffic to the internet
     - toCIDR:
         - 0.0.0.0/0
       toPorts:
         - ports:
             - port: "51820"
               protocol: UDP
-    # Allow all cluster-internal communication (pods, services, nodes)
+    # Allow DHCP traffic to the gateway
+    - toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+        - ports:
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN (dynamic port 0) by allowing all UDP to cluster pods
     - toEntities:
         - cluster
         - host
----
-# This policy allows the vpn-gateway to communicate over the default VXLAN port 4789
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: vpn-gateway-vxlan
-  labels:
-    app.kubernetes.io/instance: &instance vpn-gateway
-    app.kubernetes.io/name: &name pod-gateway
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/instance: *instance
-      app.kubernetes.io/name: *name
-  egress:
-    - toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
+    # Allow ICMP for ping out
+    - toEntities:
+        - cluster
   ingress:
+    # Allow inbound DHCP
     - toPorts:
         - ports:
-            - port: "4789"
+            - port: "67"
               protocol: UDP
-    # Allow ICMP echo for basic troubleshooting (ping from/to gateway)
+        - ports:
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN traffic (any UDP) from cluster pods
+    - fromEntities:
+        - cluster
+        - host
+    # Allow ICMP echo
     - icmps:
         - fields:
             - type: 8
