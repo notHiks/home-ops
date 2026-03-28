@@ -25,6 +25,7 @@ spec:
     # ==================== Main VPN Gateway Controller ====================
     controllers:
       main:
+        enabled: true
         serviceAccount:
           identifier: default
 
