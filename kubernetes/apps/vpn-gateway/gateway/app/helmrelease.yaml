@@ -68,36 +68,37 @@ spec:
                 memory: 192Mi
                 squat.ai/tun: "1"
 
+        persistence:
+          config:
+            enabled: true
+            type: secret
+            name: gluetun
+            globalMounts:
+              - path: /gluetun/auth/config.toml
+                subPath: config.toml
+                readOnly: true
+
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            type: custom
+            spec:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - 'if ip -4 addr show wg0 | grep -q "inet "; then exit 0; else exit 1; fi'
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 5
+            timeoutSeconds: 5
+
         pod:
           annotations:
             configmap.reloader.stakater.com/reload: vpn-gateway
             secret.reloader.stakater.com/reload: vpn-gateway
 
-            probes:
-              liveness:
-                enabled: true
-                custom: true
-                type: custom
-                spec:
-                  exec:
-                    command:
-                      - sh
-                      - -c
-                      - 'if ip -4 addr show wg0 | grep -q "inet "; then exit 0; else exit 1; fi'
-                  initialDelaySeconds: 30
-                  periodSeconds: 60
-                  failureThreshold: 5
-                  timeoutSeconds: 5
-
-            persistence:
-              config:
-                enabled: true
-                type: secret
-                name: gluetun
-                globalMounts:
-                  - path: /gluetun/auth/config.toml
-                    subPath: config.toml
-                    readOnly: true
       # Admission webhook
       webhook:
         serviceAccount:
