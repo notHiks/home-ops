@@ -22,11 +22,12 @@ spec:
       retries: 3
 
   values:
+    # ==================== Main VPN Gateway Controller ====================
     controllers:
       main:
         serviceAccount:
           identifier: default
-        # Main controller runs the VPN gateway (Gluetun + WireGuard)
+
         containers:
           main:
             image:
@@ -101,7 +102,7 @@ spec:
             configmap.reloader.stakater.com/reload: vpn-gateway
             secret.reloader.stakater.com/reload: vpn-gateway
 
-      # Admission webhook
+      # ==================== Admission Webhook Controller ====================
       webhook:
         serviceAccount:
           identifier: default
@@ -149,11 +150,10 @@ spec:
       # Traffic from routed pods to these CIDRs will NOT go through the gateway
       NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
 
-  # Post-render patches for Gluetun dashboard
+  # Post-renderers to expose Gluetun HTTP dashboard on port 80
   postRenderers:
     - kustomize:
         patches:
-          # Expose Gluetun HTTP dashboard on the service
           - target:
               kind: Service
               name: vpn-gateway
@@ -166,7 +166,6 @@ spec:
                   protocol: TCP
                   targetPort: 80
 
-          # Clear existing ports on gluetun container
           - target:
               kind: Deployment
               name: vpn-gateway
@@ -175,7 +174,6 @@ spec:
                 path: /spec/template/spec/containers/1/ports
                 value: []
 
-          # Add gluetun port 80 to the container
           - target:
               kind: Deployment
               name: vpn-gateway
