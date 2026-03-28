@@ -131,17 +131,8 @@ spec:
     routed_namespaces:
       - downloads
 
-    namespaceSelector:
-      type: custom
-      custom:
-        matchExpressions:
-          - key: kubernetes.io/metadata.name
-            operator: In
-            values:
-              - downloads
-
-    # Inject VPN sidecar into ALL pods in the routed_namespaces
-    gatewayDefault: true
+    # Inject VPN sidecar into ALL pods in the routed_namespaces. (true by default)
+    # gatewayDefault: false
 
     # No longer needed when gatewayDefault = true
     # gatewayLabel: use-vpn-gateway
