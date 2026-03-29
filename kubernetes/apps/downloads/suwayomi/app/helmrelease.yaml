@@ -128,7 +128,7 @@ spec:
         annotations:
           lbipam.cilium.io/ips: 192.168.99.65
           service.cilium.io/announce-loadbalancer-ip: "true"
-          service.cilium.io/affinity: "local"
+          service.cilium.io/node-selector: "kubernetes.io/hostname=fuu-01"
           externalTrafficPolicy: Local
         ports:
           http:
