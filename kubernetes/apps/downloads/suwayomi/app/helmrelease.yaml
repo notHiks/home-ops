@@ -21,8 +21,6 @@ spec:
   values:
     controllers:
       suwayomi:
-        type: deployment
-        strategy: Recreate
 
         pod:
           nodeSelector:
@@ -129,12 +127,18 @@ spec:
           http:
             port: *port
             protocol: TCP
+
       listen:
-        controller: syncthing
+        controller: suwayomi
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.99.65
         externalTrafficPolicy: Local
+        ports:
+          http:
+            port: *port
+            protocol: TCP
+
     route:
       app:
         annotations:
