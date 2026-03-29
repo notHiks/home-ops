@@ -124,16 +124,10 @@ spec:
     service:
       app:
         controller: suwayomi
-        primary: true
-        ports:
-          http:
-            port: *port
-      listen:
-        controller: suwayomi
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.99.65
-        externalTrafficPolicy: Local
+          externalTrafficPolicy: Local
         ports:
           http:
             port: *port
