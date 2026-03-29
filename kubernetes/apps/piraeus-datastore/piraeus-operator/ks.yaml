@@ -29,12 +29,13 @@ metadata:
   name: &app piraeus-monitoring
   namespace: flux-system
 spec:
+  targetNamespace: piraeus-datastore
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: piraeus-operator
-  path: ./kubernetes/apps/piraeus-datastore/piraeus-operator/monmitoring
+  path: ./kubernetes/apps/piraeus-datastore/piraeus-operator/monitoring
   prune: true
   force: true
   sourceRef:
