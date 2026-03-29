@@ -129,7 +129,12 @@ spec:
           http:
             port: *port
             protocol: TCP
-
+      listen:
+        controller: syncthing
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 192.168.99.65
+        externalTrafficPolicy: Local
     route:
       app:
         annotations:
