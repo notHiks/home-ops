@@ -21,6 +21,7 @@ spec:
   values:
     controllers:
       suwayomi:
+        strategy: RollingUpdate
 
         pod:
           nodeSelector:
@@ -123,11 +124,10 @@ spec:
     service:
       app:
         controller: suwayomi
+        primary: true
         ports:
           http:
             port: *port
-            protocol: TCP
-
       listen:
         controller: suwayomi
         type: LoadBalancer
