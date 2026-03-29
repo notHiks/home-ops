@@ -127,6 +127,8 @@ spec:
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.99.65
+          service.cilium.io/announce-loadbalancer-ip: "true"
+          service.cilium.io/affinity: "local"
           externalTrafficPolicy: Local
         ports:
           http:
