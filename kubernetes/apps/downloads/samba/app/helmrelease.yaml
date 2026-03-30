@@ -18,7 +18,7 @@ spec:
       retries: 3
   values:
     controllers:
-      samba-1:
+      samba:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
