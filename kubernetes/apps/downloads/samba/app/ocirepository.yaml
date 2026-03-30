@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
-  name: samba-1
+  name: samba
 spec:
   interval: 15m
   layerSelector:
