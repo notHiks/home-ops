@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app samba-1
+  name: &app samba
 spec:
   interval: 1h
   chartRef:
@@ -90,4 +90,11 @@ spec:
         existingClaim: nfs-pictures
         globalMounts:
         - path: /shares/media
+          readOnly: false
+      manga:
+        enabled: true
+        type: persistentVolumeClaim
+        existingClaim: nfs-manga
+        globalMounts:
+        - path: /shares/manga
           readOnly: false
