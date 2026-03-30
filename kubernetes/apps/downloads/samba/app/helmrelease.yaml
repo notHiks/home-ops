@@ -79,7 +79,7 @@ spec:
       config:
         enabled: true
         type: secret
-        name: samba-1
+        name: samba
         globalMounts:
           - path: /data/config.yml
             subPath: samba.yaml
