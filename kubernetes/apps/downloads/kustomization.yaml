@@ -7,4 +7,4 @@ resources:
   - ./nfs-pvcs/ks.yaml
   - ./suwayomi/ks.yaml
   - ./tranga/ks.yaml
-  - ./samba-1/ks.yaml
+  - ./samba/ks.yaml
