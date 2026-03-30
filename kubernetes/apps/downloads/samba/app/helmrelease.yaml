@@ -8,7 +8,7 @@ spec:
   interval: 1h
   chartRef:
     kind: OCIRepository
-    name: samba-1
+    name: samba
   install:
     remediation:
       retries: -1
