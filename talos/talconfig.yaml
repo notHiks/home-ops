@@ -28,7 +28,7 @@ nodes:
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "bc:24:11:8a:dd:99"
+          hardwareAddr: "bc:24:11:5b:44:b7"
         dhcp: false
         addresses:
           - "192.168.99.23/24"
@@ -80,6 +80,7 @@ nodes:
 # Global patches
 patches:
   - "@./patches/global/machine-drbd.yaml"
+  - "@./patches/global/machine-grub.yaml"
   - "@./patches/global/machine-interface.yaml"
   - "@./patches/global/machine-files.yaml"
   - "@./patches/global/machine-kubelet.yaml"
