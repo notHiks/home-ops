@@ -9,6 +9,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  dependsOn:
+    - name: linstor
+      namespace: flux-system
   interval: 30m
   path: ./kubernetes/apps/database/crunchy-postgres/app
   prune: true
