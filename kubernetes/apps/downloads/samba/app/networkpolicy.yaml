@@ -99,9 +99,9 @@ spec:
         - matchLabels:
             app.kubernetes.io/instance: pod-gateway
             app.kubernetes.io/name: vpn-gateway
-          namespaceSelector:
-            matchLabels:
-              name: vpn-gateway
+      toNamespaces:
+        - matchLabels:
+            name: vpn-gateway
       toPorts:
         - ports:
             - port: "51820"
