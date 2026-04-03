@@ -13,7 +13,7 @@ spec:
       tranga-website:
         pod:
           annotations:
-            setGateway: "false"
+            setGateway: "true"
         containers:
           app:
             image:
