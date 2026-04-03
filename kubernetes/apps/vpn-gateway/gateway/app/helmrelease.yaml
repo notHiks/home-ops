@@ -137,10 +137,7 @@ spec:
     gatewayDefault: false
 
     # No longer needed when gatewayDefault = true
-    gatewayLabel: setGateway
-
-    # -- determines how sidecar container is created
-    sidecarAsInit: false
+    gatewayAnnotation: setGateway
 
     settings:
       # -- If using a VPN, interface name created by it
