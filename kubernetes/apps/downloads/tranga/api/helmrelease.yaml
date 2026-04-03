@@ -13,6 +13,8 @@ spec:
       tranga-api:
 
         pod:
+          annotations:
+            setGateway: "true"
           securityContext:
             fsGroup: 1000
             fsGroupChangePolicy: OnRootMismatch
