@@ -96,7 +96,7 @@ spec:
       app.kubernetes.io/name: samba
   egress:
     - toCIDR:
-        - "10.43.0.0/16"  # Kubernetes cluster CIDR
+        - "10.0.0.0/16"  # Kubernetes cluster CIDR
       toPorts:
         - ports:
             - port: "51820"
