@@ -43,6 +43,14 @@ spec:
               protocol: UDP
             - port: "5355"
               protocol: UDP
+  egress:
+    # Allow DNS queries to CoreDNS
+    - toEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
