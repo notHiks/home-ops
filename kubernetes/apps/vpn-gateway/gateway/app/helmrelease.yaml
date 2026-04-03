@@ -25,7 +25,6 @@ spec:
     # ==================== Main VPN Gateway Controller ====================
     controllers:
       main:
-        forceRebuild: "1"
         enabled: true
         serviceAccount:
           identifier: default
