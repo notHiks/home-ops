@@ -14,6 +14,7 @@ spec:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
   ingress:
+  # Cluster internal SMB and discovery traffic
     - fromEntities:
         - cluster
       toPorts:
@@ -28,7 +29,7 @@ spec:
               protocol: UDP
             - port: "5355"
               protocol: UDP
-    # Allow ICMP echo
+    # ICMP echo requests (for ping)
     - icmps:
         - fields:
             - type: 8
@@ -49,12 +50,38 @@ spec:
             - port: "5355"
               protocol: UDP
   egress:
-    # Allow DNS queries to CoreDNS
+    # Allow ICMP to cluster and LAN
+    - toEntities:
+        - cluster
+      icmps:
+        - fields:
+            - type: 0   # echo reply
+              family: IPv4
+            - type: 8   # echo request
+              family: IPv4
+    - toCIDR:
+        - 192.168.88.0/24
+      icmps:
+        - fields:
+            - type: 0
+              family: IPv4
+            - type: 8
+              family: IPv4
+    # DNS egress to CoreDNS in cluster
     - toEntities:
         - cluster
       toPorts:
         - ports:
             - port: "53"
+              protocol: UDP
+    # SMB egress to Windows LAN
+    - toCIDR:
+        - 192.168.88.0/24
+      toPorts:
+        - ports:
+            - port: "445"
+              protocol: TCP
+            - port: "445"
               protocol: UDP
 ---
 apiVersion: cilium.io/v2
