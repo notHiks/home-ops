@@ -95,13 +95,8 @@ spec:
       app.kubernetes.io/instance: samba
       app.kubernetes.io/name: samba
   egress:
-    - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/instance: pod-gateway
-            app.kubernetes.io/name: vpn-gateway
-      toNamespaces:
-        - matchLabels:
-            name: vpn-gateway
+    - toCIDR:
+        - "10.43.0.0/16"  # Kubernetes cluster CIDR
       toPorts:
         - ports:
             - port: "51820"
