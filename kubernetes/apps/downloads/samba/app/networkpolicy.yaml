@@ -5,17 +5,28 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: samba-ingress
+  labels:
+    app.kubernetes.io/instance: &instance samba
+    app.kubernetes.io/name: &name samba
 spec:
   endpointSelector:
     matchLabels:
-      app: samba
+      app.kubernetes.io/instance: *instance
+      app.kubernetes.io/name: *name
   ingress:
     - fromEntities:
-        - host
+        - cluster
       toPorts:
         - ports:
             - port: "445"
               protocol: TCP
-        - ports:
             - port: "445"
+              protocol: UDP
+            - port: "3702"
+              protocol: TCP
+            - port: "3702"
+              protocol: UDP
+            - port: "5355"
+              protocol: TCP
+            - port: "5355"
               protocol: UDP
