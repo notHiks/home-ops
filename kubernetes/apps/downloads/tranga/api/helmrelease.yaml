@@ -37,8 +37,6 @@ spec:
 
             envFrom:
               - secretRef:
-                  name: tranga-api
-              - secretRef:
                   name: database-credentials
 
     persistence:
