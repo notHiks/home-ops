@@ -134,10 +134,10 @@ spec:
       - downloads
 
     # Inject VPN sidecar into ALL pods in the routed_namespaces. (true by default)
-    # gatewayDefault: false
+    gatewayDefault: false
 
     # No longer needed when gatewayDefault = true
-    # gatewayLabel: use-vpn-gateway
+    gatewayLabel: use-vpn-gateway
 
     settings:
       # -- If using a VPN, interface name created by it
