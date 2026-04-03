@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/cilium.io/ciliumnetworkpolicy_v2.json
+# This policy is to allow inbound SMB traffic to the Samba pod
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: samba-ingress
+spec:
+  endpointSelector:
+    matchLabels:
+      app: samba
+  ingress:
+    - fromEntities:
+        - cluster
+        - host
+      toPorts:
+        - ports:
+            - port: "445"
+              protocol: TCP
