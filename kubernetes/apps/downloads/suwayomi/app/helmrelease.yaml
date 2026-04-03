@@ -24,6 +24,8 @@ spec:
         strategy: RollingUpdate
 
         pod:
+          annotations:
+            setGateway: "true"
           nodeSelector:
             kubernetes.io/hostname: fuu-01
 
