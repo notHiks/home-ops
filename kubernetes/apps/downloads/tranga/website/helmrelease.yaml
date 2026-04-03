@@ -11,6 +11,9 @@ spec:
   values:
     controllers:
       tranga-website:
+        pod:
+          annotations:
+            setGateway: "false"
         containers:
           app:
             image:
