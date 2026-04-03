@@ -22,9 +22,9 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
-        annotations:
-          setGateway: "false"
-          reloader.stakater.com/auto: "true"
+          annotations:
+            setGateway: "false"
+            reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
