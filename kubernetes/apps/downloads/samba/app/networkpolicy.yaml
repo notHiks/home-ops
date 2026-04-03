@@ -11,9 +11,11 @@ spec:
       app: samba
   ingress:
     - fromEntities:
-        - cluster
         - host
       toPorts:
         - ports:
             - port: "445"
               protocol: TCP
+        - ports:
+            - port: "445"
+              protocol: UDP
