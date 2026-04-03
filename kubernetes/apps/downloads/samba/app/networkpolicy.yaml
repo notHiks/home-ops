@@ -14,7 +14,9 @@ spec:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
   ingress:
-    - toPorts:
+    - fromEntities:
+        - cluster
+      toPorts:
         - ports:
             - port: "445"
               protocol: TCP
@@ -25,6 +27,44 @@ spec:
             - port: "3702"
               protocol: UDP
             - port: "5355"
+              protocol: UDP
+    # Allow traffic from Windows PC
+    - fromCIDR:
+        - 192.168.88.0/24
+      toPorts:
+        - ports:
+            - port: "445"
               protocol: TCP
+            - port: "445"
+              protocol: UDP
+            - port: "3702"
+              protocol: TCP
+            - port: "3702"
+              protocol: UDP
             - port: "5355"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: samba-sidecar-egress
+  namespace: downloads
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: samba
+      app.kubernetes.io/name: samba
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/instance: vpn-gateway
+            app.kubernetes.io/name: pod-gateway
+      toPorts:
+        - ports:
+            - port: "51820"
+              protocol: UDP
+        - ports:
+            - port: "67"
+              protocol: UDP
+            - port: "68"
               protocol: UDP
