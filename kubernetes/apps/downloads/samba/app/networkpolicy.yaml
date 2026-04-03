@@ -28,6 +28,11 @@ spec:
               protocol: UDP
             - port: "5355"
               protocol: UDP
+    # Allow ICMP echo
+    - icmps:
+        - fields:
+            - type: 8
+              family: IPv4
     # Allow traffic from Windows PC
     - fromCIDR:
         - 192.168.88.0/24
