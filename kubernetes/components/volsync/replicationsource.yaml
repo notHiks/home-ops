@@ -20,12 +20,12 @@ spec:
       - mountPath: repository
         volumeSource:
           nfs:
-            path: /mnt/daena/kubernetes/volsync
-            server: voyager.internal
+            server: 192.168.100.192
+            path: /export/volysnc
     parallelism: 2
     repository: "${APP}-volsync"
     retain:
       hourly: 24
       daily: 7
-    storageClassName: "${VOLSYNC_STORAGECLASS:=ceph-block}"
-    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=csi-ceph-blockpool}"
+    storageClassName: "${VOLSYNC_STORAGECLASS:=linbit-replicated}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=linstor-snapclass}"
