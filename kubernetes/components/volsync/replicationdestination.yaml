@@ -10,7 +10,7 @@ spec:
   trigger:
     manual: restore-once
   kopia:
-    accessModes: ["${VOLSYNC_ACCESSMODES"]
+    accessModes: ["${VOLSYNC_ACCESSMODES}"]
     capacity: "${VOLSYNC_CAPACITY}"
     cleanupCachePVC: true
     cleanupTempPVC: true
