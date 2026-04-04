@@ -7,3 +7,26 @@ resources:
   - ./pvc.yaml
   - ./replicationdestination.yaml
   - ./replicationsource.yaml
+
+  # Local-only variable substitution
+configMapGenerator:
+  - name: volsync-vars
+    literals:
+      - VOLSYNC_ACCESSMODES=ReadWriteOnce
+      - VOLSYNC_STORAGECLASS=linbit-replicated
+      - VOLSYNC_CAPACITY=2Gi
+      - VOLSYNC_SNAPSHOTCLASS=linstor-snapclass
+      - VOLSYNC_COPYMETHOD=Snapshot
+      - VOLSYNC_PUID=1000
+      - VOLSYNC_PGID=1000
+      - VOLSYNC_PGID=1000
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+# Tell Flux to substitute from this ConfigMap
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/substituteFrom: |
+      - kind: ConfigMap
+        name: volsync-vars
