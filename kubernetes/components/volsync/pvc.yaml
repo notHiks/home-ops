@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ${APP_NAME}
+  name: ${APP_NAME}-volsync
 spec:
   accessModes:
     - ${VOLSYNC_ACCESSMODES}

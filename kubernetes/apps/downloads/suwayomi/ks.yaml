@@ -7,7 +7,7 @@ metadata:
   namespace: &namespace downloads
 spec:
   components:
- #   - ../../../../components/nfs-scaler
+    - ../../../../components/nfs-scaler
     - ../../../../components/volsync
   dependsOn:
     - name: linstor
