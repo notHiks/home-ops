@@ -6,6 +6,7 @@ metadata:
   name: &app suwayomi
   namespace: &namespace downloads
 spec:
+  dependsOn:
     - name: linstor
       namespace: flux-system
   targetNamespace: *namespace
