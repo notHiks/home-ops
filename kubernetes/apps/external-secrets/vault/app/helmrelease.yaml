@@ -11,6 +11,11 @@ spec:
   interval: 1h
   values:
     leaderElect: true
+    serviceAccount:
+      automountServiceAccountToken: true
+    controller:
+      serviceAccount:
+        automountServiceAccountToken: true
     serviceMonitor:
       enabled: true
     grafanaDashboard:
