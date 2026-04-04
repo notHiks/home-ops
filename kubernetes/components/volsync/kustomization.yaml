@@ -19,7 +19,6 @@ configMapGenerator:
       - VOLSYNC_COPYMETHOD=Snapshot
       - VOLSYNC_PUID=1000
       - VOLSYNC_PGID=1000
-      - VOLSYNC_PGID=1000
 
 generatorOptions:
   disableNameSuffixHash: true
