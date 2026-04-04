@@ -6,6 +6,12 @@ metadata:
   name: &app suwayomi
   namespace: &namespace downloads
 spec:
+  components:
+    - ../../../../components/nfs-scaler
+    - ../../../../components/volsync
+  dependsOn:
+    - name: linstor
+      namespace: flux-system
   targetNamespace: *namespace
   commonMetadata:
     labels:
@@ -16,8 +22,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  dependsOn:
-    - name: linstor
-      namespace: flux-system
   interval: 30m
   timeout: 3m
