@@ -23,7 +23,6 @@ spec:
             - serviceAccountToken:
                 path: vault-token
                 expirationSeconds: 600
-                audience: vault
     extraVolumeMounts:
       - name: vault-token
         mountPath: /var/run/secrets/tokens
