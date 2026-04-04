@@ -9,7 +9,7 @@ spec:
     - name: linstor
       namespace: flux-system
     - name: snapshot-controller
-      namespace: kube-system
+      namespace: storage
   interval: 1h
   path: ./kubernetes/apps/storage/volsync-system/volsync/app
   prune: true
