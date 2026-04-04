@@ -6,8 +6,8 @@ metadata:
   name: &app suwayomi
   namespace: &namespace downloads
 spec:
-  components:
-    - ../../../../components/nfs-scaler
+  #components:
+  #  - ../../../../components/nfs-scaler
   #  - ../../../../components/volsync
   dependsOn:
     - name: linstor
@@ -17,10 +17,10 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   path: ./kubernetes/apps/downloads/suwayomi/app
-  postBuild:
-    substitute:
-      APP_NAME: suwayomi
-      VOLSYNC_CAPACITY: 50Gi
+ #postBuild:
+ #   substitute:
+ #     APP_NAME: suwayomi
+ #     VOLSYNC_CAPACITY: 50Gi
   prune: true
   sourceRef:
     kind: GitRepository
