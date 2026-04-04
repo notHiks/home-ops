@@ -12,6 +12,7 @@ resources:
 configMapGenerator:
   - name: volsync-vars
     literals:
+      - APP_NAME=myapp
       - VOLSYNC_ACCESSMODES=ReadWriteOnce
       - VOLSYNC_STORAGECLASS=linbit-replicated
       - VOLSYNC_CAPACITY=2Gi
