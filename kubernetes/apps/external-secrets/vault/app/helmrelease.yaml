@@ -17,7 +17,7 @@ spec:
       serviceAccount:
         automountServiceAccountToken: true
       manager:
-      tokenAudience: vault
+        tokenAudience: vault
     serviceMonitor:
       enabled: true
     grafanaDashboard:
