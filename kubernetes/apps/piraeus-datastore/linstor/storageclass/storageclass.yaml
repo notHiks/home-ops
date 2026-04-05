@@ -48,7 +48,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: linbit-snapshot
-reclaimPolicy: Delete
+reclaimPolicy: Retain
 provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
