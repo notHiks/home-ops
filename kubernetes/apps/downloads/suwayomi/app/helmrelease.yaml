@@ -60,7 +60,7 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/suwayomi/tachidesk
+              repository: ghcr.io/suwayomi/suwayomi-server
               tag: v2.1.2087@sha256:bc7164c81b810dfc2804b26243aa768ff0746348675988532dfb734f15350713
             env:
               BIND_PORT: &port 4567
@@ -158,7 +158,7 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: suwayomi-config
+        existingClaim: suwayomi-main
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
 
@@ -171,6 +171,8 @@ spec:
             subPath: downloads
           - path: /home/suwayomi/.local/share/Tachidesk/local
             subPath: local
+          - path: /home/suwayomi/.local/share/Tachidesk/backups
+            subPath: backups
 
       tmpfs:
         enabled: true
