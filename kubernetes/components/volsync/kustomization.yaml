@@ -14,9 +14,8 @@ configMapGenerator:
     literals:
       - VOLSYNC_ACCESSMODES=ReadWriteOnce
       - VOLSYNC_STORAGECLASS=linbit-replicated
-      - VOLSYNC_CAPACITY=2Gi
+      - VOLSYNC_CAPACITY=5Gi
       - VOLSYNC_SNAPSHOTCLASS=linstor-snapclass
-      - VOLSYNC_COPYMETHOD=Snapshot
       - VOLSYNC_PUID=1000
       - VOLSYNC_PGID=1000
 
