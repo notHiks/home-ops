@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app suwayomi
+  name: suwayomi
 spec:
   chartRef:
     kind: OCIRepository
@@ -30,7 +30,7 @@ spec:
             kubernetes.io/hostname: fuu-01
 
           labels:
-            app.kubernetes.io/name: *app
+            app.kubernetes.io/name: suwayomi
 
           securityContext:
             fsGroup: 1000
@@ -152,13 +152,13 @@ spec:
         rules:
           - backendRefs:
               - port: *port
-                name: *app
+                name: suwayomi
 
     persistence:
       config:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: *app
+        existingClaim: suwayomi-config
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
 
