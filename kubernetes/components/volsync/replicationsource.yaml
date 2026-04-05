@@ -10,13 +10,13 @@ spec:
     schedule: 0 */12 * * *
   kopia:
     accessModes:
-      - ${VOLSYNC_SNAP_ACCESSMODES} # Use ReadOnlyMany for CephFS
+      - ${VOLSYNC_SNAP_ACCESSMODES:=ReadWriteOnce} # Use ReadOnlyMany for CephFS
     compression: zstd-fastest
     copyMethod: Snapshot
     moverSecurityContext:
-      runAsUser: ${VOLSYNC_PUID}
-      runAsGroup: ${VOLSYNC_PGID}
-      fsGroup: ${VOLSYNC_PGID}
+      runAsUser: ${VOLSYNC_PUID:=1000}
+      runAsGroup: ${VOLSYNC_PGID:=1000}
+      fsGroup: ${VOLSYNC_PGID:=1000}
     moverVolumes:
       - mountPath: repository
         volumeSource:
@@ -28,5 +28,5 @@ spec:
     retain:
       hourly: 24
       daily: 7
-    storageClassName: "${VOLSYNC_STORAGECLASS}"
-    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS}"
+    storageClassName: ${VOLSYNC_STORAGECLASS:=linbit-local}
+    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-local}
