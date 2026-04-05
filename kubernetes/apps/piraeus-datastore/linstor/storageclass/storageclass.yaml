@@ -54,5 +54,3 @@ parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/layerList: "storage"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
-allowVolumeExpansion: true
-volumeBindingMode: Immediate
