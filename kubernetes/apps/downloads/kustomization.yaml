@@ -8,3 +8,4 @@ resources:
   - ./suwayomi/ks.yaml
   - ./tranga/ks.yaml
   - ./samba/ks.yaml
+  - ./flaresolverr/ks.yaml
