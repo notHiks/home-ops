@@ -13,7 +13,7 @@ spec:
     enableServiceLinks: false
     prometheus:
       metricServer:
-        enabled: true
+        enabled: false # temp disabled
         serviceMonitor:
           enabled: true
       operator:
