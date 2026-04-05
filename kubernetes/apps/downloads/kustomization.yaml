@@ -5,7 +5,7 @@ namespace: downloads
 resources:
   - ./namespace.yaml
   - ./nfs-pvcs/ks.yaml
-  - ./suwayomi/ks.yaml
+#  - ./suwayomi/ks.yaml
   - ./tranga/ks.yaml
   - ./samba/ks.yaml
   - ./flaresolverr/ks.yaml
