@@ -11,16 +11,16 @@ spec:
     manual: restore-once
   kopia:
     accessModes:
-      - ${VOLSYNC_ACCESSMODES}
-    capacity: ${VOLSYNC_CAPACITY}
+      - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
+    cacheCapacity: ${VOLSYNC_CAPACITY:=5Gi}
     cleanupCachePVC: true
     cleanupTempPVC: true
     copyMethod: Snapshot
     enableFileDeletion: true
     moverSecurityContext:
-      runAsUser: ${VOLSYNC_PUID}
-      runAsGroup: ${VOLSYNC_PGID}
-      fsGroup: ${VOLSYNC_PGID}
+      runAsUser: ${VOLSYNC_PUID:=1000}
+      runAsGroup: ${VOLSYNC_PGID:=1000}
+      fsGroup: ${VOLSYNC_PGID:=1000}
     moverVolumes:
       - mountPath: repository
         volumeSource:
@@ -30,5 +30,5 @@ spec:
     repository: ${APP_NAME}-volsync
     sourceIdentity:
       sourceName: ${APP_NAME}
-    storageClassName: "${VOLSYNC_STORAGECLASS}"
-    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS}"
+    storageClassName: ${VOLSYNC_STORAGECLASS:=linbit-local}
+    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-local}
