@@ -5,13 +5,14 @@ kind: ReplicationSource
 metadata:
   name: "${APP_NAME}"
 spec:
-  sourcePVC: "${CLAIM:=${APP_NAME}}"
+  sourcePVC: ${APP_NAME}
   trigger:
-    schedule: "0 * * * *"
+    schedule: 0 */12 * * *
   kopia:
-    accessModes: ["${VOLSYNC_SNAP_ACCESSMODES}"] # Use ReadOnlyMany for CephFS
+    accessModes:
+      - ${VOLSYNC_SNAP_ACCESSMODES} # Use ReadOnlyMany for CephFS
     compression: zstd-fastest
-    copyMethod: "${VOLSYNC_COPYMETHOD}"
+    copyMethod: Snapshot
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID}
       runAsGroup: ${VOLSYNC_PGID}
