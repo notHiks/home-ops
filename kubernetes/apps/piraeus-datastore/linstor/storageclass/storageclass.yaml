@@ -48,8 +48,8 @@ apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
 metadata:
   name: linbit-snapshot
-reclaimPolicy: Retain
-provisioner: linstor.csi.linbit.com
+deletionPolicy: Retain
+driver: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/layerList: "storage"
