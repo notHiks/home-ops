@@ -29,4 +29,4 @@ spec:
       hourly: 24
       daily: 7
     storageClassName: ${VOLSYNC_STORAGECLASS:=linbit-local}
-    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-local}
+    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-snapshot}

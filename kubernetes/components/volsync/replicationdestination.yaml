@@ -31,4 +31,4 @@ spec:
     sourceIdentity:
       sourceName: ${APP_NAME}
     storageClassName: ${VOLSYNC_STORAGECLASS:=linbit-local}
-    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-local}
+    volumeSnapshotClassName: ${VOLSYNC_SNAPSHOTCLASS:=linbit-snapshot}
