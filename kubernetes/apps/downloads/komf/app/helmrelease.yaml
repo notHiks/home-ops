@@ -23,6 +23,7 @@ spec:
     controllers:
       komf:
         annotations:
+          setGateway: "false"
           reloader.stakater.com/auto: "true"
         containers:
           app:
