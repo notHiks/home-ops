@@ -24,6 +24,7 @@ spec:
             env:
               TZ: Europe/london
               SERVER_PORT: &port 8080
+              KOMGA_CORS_ALLOWEDORIGINS: https://komf.musai.ovh
               JAVA_TOOL_OPTIONS: "-Xmx6g"
             resources:
               requests:
