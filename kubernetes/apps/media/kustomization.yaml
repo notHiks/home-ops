@@ -6,5 +6,3 @@ components:
   - ../../components/common
 resources:
   - ./syncthing/ks.yaml
-  - ./komga/ks.yaml
-  - ./komf/ks.yaml
