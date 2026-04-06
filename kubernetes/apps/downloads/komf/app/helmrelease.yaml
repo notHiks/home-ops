@@ -22,9 +22,10 @@ spec:
   values:
     controllers:
       komf:
-        annotations:
-          setGateway: "false"
-          reloader.stakater.com/auto: "true"
+        pod:
+          annotations:
+            setGateway: "false"
+            reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
