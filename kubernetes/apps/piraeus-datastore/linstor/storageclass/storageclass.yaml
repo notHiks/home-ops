@@ -9,6 +9,7 @@ parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/layerList: "DRBD"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
+  linstor.csi.linbit.com/autoPlace: "1"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 ---
@@ -21,7 +22,7 @@ provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
-  autoPlace: "1"
+  linstor.csi.linbit.com/autoPlace: "1"
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 ---
