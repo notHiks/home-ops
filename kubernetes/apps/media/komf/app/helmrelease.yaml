@@ -71,7 +71,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: komf
+        existingClaim: ${APP_NAME}
         globalMounts:
           - path: /config
       configmap:
@@ -83,9 +83,8 @@ spec:
             # readOnly: true
             subPath: application.yml
       media:
-        type: nfs
-        server: ${NFS_ADDR:=temp}
-        path: /mnt/tank/shared
+        enabled: true
+        existingClaim: nfs-manga
         globalMounts:
           - path: /data
             subPath: Literature

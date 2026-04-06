@@ -13,7 +13,7 @@ spec:
   components:
     - ../../../../components/nfs-scaler
     - ../../../../components/volsync
-  path: ./kubernetes/apps/main/media/komga/app
+  path: ./kubernetes/apps/media/komga/app
   prune: true
   sourceRef:
     kind: GitRepository

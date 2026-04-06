@@ -12,7 +12,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../../../components/volsync
-  path: ./kubernetes/apps/main/media/komf/app
+  path: ./kubernetes/apps/media/komf/app
   prune: true
   sourceRef:
     kind: GitRepository
