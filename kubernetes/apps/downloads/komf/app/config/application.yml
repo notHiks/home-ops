@@ -42,6 +42,7 @@ database:
 cors.allowed-origins:
   - https://komf.musai.ovh
   - https://komga.musai.ovh
+  - http://192.168.99.68:8085
 
 metadataProviders:
   #malClientId: "${SECRET_KOMF_MAL_CLIENT_ID}" # required for mal provider. See https://myanimelist.net/forum/?topicid=1973077
