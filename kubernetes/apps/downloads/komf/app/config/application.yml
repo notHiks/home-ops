@@ -1,5 +1,5 @@
 ---
-komga:
+kavita:
   eventListener:
     enabled: true # if disabled will not connect to komga and won't pick up newly added entries
     metadataLibraryFilter: [] # listen to all events if empty
