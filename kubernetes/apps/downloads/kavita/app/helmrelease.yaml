@@ -1,0 +1,53 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kavta
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: kavta
+  values:
+    controllers:
+      kavita:
+        pod:
+          annotations:
+            setGateway: "false"
+            reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/kareadita/kavita
+              tag: 0.8.9@sha256:1f2acae7466d022f037ea09f7989eb7c487f916b881174c7a6de33dbfa8acb39
+            env:
+              TZ: America/Edmonton
+            resources:
+              requests:
+                cpu: 15m
+                memory: 300Mi
+              limits:
+                memory: 1Gi
+    service:
+      app:
+        ports:
+          http:
+            port: 5000
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.musai.ovh"]
+        parentRefs:
+          - name: envoy-internal
+            namespace: network
+    persistence:
+      config:
+        existingClaim: "{{ .Release.Name }}"
+        globalMounts:
+          - path: /kavita/config
+      media:
+        enabled: true
+        existingClaim: nfs-manga
+        globalMounts:
+          - path: /data
+            subPath: Literature
