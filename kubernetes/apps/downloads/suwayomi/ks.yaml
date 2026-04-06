@@ -20,7 +20,7 @@ spec:
   postBuild:
     substitute:
       APP_NAME: suwayomi
-      VOLSYNC_CAPACITY: 50Gi
+      VOLSYNC_CAPACITY: 5Gi
   prune: true
   sourceRef:
     kind: GitRepository
