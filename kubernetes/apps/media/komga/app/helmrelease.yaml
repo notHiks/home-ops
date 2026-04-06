@@ -10,6 +10,8 @@ spec:
     name: komga
   interval: 1h
   values:
+    serviceAccountName: komga-sa
+
     controllers:
       komga:
         annotations:
