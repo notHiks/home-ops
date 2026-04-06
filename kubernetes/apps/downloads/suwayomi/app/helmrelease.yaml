@@ -158,7 +158,7 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: suwayomi-main
+        existingClaim: ${APP_NAME}
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
 
