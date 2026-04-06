@@ -17,7 +17,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: komga-sa
-    namespace: readers
+    namespace: media
 roleRef:
   kind: Role
   name: pvc-access
