@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: suwayomi-main
+  name: ${APP_NAME}
 spec:
   storageClassName: linbit-local
   resources:
