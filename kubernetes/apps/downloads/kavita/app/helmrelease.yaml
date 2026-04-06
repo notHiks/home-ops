@@ -42,7 +42,7 @@ spec:
             namespace: network
     persistence:
       config:
-        existingClaim: "{{ .Release.Name }}"
+        existingClaim: "${APP_NAME}"
         globalMounts:
           - path: /kavita/config
       media:
