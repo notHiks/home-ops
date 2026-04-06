@@ -77,15 +77,15 @@ spec:
                 cpu: 1
 
           # Image Converter
-          suwayomi-converter:
-            image:
-              repository: ghcr.io/suwayomi/suwayomi-converter
-              tag: r10@sha256:6f200b3051daa5bac83cc723130fdb4a1fb440f88568aeb2fd78b340381ce8c5
-            envFrom:
-              - secretRef:
-                  name: suwayomi-image
-            ports:
-              - containerPort: 5678
+        #  suwayomi-converter:
+        #    image:
+        #      repository: ghcr.io/suwayomi/suwayomi-converter
+        #      tag: r10@sha256:6f200b3051daa5bac83cc723130fdb4a1fb440f88568aeb2fd78b340381ce8c5
+        #    envFrom:
+        #      - secretRef:
+        #          name: suwayomi-image
+        #    ports:
+        #      - containerPort: 5678
 
           #  probes:
           #    # Readiness: App is ready to serve traffic
