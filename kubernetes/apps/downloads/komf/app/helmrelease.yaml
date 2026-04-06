@@ -39,10 +39,10 @@ spec:
                   name: komf-secret
             resources:
               requests:
-                memory: 4282M
+                memory: 1024Mi
                 cpu: 15m
               limits:
-                memory: 4282M
+                memory: 2048Mi
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -64,9 +64,8 @@ spec:
           gethomepage.dev/name: Komf
           gethomepage.dev/icon: komga.png
           gethomepage.dev/description: Komga Metadata Analyser
-          external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
-        hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+      #    external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
+        hostnames: ["{{ .Release.Name }}.musai.ovh"]
         parentRefs:
           - name: envoy-internal
             namespace: network
