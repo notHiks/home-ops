@@ -22,7 +22,7 @@ spec:
               repository: ghcr.io/kareadita/kavita
               tag: 0.8.9@sha256:1f2acae7466d022f037ea09f7989eb7c487f916b881174c7a6de33dbfa8acb39
             env:
-              TZ: America/Edmonton
+              TZ: Europe/london
             resources:
               requests:
                 cpu: 15m
@@ -31,6 +31,7 @@ spec:
                 memory: 1Gi
     service:
       app:
+        controller: kavita
         ports:
           http:
             port: 5000
