@@ -8,7 +8,7 @@ provisioner: linstor.csi.linbit.com
 parameters:
   linstor.csi.linbit.com/storagePool: "data"
   linstor.csi.linbit.com/layerList: "DRBD"
-  linstor.csi.linbit.com/allowRemoteVolumeAccess: "false"
+  linstor.csi.linbit.com/allowRemoteVolumeAccess: "true"
   linstor.csi.linbit.com/autoPlace: "1"
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
