@@ -15,7 +15,7 @@ spec:
     cacheCapacity: ${VOLSYNC_CAPACITY:=5Gi}
     cleanupCachePVC: true
     cleanupTempPVC: true
-    copyMethod: Snapshot
+    copyMethod: ${VOLSYNC_COPYMETHOD:=Snapshot}
     enableFileDeletion: true
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
