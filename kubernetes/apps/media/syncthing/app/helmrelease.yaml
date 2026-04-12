@@ -126,7 +126,6 @@ spec:
               - identifier: browser
                 port: *browserPort
     persistence:
-      # TODO: volsync
       config:
         type: persistentVolumeClaim
         suffix: config
@@ -134,11 +133,10 @@ spec:
         storageClass: linbit-replicated
         accessMode: ReadWriteOnce
         globalMounts:
-          - path: "/config"
+          - path: /var/syncthing/config
       data:
+        enabled: true
         type: persistentVolumeClaim
-        size: 1050Gi
-        storageClass: linbit-local
-        accessMode: ReadWriteOnce
+        existingClaim: ${APP_NAME}
         globalMounts:
           - path: /var/syncthing
