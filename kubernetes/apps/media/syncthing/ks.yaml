@@ -15,6 +15,10 @@ spec:
   interval: 30m
   path: ./kubernetes/apps/media/syncthing/app
   postBuild:
+    substitute:
+      APP_NAME: syncthing
+      VOLSYNC_CAPACITY: 1050Gi
+      VOLSYNC_COPYMETHOD: Direct
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
