@@ -19,7 +19,7 @@ spec:
   postBuild:
     substitute:
       APP_NAME: syncthing
-      VOLSYNC_CAPACITY: 1050Gi
+      VOLSYNC_CAPACITY: 5Gi
       VOLSYNC_COPYMETHOD: Direct
     substituteFrom:
       - name: cluster-secrets
