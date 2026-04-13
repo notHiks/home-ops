@@ -29,7 +29,7 @@ spec:
         volumeSource:
           nfs:
             server: 192.168.100.192
-            path: /export/volysnc
+            path: /export/volsync
     repository: ${APP_NAME}-volsync
     sourceIdentity:
       sourceName: ${APP_NAME}

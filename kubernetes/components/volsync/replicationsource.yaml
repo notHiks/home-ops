@@ -22,7 +22,7 @@ spec:
         volumeSource:
           nfs:
             server: 192.168.100.192
-            path: /export/volysnc
+            path: /export/volsync
     parallelism: 2
     repository: "${APP_NAME}-volsync"
     retain:
