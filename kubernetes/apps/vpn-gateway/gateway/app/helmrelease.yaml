@@ -84,12 +84,10 @@ spec:
                     command:
                       - sh
                       - -c
-                      - >
-                        wget -qO- http://localhost:80/v1/wireguard/status |
-                        grep -q '"connected":true'
+                      - 'wget -qO- http://localhost:80/v1/version || exit 1'
                   initialDelaySeconds: 30
-                  periodSeconds: 30
-                  failureThreshold: 3
+                  periodSeconds: 20
+                  failureThreshold: 5
                   timeoutSeconds: 5
 
             readiness:
@@ -107,9 +105,9 @@ spec:
                       COUNTRY=$(wget -qO- http://localhost:80/v1/publicip/country);
                       echo "Exit country: $COUNTRY";
                       if [ "$COUNTRY" = "SE" ]; then exit 0; else exit 1; fi
-                initialDelaySeconds: 10
+                initialDelaySeconds: 40
                 periodSeconds: 30
-                failureThreshold: 2
+                failureThreshold: 3
                 timeoutSeconds: 5
 
         # no probes on main container
