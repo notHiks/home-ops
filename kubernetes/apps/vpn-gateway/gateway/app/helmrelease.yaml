@@ -51,6 +51,8 @@ spec:
                value: "off"
              - name: VPN_ENDPOINT_IP_VERSION
                value: "v4"       # Forces Gluetun to pick an IPv4 address for the VPN server
+             - name: IPV6
+               value: "off"
              - name: DOT_IPV6
                value: "off"      # Disables IPv6 for the internal DNS over TLS (Unbound)
 
@@ -72,6 +74,47 @@ spec:
                 memory: 192Mi
                 squat.ai/tun: "1"
 
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                type: custom
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - >
+                        wget -qO- http://localhost:80/v1/wireguard/status |
+                        grep -q '"connected":true'
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  failureThreshold: 3
+                  timeoutSeconds: 5
+
+            readiness:
+              enabled: true
+              custom: true
+              type: custom
+              spec:
+                exec:
+                  command:
+                    - sh
+                    - -c
+                    - >
+                      wget -qO- http://localhost:80/v1/wireguard/status |
+                      grep -q '"connected":true' || exit 1;
+                      COUNTRY=$(wget -qO- http://localhost:80/v1/publicip/country);
+                      echo "Exit country: $COUNTRY";
+                      if [ "$COUNTRY" = "SE" ]; then exit 0; else exit 1; fi
+                initialDelaySeconds: 10
+                periodSeconds: 30
+                failureThreshold: 2
+                timeoutSeconds: 5
+
+        # no probes on main container
+        probes: {}
+
         persistence:
           config:
             enabled: true
@@ -81,22 +124,6 @@ spec:
               - path: /gluetun/auth/config.toml
                 subPath: config.toml
                 readOnly: true
-
-        probes:
-          liveness:
-            enabled: true
-            custom: true
-            type: custom
-            spec:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - 'if ip -4 addr show wg0 | grep -q "inet "; then exit 0; else exit 1; fi'
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            failureThreshold: 5
-            timeoutSeconds: 5
 
         pod:
           annotations:
@@ -162,7 +189,7 @@ spec:
               - op: add
                 path: /spec/ports/-
                 value:
-                  name: gluetun
+                  name: gluetun-dashboard
                   port: 80
                   protocol: TCP
                   targetPort: 80
@@ -173,18 +200,10 @@ spec:
             patch: |
               - op: add
                 path: /spec/template/spec/containers/1/ports
-                value: []
-
-          - target:
-              kind: Deployment
-              name: vpn-gateway
-            patch: |
-              - op: add
-                path: /spec/template/spec/containers/1/ports/-
                 value:
-                  containerPort: 80
-                  name: gluetun
-                  protocol: TCP
+                  - containerPort: 80
+                    name: gluetun-dashboard
+                    protocol: TCP
 
           - target:
               kind: Deployment
@@ -195,7 +214,7 @@ spec:
                 value:
                   type: Recreate
 
-          # https://github.com/qdm12/gluetun-wiki/blob/main/setup/advanced/kubernetes.md#adding-ipv6-rule--file-exists
+          # IPv6 rule cleanup on start (defensive, though IPV6 is off)
           - target:
               kind: Deployment
               name: vpn-gateway
@@ -208,4 +227,4 @@ spec:
                       command:
                         - /bin/sh
                         - -c
-                        - "(ip rule del table 51820; ip -6 rule del table 51820) || true"
+                        - "(ip rule del table 51820; ip -6 rule del table 51820) ||
