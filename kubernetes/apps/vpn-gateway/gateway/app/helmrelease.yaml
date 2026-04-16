@@ -108,7 +108,7 @@ spec:
                                     --password="$HTTP_CONTROL_SERVER_PASSWORD" \
                                     -qO- http://localhost:80/v1/vpn/status)
 
-                      echo "$STATUS" | grep -q '"status":"Running"' || exit 1
+                      echo "$STATUS" | grep -q '"status":"running"' || exit 1
 
                       COUNTRY=$(wget --user="$HTTP_CONTROL_SERVER_USER" \
                                      --password="$HTTP_CONTROL_SERVER_PASSWORD" \
