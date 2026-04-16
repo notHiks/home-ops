@@ -84,7 +84,10 @@ spec:
                     command:
                       - sh
                       - -c
-                      - 'wget -qO- http://localhost:80/v1/version || exit 1'
+                      - >
+                        wget --user="$HTTP_CONTROL_SERVER_USER" --password="$HTTP_CONTROL_SERVER_PASSWORD" \
+                        -qO- http://localhost:80/v1/wireguard/status |
+                        grep -q '"connected":true'
                   initialDelaySeconds: 30
                   periodSeconds: 20
                   failureThreshold: 5
@@ -100,11 +103,13 @@ spec:
                     - sh
                     - -c
                     - >
-                      wget -qO- http://localhost:80/v1/wireguard/status |
-                      grep -q '"connected":true' || exit 1;
-                      COUNTRY=$(wget -qO- http://localhost:80/v1/publicip/country);
+                      STATUS=$(wget --user="$HTTP_CONTROL_SERVER_USER" --password="$HTTP_CONTROL_SERVER_PASSWORD" \
+                      -qO- http://localhost:80/v1/wireguard/status) || exit 1;
+                      echo "$STATUS" | grep -q '"connected":true' || exit 1;
+                      COUNTRY=$(wget --user="$HTTP_CONTROL_SERVER_USER" --password="$HTTP_CONTROL_SERVER_PASSWORD" \
+                      -qO- http://localhost:80/v1/publicip/country) || exit 1;
                       echo "Exit country: $COUNTRY";
-                      if [ "$COUNTRY" = "SE" ]; then exit 0; else exit 1; fi
+                      [ "$COUNTRY" = "SE" ]
                 initialDelaySeconds: 40
                 periodSeconds: 30
                 failureThreshold: 3
