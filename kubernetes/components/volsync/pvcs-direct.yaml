@@ -1,0 +1,11 @@
+pvcListDirect:
+  - name: syncthing
+    pvc: syncthing
+    repo: syncthing-volsync
+    schedule: "0 */12 * * *"
+    capacity: 1050Gi
+    accessMode: ReadWriteOnce
+    storageClass: linbit-local
+    snapshotClass: ""
+    nfsServer: 192.168.100.192
+    nfsPath: /export/volsync

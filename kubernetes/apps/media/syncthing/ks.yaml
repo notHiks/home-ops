@@ -9,18 +9,14 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  #components:
-  #  - ../../../../components/volsync
+  components:
+    - ../../../../components/volsync
   dependsOn:
     - name: linstor
       namespace: flux-system
   interval: 30m
   path: ./kubernetes/apps/media/syncthing/app
   postBuild:
-    substitute:
-      APP_NAME: syncthing
-      VOLSYNC_CAPACITY: 200Gi
-      VOLSYNC_COPYMETHOD: Direct
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
