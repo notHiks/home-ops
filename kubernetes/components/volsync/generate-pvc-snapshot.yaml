@@ -22,4 +22,3 @@ vars:
   - name: CAPACITY
     objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
     fieldref: {fieldpath: data.capacity}
-
