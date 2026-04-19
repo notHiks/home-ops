@@ -1,0 +1,11 @@
+pvcListSnapshot:
+  - name: komga
+    pvc: komga-config
+    repo: komga-volsync
+    schedule: "0 */6 * * *"
+    capacity: 50Gi
+    accessMode: ReadWriteOnce
+    storageClass: linbit-local
+    snapshotClass: linbit-snapshot
+    nfsServer: 192.168.100.192
+    nfsPath: /export/volsync

@@ -2,8 +2,17 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
-resources:
-  - ./externalsecret.yaml
-# - ./pvc.yaml
-  - ./replicationdestination.yaml
-  - ./replicationsource.yaml
+
+configMapGenerator:
+  - name: volsync-pvc-snapshot
+    files:
+      - pvcs-snapshot.yaml
+
+  - name: volsync-pvc-direct
+    files:
+      - pvcs-direct.yaml
+
+transformers:
+  - generate-sources.yaml
+  - generate-destinations.yaml
+  - generate-pvc-snapshot.yaml
