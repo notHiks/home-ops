@@ -14,6 +14,7 @@ patch: |-
     value: $(NAME)-dst
 target:
   kind: PersistentVolumeClaim
+  name: APP_NAME
 vars:
   - name: NAME
     objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
@@ -21,3 +22,4 @@ vars:
   - name: CAPACITY
     objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
     fieldref: {fieldpath: data.capacity}
+
