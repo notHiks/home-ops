@@ -13,6 +13,6 @@ configMapGenerator:
       - pvcs-direct.yaml
 
 transformers:
-  - generator-sources.yaml
-  - generator-destinations.yaml
-  - generator-pvc-snapshot.yaml
+  - generate-sources.yaml
+  - generate-destinations.yaml
+  - generate-pvc-snapshot.yaml
