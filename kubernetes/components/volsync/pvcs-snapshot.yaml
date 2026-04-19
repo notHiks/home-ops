@@ -5,7 +5,6 @@ pvcListSnapshot:
     schedule: "0 */6 * * *"
     capacity: 50Gi
     accessMode: ReadWriteOnce
+    copyMethod: Snapshot
     storageClass: linbit-local
     snapshotClass: linbit-snapshot
-    nfsServer: 192.168.100.192
-    nfsPath: /export/volsync

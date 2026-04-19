@@ -1,0 +1,28 @@
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: APP_NAME-dst
+spec:
+  trigger:
+    manual: restore-once
+  kopia:
+    repository: APP_NAME-volsync
+    sourceIdentity:
+      sourceName: APP_NAME
+    copyMethod: Snapshot
+    accessModes:
+      - ReadWriteOnce
+    capacity: 5Gi
+    storageClassName: linbit-local
+    volumeSnapshotClassName: ""
+    enableFileDeletion: true
+    moverSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: 192.168.100.192
+            path: /export/volsync

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: APP_NAME
+spec:
+  sourcePVC: APP_NAME
+  trigger:
+    schedule: "0 */12 * * *"
+  kopia:
+    repository: APP_NAME-volsync
+    compression: zstd-fastest
+    copyMethod: Snapshot
+    moverSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    storageClassName: linbit-local
+    volumeSnapshotClassName: ""
+    accessModes:
+      - ReadWriteOnce
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: 192.168.100.192
+            path: /export/volsync
+    parallelism: 2
+    retain:
+      hourly: 24
+      daily: 7
+

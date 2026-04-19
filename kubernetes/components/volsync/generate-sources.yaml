@@ -19,20 +19,11 @@ patch: |-
     path: /spec/kopia/copyMethod
     value: $(COPYMETHOD)
   - op: replace
-    path: /spec/kopia/storageClassName
-    value: $(STORAGECLASS)
-  - op: replace
     path: /spec/kopia/volumeSnapshotClassName
     value: $(SNAPSHOTCLASS)
   - op: replace
     path: /spec/kopia/accessModes/0
     value: $(ACCESSMODE)
-  - op: replace
-    path: /spec/kopia/moverVolumes/0/volumeSource/nfs/server
-    value: $(NFSSERVER)
-  - op: replace
-    path: /spec/kopia/moverVolumes/0/volumeSource/nfs/path
-    value: $(NFSPATH)
 target:
   kind: ReplicationSource
 vars:
@@ -66,12 +57,6 @@ vars:
   - name: COPYMETHOD
     objref: {kind: ConfigMap, name: volsync-pvc-direct, apiVersion: v1}
     fieldref: {fieldpath: data.copyMethod}
-  - name: STORAGECLASS
-    objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
-    fieldref: {fieldpath: data.storageClass}
-  - name: STORAGECLASS
-    objref: {kind: ConfigMap, name: volsync-pvc-direct, apiVersion: v1}
-    fieldref: {fieldpath: data.storageClass}
   - name: SNAPSHOTCLASS
     objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
     fieldref: {fieldpath: data.snapshotClass}
@@ -84,15 +69,3 @@ vars:
   - name: ACCESSMODE
     objref: {kind: ConfigMap, name: volsync-pvc-direct, apiVersion: v1}
     fieldref: {fieldpath: data.accessMode}
-  - name: NFSSERVER
-    objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
-    fieldref: {fieldpath: data.nfsServer}
-  - name: NFSSERVER
-    objref: {kind: ConfigMap, name: volsync-pvc-direct, apiVersion: v1}
-    fieldref: {fieldpath: data.nfsServer}
-  - name: NFSPATH
-    objref: {kind: ConfigMap, name: volsync-pvc-snapshot, apiVersion: v1}
-    fieldref: {fieldpath: data.nfsPath}
-  - name: NFSPATH
-    objref: {kind: ConfigMap, name: volsync-pvc-direct, apiVersion: v1}
-    fieldref: {fieldpath: data.nfsPath}
