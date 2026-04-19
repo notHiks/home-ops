@@ -3,31 +3,35 @@
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationDestination
 metadata:
-  name: "${APP_NAME}-dst"
+  name: ${APP}-dst
   labels:
     kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
 spec:
   trigger:
     manual: restore-once
   kopia:
-    accessModes: ["${VOLSYNC_ACCESSMODES}"]
+    accessModes:
+      - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
+    cacheAccessModes:
+      - ${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}
+    cacheCapacity: ${VOLSYNC_CAPACITY:=5Gi}
     capacity: "${VOLSYNC_CAPACITY}"
     cleanupCachePVC: true
     cleanupTempPVC: true
-    copyMethod: Snapshot
+    copyMethod: ${VOLSYNC_COPYMETHOD:=Snapshot}
     enableFileDeletion: true
     moverSecurityContext:
-      runAsUser: ${VOLSYNC_PUID}
-      runAsGroup: ${VOLSYNC_PGID}
-      fsGroup: ${VOLSYNC_PGID}
+      runAsUser: ${VOLSYNC_PUID:=1000}
+      runAsGroup: ${VOLSYNC_PGID:=1000}
+      fsGroup: ${VOLSYNC_PGID:=1000}
     moverVolumes:
       - mountPath: repository
         volumeSource:
           nfs:
             server: 192.168.100.192
             path: /export/volysnc
-    repository: ${APP_NAME}-volsync
+    repository: ${APP}-volsync-secret
     sourceIdentity:
-      sourceName: ${APP_NAME}
-    storageClassName: "${VOLSYNC_STORAGECLASS}"
-    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS}"
+      sourceName: ${APP}
+    storageClassName: "${VOLSYNC_STORAGECLASS:=linbit-local}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS:=linbit-snapshot}"

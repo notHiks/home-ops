@@ -18,9 +18,8 @@ spec:
   path: ./kubernetes/apps/media/syncthing/app
   postBuild:
     substitute:
-      APP_NAME: syncthing
+      APP: syncthing
       VOLSYNC_CAPACITY: 200Gi
-      VOLSYNC_COPYMETHOD: Snapshot
     substituteFrom:
       - name: cluster-secrets
         kind: Secret

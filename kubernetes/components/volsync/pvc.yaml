@@ -2,15 +2,15 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ${APP_NAME}-pvc
+  name: ${APP}
 spec:
   accessModes:
-    - ${VOLSYNC_ACCESSMODES}
+    - ${VOLSYNC_ACCESSMODES:=ReadWriteOnce}
   dataSourceRef:
     kind: ReplicationDestination
     apiGroup: volsync.backube
-    name: ${APP_NAME}-dst
+    name: ${APP}-dst
   resources:
     requests:
-      storage: ${VOLSYNC_CAPACITY}
-  storageClassName: ${VOLSYNC_STORAGECLASS}
+      storage: ${VOLSYNC_CAPACITY:=5Gi}
+  storageClassName: "${VOLSYNC_STORAGECLASS:=linbit-local}"
