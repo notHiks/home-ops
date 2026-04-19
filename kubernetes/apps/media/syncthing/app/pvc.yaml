@@ -6,10 +6,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  dataSourceRef:
-    kind: ReplicationDestination
-    apiGroup: volsync.backube
-    name: syncthing-dst
   resources:
     requests:
       storage: 1050Gi
