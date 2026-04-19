@@ -20,6 +20,7 @@ spec:
     substitute:
       APP: syncthing
       VOLSYNC_CAPACITY: 200Gi
+      VOLSYNC_COPYMETHOD: Direct
     substituteFrom:
       - name: cluster-secrets
         kind: Secret
