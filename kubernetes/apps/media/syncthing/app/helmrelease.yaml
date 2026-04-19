@@ -126,18 +126,10 @@ spec:
                 port: *browserPort
 
     persistence:
-      config:
-        type: persistentVolumeClaim
-        suffix: config
-        size: 1Gi
-        storageClass: linbit-replicated
-        accessMode: ReadWriteOnce
-        globalMounts:
-          - path: /var/syncthing/config
-
       data:
         enabled: true
         type: persistentVolumeClaim
         existingClaim: ${APP_NAME}
         globalMounts:
           - path: /var/syncthing
+          - path: /var/syncthing/config
