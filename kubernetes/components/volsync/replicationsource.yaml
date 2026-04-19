@@ -1,0 +1,31 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/volsync.backube/replicationsource_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: "${APP_NAME}"
+spec:
+  sourcePVC: "${CLAIM:=${APP_NAME}}"
+  trigger:
+    schedule: "0 * * * *"
+  kopia:
+    accessModes: ["${VOLSYNC_SNAP_ACCESSMODES}"] # Use ReadOnlyMany for CephFS
+    compression: zstd-fastest
+    copyMethod: "${VOLSYNC_COPYMETHOD}"
+    moverSecurityContext:
+      runAsUser: ${VOLSYNC_PUID}
+      runAsGroup: ${VOLSYNC_PGID}
+      fsGroup: ${VOLSYNC_PGID}
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: 192.168.100.192
+            path: /export/volysnc
+    parallelism: 2
+    repository: "${APP_NAME}-volsync"
+    retain:
+      hourly: 24
+      daily: 7
+    storageClassName: "${VOLSYNC_STORAGECLASS}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS}"

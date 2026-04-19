@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://kube-schemas.pages.dev/volsync.backube/replicationdestination_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: "${APP_NAME}-dst"
+  labels:
+    kustomize.toolkit.fluxcd.io/ssa: IfNotPresent
+spec:
+  trigger:
+    manual: restore-once
+  kopia:
+    accessModes: ["${VOLSYNC_ACCESSMODES}"]
+    capacity: "${VOLSYNC_CAPACITY}"
+    cleanupCachePVC: true
+    cleanupTempPVC: true
+    copyMethod: Snapshot
+    enableFileDeletion: true
+    moverSecurityContext:
+      runAsUser: ${VOLSYNC_PUID}
+      runAsGroup: ${VOLSYNC_PGID}
+      fsGroup: ${VOLSYNC_PGID}
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            server: 192.168.100.192
+            path: /export/volysnc
+    repository: ${APP_NAME}-volsync
+    sourceIdentity:
+      sourceName: ${APP_NAME}
+    storageClassName: "${VOLSYNC_STORAGECLASS}"
+    volumeSnapshotClassName: "${VOLSYNC_SNAPSHOTCLASS}"

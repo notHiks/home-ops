@@ -2,20 +2,31 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
-
 resources:
-  - template/
+  - ./externalsecret.yaml
+  - ./pvc.yaml
+  - ./replicationdestination.yaml
+  - ./replicationsource.yaml
 
+  # Local-only variable substitution
 configMapGenerator:
-  - name: volsync-pvc-snapshot
-    files:
-      - pvcs-snapshot.yaml
+  - name: volsync-vars
+    literals:
+      - APP_NAME=myapp
+      - VOLSYNC_ACCESSMODES=ReadWriteOnce
+      - VOLSYNC_STORAGECLASS=linbit-replicated
+      - VOLSYNC_CAPACITY=2Gi
+      - VOLSYNC_SNAPSHOTCLASS=linstor-snapclass
+      - VOLSYNC_COPYMETHOD=Snapshot
+      - VOLSYNC_PUID=1000
+      - VOLSYNC_PGID=1000
 
-  - name: volsync-pvc-direct
-    files:
-      - pvcs-direct.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 
-transformers:
-  - generate-sources.yaml
-  - generate-destinations.yaml
-  - generate-pvc-snapshot.yaml
+# Tell Flux to substitute from this ConfigMap
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/substituteFrom: |
+      - kind: ConfigMap
+        name: volsync-vars
