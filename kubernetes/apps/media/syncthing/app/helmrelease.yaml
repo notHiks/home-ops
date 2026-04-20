@@ -126,8 +126,16 @@ spec:
                 port: *browserPort
 
     persistence:
+      config:
+        type: persistentVolumeClaim
+        suffix: config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        advancedMounts:
+          browser:
+            app:
+              - path: /config
       data:
         existingClaim: "{{ .Release.Name }}"
         globalMounts:
           - path: /var/syncthing
-          - path: /var/syncthing/config
