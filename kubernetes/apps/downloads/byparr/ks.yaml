@@ -6,7 +6,7 @@ metadata:
   name: byparr
 spec:
   targetNamespace: downloads
-  path: ./kubernetes/app/downloads/byparr/app
+  path: ./kubernetes/apps/downloads/byparr/app
   prune: true
   sourceRef:
     kind: GitRepository
