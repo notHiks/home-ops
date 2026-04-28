@@ -7,7 +7,7 @@ metadata:
 spec:
   components:
     - ../../../../components/volsync
-    - ../../../../components/zeroscaler
+#    - ../../../../components/zeroscaler
   dependsOn:
     - name: linstor
       namespace: flux-system

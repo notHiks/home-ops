@@ -86,7 +86,12 @@ spec:
           - name: envoy-internal
             namespace: network
     persistence:
-      config:
-        existingClaim: "{{ .Release.Name }}"
-      tmp:
+      tmpfs:
         type: emptyDir
+        advancedMounts:
+          prowlarr:
+            app:
+            - path: /config
+              subPath: config
+            - path: /tmp
+              subPath: tmp
