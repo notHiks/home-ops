@@ -25,7 +25,7 @@ spec:
         args:
         - --device
         - |
-          name: squat.ai/tun
+          name: tun
           groups:
             - count: 1000
               paths:
