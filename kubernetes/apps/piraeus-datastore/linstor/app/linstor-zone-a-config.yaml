@@ -22,7 +22,7 @@ spec:
       thinPool: data
     source:
       hostDevices:
-      - /dev/sda
+      - /dev/vda
   patches:
     - target:
         kind: DaemonSet
