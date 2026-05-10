@@ -101,7 +101,7 @@ spec:
      - name: repo1
        s3:
          bucket: "crunchy-postgres"
-         endpoint: "$(GARAGEFS_HOSTNAME):3900"
+         endpoint: "http://192.168.99.19:3900"
          region: "eu-west-1"
        schedules:
          full: "30 1 * * 0" # Sunday at 01:30
