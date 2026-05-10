@@ -6,3 +6,4 @@ resources:
   - ./cluster.yaml
   - ./gatus.yaml
   - ./podmonitor.yaml
+  - ./secret.sops.yaml
