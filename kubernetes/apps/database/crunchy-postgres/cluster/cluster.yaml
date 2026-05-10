@@ -76,38 +76,37 @@ spec:
       password: *pw
 
   backups:
-    pgbackrest:
-      configuration: &backupConfig
-        - secret:
-            name: crunchy-postgres-s3-creds
-      global: &backupFlag
-        # Global
-        compress-type: "bz2"
-        compress-level: "9"
-        backup-standby: "n"
-        repo1-block: "y"
-        repo1-bundle: "y"
-        repo1-path: /crunchy-pgo
-        repo1-retention-full: "30" # days
-        repo1-retention-full-type: "time"
-        repo1-s3-uri-style: path
-      manual:
-        repoName: repo1
-        options:
-          - --type=full
-      metadata:
-        labels:
-          app.kubernetes.io/name: crunchy-postgres-backup
-      repos:
-        - name: repo1
-          s3: &garage
-            bucket: "crunchy-postgres"
-            endpoint: "$(GARAGEFS_HOSTNAME):3900"
-            region: "eu-west-1"
-          schedules:
-            full: "30 1 * * 0" # Sunday at 01:30
-            differential: "30 1 * * 1-6" # Mon-Sat at 01:30
-            incremental: "30 3-23 * * *" # Every hour except 01:30-2:30
+   pgbackrest:
+     configuration:
+     - secret:
+         name: crunchy-postgres-s3-creds
+     global:
+       compress-type: "bz2"
+       compress-level: "9"
+       backup-standby: "n"
+       repo1-block: "y"
+       repo1-bundle: "y"
+       repo1-path: /crunchy-pgo
+       repo1-retention-full: "30" # days
+       repo1-retention-full-type: "time"
+       repo1-s3-uri-style: path
+     manual:
+       repoName: repo1
+       options:
+         - --type=full
+     metadata:
+       labels:
+         app.kubernetes.io/name: crunchy-postgres-backup
+     repos:
+     - name: repo1
+       s3:
+         bucket: "crunchy-postgres"
+         endpoint: "$(GARAGEFS_HOSTNAME):3900"
+         region: "eu-west-1"
+       schedules:
+         full: "30 1 * * 0" # Sunday at 01:30
+         differential: "30 1 * * 1-6" # Mon-Sat at 01:30
+         incremental: "30 3-23 * * *" # Every hour except 01:30-2:30
 #  dataSource:
 #    pgbackrest:
 #      stanza: db
