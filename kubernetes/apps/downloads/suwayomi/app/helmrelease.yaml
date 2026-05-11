@@ -61,7 +61,7 @@ spec:
           app:
             image:
               repository: ghcr.io/suwayomi/suwayomi-server
-              tag: v2.1.2092@sha256:ba7e3dcd597704f5fbe4f2fa81561b3f8161eba81fcd546464894a1c616db870
+              tag: v2.2.2139@sha256:38f743fe4d6b196b6649342c7480a8fa3dbe310932440edce75a9550f308515b
             env:
               BIND_PORT: &port 4567
               WEB_UI_CHANNEL: "preview"
