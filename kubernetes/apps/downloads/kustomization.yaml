@@ -12,4 +12,4 @@ resources:
 #  - ./kavita/ks.yaml
   - ./samba/ks.yaml
   - ./flaresolverr/ks.yaml
-  - ./prowlarr/ks.yaml
+#  - ./prowlarr/ks.yaml
