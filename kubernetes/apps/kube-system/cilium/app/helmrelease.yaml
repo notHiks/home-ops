@@ -30,7 +30,7 @@ spec:
     endpointRoutes:
       enabled: true
     envoy:
-      enabled: true
+      enabled: false
     gatewayAPI:
       enabled: false
     hubble:
