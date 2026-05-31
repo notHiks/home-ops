@@ -10,8 +10,6 @@ spec:
   interval: 1h
   values:
     autoDirectNodeRoutes: false
-    routingMode: tunnel
-    tunnelProtocol: vxlan
     bpf:
       masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
@@ -66,7 +64,8 @@ spec:
         enabled: true
         trustCRDsExist: true
     rollOutCiliumPods: true
-    routingMode: native
+    routingMode: tunnel
+    tunnelProtocol: vxlan
     securityContext:
       capabilities:
         ciliumAgent:
