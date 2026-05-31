@@ -90,3 +90,4 @@ spec:
     socketLB:
       enabled: true
       hostNamespaceOnly: true
+    mtu: 1400
