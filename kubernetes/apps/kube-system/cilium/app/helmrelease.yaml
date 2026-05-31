@@ -9,7 +9,9 @@ spec:
     name: cilium
   interval: 1h
   values:
-    autoDirectNodeRoutes: true
+    autoDirectNodeRoutes: false
+    routingMode: tunnel
+    tunnelProtocol: vxlan
     bpf:
       masquerade: true
       # Ref: https://github.com/siderolabs/talos/issues/10002
@@ -28,7 +30,7 @@ spec:
     dashboards:
       enabled: true
     endpointRoutes:
-      enabled: true
+      enabled: false
     envoy:
       enabled: false
     gatewayAPI:
