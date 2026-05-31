@@ -142,6 +142,7 @@ spec:
 
       # ==================== Admission Webhook Controller ====================
       webhook:
+        enabled: true
         serviceAccount:
           identifier: default
         pod:
