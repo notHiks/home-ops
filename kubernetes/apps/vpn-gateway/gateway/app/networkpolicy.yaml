@@ -14,13 +14,34 @@ spec:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
 
-  # === TEMPORARY: Allow ALL traffic (for testing) ===
   egress:
+    - toCIDR:
+        - 0.0.0.0/0
+      toPorts:
+        - ports:
+            - port: "51820"
+              protocol: UDP
     - toEntities:
-        - all
+        - cluster
+        - remote-node
+        - host
+
   ingress:
+    # Allow everything (broad)
     - fromEntities:
-        - all
+        - cluster
+        - remote-node
+        - host
+
+    # VXLAN on new port
+    - fromEntities:
+        - cluster
+        - remote-node
+        - host
+      toPorts:
+        - ports:
+            - port: "4789"
+              protocol: UDP
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
@@ -74,10 +95,7 @@ spec:
         - host
       toPorts:
         - ports:
-            - port: "8472"
-              protocol: UDP
-        - ports:
-            - port: "0"
+            - port: "4789"
               protocol: UDP
     - fromEntities:
         - remote-node
