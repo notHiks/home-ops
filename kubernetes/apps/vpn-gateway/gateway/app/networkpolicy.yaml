@@ -34,7 +34,6 @@ spec:
         - cluster
         - remote-node
         - host
-    # No toPorts = allows ALL protocols (including ICMP)
 
   ingress:
     # Allow inbound DHCP requests + responses
@@ -56,9 +55,8 @@ spec:
         - host
       toPorts:
         - ports:
-            - port: "0"
+            - port: "8472"
               protocol: UDP
-
     # Allow everything else from cluster pods/nodes
     - fromEntities:
         - cluster
@@ -108,3 +106,31 @@ spec:
         - ports:
             - port: "80"
               protocol: TCP
+---
+# clusterwide vxlan and dhcp policy for the vpn-gateway, since it needs to talk to other nodes and the cluster network
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-pod-gateway-vxlan
+spec:
+  nodeSelector: {}
+  ingress:
+    # Allow VXLAN from other nodes (port 8472)
+    - fromEntities:
+        - remote-node
+        - host
+      toPorts:
+        - ports:
+            - port: "8472"
+              protocol: UDP
+
+    # Allow DHCP
+    - fromEntities:
+        - remote-node
+        - host
+      toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+            - port: "68"
+              protocol: UDP
