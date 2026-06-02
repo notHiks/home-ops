@@ -21,34 +21,21 @@ spec:
         - ports:
             - port: "51820"
               protocol: UDP
-    # Allow DHCP traffic to the gateway
-    - toPorts:
-        - ports:
-            - port: "67"
-              protocol: UDP
-        - ports:
-            - port: "68"
-              protocol: UDP
-    # Broad cluster communication (VXLAN + ICMP ping + everything else
+    # Broad outbound to cluster (covers VXLAN replies, ICMP, etc.)
     - toEntities:
         - cluster
         - remote-node
         - host
 
   ingress:
-    # Allow inbound DHCP requests + responses
+    # Allow all traffic from cluster (this fixes return path) ===
     - fromEntities:
         - cluster
         - remote-node
         - host
-    - toPorts:
-        - ports:
-            - port: "67"
-              protocol: UDP
-        - ports:
-            - port: "68"
-              protocol: UDP
-    # Allow VXLAN traffic (any UDP) from cluster pods
+      # No toPorts = allow ALL ports/protocols (DHCP responses, VXLAN replies, etc.)
+
+    # Explicit VXLAN (port 8472)
     - fromEntities:
         - cluster
         - remote-node
@@ -57,17 +44,19 @@ spec:
         - ports:
             - port: "8472"
               protocol: UDP
-    # Allow everything else from cluster pods/nodes
+
+    # Explicit DHCP
     - fromEntities:
         - cluster
         - remote-node
         - host
+      toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+            - port: "68"
+              protocol: UDP
 
-    # Allow ICMP echo
-    - icmps:
-        - fields:
-            - type: 8
-              family: IPv4
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
 apiVersion: cilium.io/v2
@@ -115,7 +104,6 @@ metadata:
 spec:
   nodeSelector: {}
   ingress:
-    # Allow VXLAN from other nodes (port 8472)
     - fromEntities:
         - remote-node
         - host
@@ -123,8 +111,9 @@ spec:
         - ports:
             - port: "8472"
               protocol: UDP
-
-    # Allow DHCP
+        - ports:
+            - port: "0"
+              protocol: UDP
     - fromEntities:
         - remote-node
         - host
