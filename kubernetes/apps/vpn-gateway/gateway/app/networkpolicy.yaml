@@ -32,10 +32,17 @@ spec:
     # Allow VXLAN (dynamic port 0) by allowing all UDP to cluster pods
     - toEntities:
         - cluster
+        - remote-node
         - host
+      toPorts:
+        - ports:
+            - port: "0"          # All UDP ports (VXLAN)
+              protocol: UDP
     # Allow ICMP for ping out
     - toEntities:
         - cluster
+        - remote-node
+        - host
   ingress:
     # Allow inbound DHCP
     - toPorts:
@@ -48,7 +55,12 @@ spec:
     # Allow VXLAN traffic (any UDP) from cluster pods
     - fromEntities:
         - cluster
+        - remote-node
         - host
+      toPorts:
+        - ports:
+            - port: "0"          # All UDP ports (VXLAN)
+              protocol: UDP
     # Allow ICMP echo
     - icmps:
         - fields:
