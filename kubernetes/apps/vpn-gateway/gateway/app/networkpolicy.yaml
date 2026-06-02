@@ -27,21 +27,10 @@ spec:
         - host
 
   ingress:
-    # Allow everything (broad)
     - fromEntities:
         - cluster
         - remote-node
         - host
-
-    # VXLAN on new port
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
-      toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
