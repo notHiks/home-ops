@@ -18,7 +18,7 @@ spec:
   # ICMP connectivity check (v7+ client init) and the VXLAN tunnel.
   ingress:
     - fromEntities:
-        - cluster
+        - all
 
   egress:
     - toCIDR:
@@ -28,7 +28,7 @@ spec:
             - port: "51820"
               protocol: UDP
     - toEntities:
-        - cluster
+        - all
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
@@ -77,6 +77,7 @@ metadata:
 spec:
   nodeSelector: {}
   ingress:
+    # Allow everything from other nodes (strong)
     - fromEntities:
         - remote-node
         - host
@@ -90,3 +91,8 @@ spec:
               protocol: UDP
             - port: "68"
               protocol: UDP
+    # Allow all traffic to the gateway pod from anywhere in cluster
+    - fromEntities:
+        - cluster
+        - remote-node
+        - host
