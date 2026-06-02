@@ -14,6 +14,12 @@ spec:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
 
+  # Allow client pods (in routed namespaces) to reach the gateway over both the
+  # ICMP connectivity check (v7+ client init) and the VXLAN tunnel.
+  ingress:
+    - fromEntities:
+        - cluster
+
   egress:
     - toCIDR:
         - 0.0.0.0/0
@@ -23,14 +29,6 @@ spec:
               protocol: UDP
     - toEntities:
         - cluster
-        - remote-node
-        - host
-
-  ingress:
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
@@ -82,14 +80,11 @@ spec:
     - fromEntities:
         - remote-node
         - host
+        - cluster
       toPorts:
         - ports:
             - port: "4789"
               protocol: UDP
-    - fromEntities:
-        - remote-node
-        - host
-      toPorts:
         - ports:
             - port: "67"
               protocol: UDP
