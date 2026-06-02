@@ -13,8 +13,14 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
-  egress: []     # Allow ALL outbound
-  ingress: []    # Allow ALL inbound
+
+  # === TEMPORARY: Allow ALL traffic (for testing) ===
+  egress:
+    - toEntities:
+        - all
+  ingress:
+    - fromEntities:
+        - all
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
