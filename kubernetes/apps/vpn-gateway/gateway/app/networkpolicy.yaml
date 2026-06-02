@@ -13,49 +13,8 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
-  egress:
-    # Allow WireGuard VPN traffic to the internet
-    - toCIDR:
-        - 0.0.0.0/0
-      toPorts:
-        - ports:
-            - port: "51820"
-              protocol: UDP
-    # Broad outbound to cluster (covers VXLAN replies, ICMP, etc.)
-    - toEntities:
-        - cluster
-        - remote-node
-        - host
-
-  ingress:
-    # Allow all traffic from cluster (this fixes return path) ===
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
-      # No toPorts = allow ALL ports/protocols (DHCP responses, VXLAN replies, etc.)
-
-    # Explicit VXLAN (port 8472)
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
-      toPorts:
-        - ports:
-            - port: "8472"
-              protocol: UDP
-
-    # Explicit DHCP
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
-      toPorts:
-        - ports:
-            - port: "67"
-              protocol: UDP
-            - port: "68"
-              protocol: UDP
+  egress: []     # Allow ALL outbound
+  ingress: []    # Allow ALL inbound
 
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
