@@ -21,6 +21,18 @@ spec:
         - op: add
           path: /metadata/annotations/reloader.stakater.com~1auto
           value: "true"
+        - op: add
+          path: /spec/template/spec/containers/0/resources
+          value:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1.5"
+              memory: "2Gi"
+        - op: replace
+          path: /spec/template/spec/containers/0/livenessProbe/timeoutSeconds
+          value: 5
     - target:
         kind: Deployment
         name: linstor-csi-controller
@@ -28,6 +40,15 @@ spec:
         - op: add
           path: /metadata/annotations/reloader.stakater.com~1auto
           value: "true"
+        - op: add
+          path: /spec/template/spec/containers/0/resources
+          value:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
     - target:
         kind: DaemonSet
         name: linstor-csi-node
@@ -35,3 +56,12 @@ spec:
         - op: add
           path: /metadata/annotations/reloader.stakater.com~1auto
           value: "true"
+        - op: add
+          path: /spec/template/spec/containers/0/resources
+          value:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"

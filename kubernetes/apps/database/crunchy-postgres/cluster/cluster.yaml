@@ -34,13 +34,20 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/name: crunchy-postgres
-      replicas: &replicas 3
+      replicas: &replicas 1
       dataVolumeClaimSpec:
         storageClassName: linbit-local
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
             storage: 20Gi
+      resources:
+        requests:
+          cpu: 200m
+          memory: 512Mi
+        limits:
+          cpu: "1"
+          memory: "1.5Gi"
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: "kubernetes.io/hostname"
