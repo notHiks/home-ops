@@ -1,0 +1,35 @@
+---
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: talos-umi-01-override
+  namespace: piraeus-datastore
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: umi-01
+  podTemplate:
+    spec:
+      containers:
+      - name: linstor-satellite
+        env:
+        - name: JAVA_OPTS
+          value: "-Djdk.tls.acknowledgeCloseNotify=true -Xmx1536m -Xms768m"
+        startupProbe:
+          failureThreshold: 30
+          periodSeconds: 10
+      initContainers:
+        - name: drbd-shutdown-guard
+          $patch: delete
+        - name: drbd-module-loader
+          $patch: delete
+      volumes:
+        - name: run-systemd-system
+          $patch: delete
+        - name: run-drbd-shutdown-guard
+          $patch: delete
+        - name: systemd-bus-socket
+          $patch: delete
+        - name: lib-modules
+          $patch: delete
+        - name: usr-src
+          $patch: delete

@@ -17,3 +17,10 @@ spec:
         hostPort: 29999
     serviceMonitor:
       enabled: true
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 150Mi

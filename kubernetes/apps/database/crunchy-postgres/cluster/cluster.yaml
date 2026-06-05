@@ -18,7 +18,7 @@ spec:
             cpu: 10m
             memory: 64M
           limits:
-            memory: 512M
+            memory: 128Mi
   patroni: # turn on sync writes to at least 1 other replica
     dynamicConfiguration:
       synchronous_mode: true
@@ -34,13 +34,20 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/name: crunchy-postgres
-      replicas: &replicas 3
+      replicas: &replicas 1
       dataVolumeClaimSpec:
         storageClassName: linbit-local
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
             storage: 20Gi
+      resources:
+        requests:
+          cpu: 150m
+          memory: 512Mi
+        limits:
+          cpu: 300m
+          memory: 768Mi
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: "kubernetes.io/hostname"
@@ -75,40 +82,38 @@ spec:
       databases: [*db]
       password: *pw
 
-#  backups:
-#    pgbackrest:
-#      configuration: &backupConfig
-#        - secret:
-#            name: crunchy-postgres
-#      global: &backupFlag
-#        # Global
-#        compress-type: "bz2"
-#        compress-level: "9"
-#        backup-standby: "n"
-#        # QNAP
-#        repo1-block: "y"
-#        repo1-bundle: "y"
-#        repo1-path: /crunchy-pgo
-#        repo1-retention-full: "30" # days
-#        repo1-retention-full-type: "time"
-#        repo1-s3-uri-style: path
-#      manual:
-#        repoName: repo1
-#        options:
-#          - --type=full
-#      metadata:
-#        labels:
-#          app.kubernetes.io/name: crunchy-postgres-backup
-#      repos:
-#        - name: repo1 # QNAP
-#          s3: &qnap
-#            bucket: "crunchy-postgres"
-#            endpoint: "${SECRET_QNAP_HOSTNAME}:8010"
-#            region: "us-east-1"
-#          schedules:
-#            full: "30 1 * * 0" # Sunday at 01:30
-#            differential: "30 1 * * 1-6" # Mon-Sat at 01:30
-#            incremental: "30 3-23 * * *" # Every hour except 01:30-2:30
+  backups:
+   pgbackrest:
+     configuration:
+     - secret:
+         name: crunchy-postgres-s3-creds
+     global:
+       compress-type: "bz2"
+       compress-level: "9"
+       backup-standby: "n"
+       repo1-block: "y"
+       repo1-bundle: "y"
+       repo1-path: /crunchy-pgo
+       repo1-retention-full: "30" # days
+       repo1-retention-full-type: "time"
+       repo1-s3-uri-style: path
+     manual:
+       repoName: repo1
+       options:
+         - --type=full
+     metadata:
+       labels:
+         app.kubernetes.io/name: crunchy-postgres-backup
+     repos:
+     - name: repo1
+       s3:
+         bucket: "crunchy-postgres"
+         endpoint: "http://192.168.99.19:3900"
+         region: "eu-west-1"
+       schedules:
+         full: "30 1 * * 0" # Sunday at 01:30
+         differential: "30 1 * * 1-6" # Mon-Sat at 01:30
+         incremental: "30 3-23 * * *" # Every hour except 01:30-2:30
 #  dataSource:
 #    pgbackrest:
 #      stanza: db
@@ -116,7 +121,7 @@ spec:
 #      global: *backupFlag
 #      repo:
 #        name: "repo1"
-#        s3: *qnap
+#        s3: *garage
   proxy:
     pgBouncer:
       service:

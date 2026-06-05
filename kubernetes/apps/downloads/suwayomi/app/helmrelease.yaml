@@ -41,7 +41,7 @@ spec:
           wait-nfs:
             image:
               repository: busybox
-              tag: "1.37"
+              tag: "1.38"
             resources:
               requests:
                 cpu: 10m
@@ -61,7 +61,7 @@ spec:
           app:
             image:
               repository: ghcr.io/suwayomi/suwayomi-server
-              tag: v2.1.2087@sha256:bc7164c81b810dfc2804b26243aa768ff0746348675988532dfb734f15350713
+              tag: v2.2.2187@sha256:32a98cfdd2caf88ef33fc61aab40cedac0f254584a5049370c195c51757a42c3
             env:
               BIND_PORT: &port 4567
               WEB_UI_CHANNEL: "preview"
@@ -70,11 +70,12 @@ spec:
                   name: suwayomi-config
             resources:
               requests:
-                memory: 2Gi
-                cpu: 500m
+                cpu: 200m
+                memory: 1Gi
               limits:
-                memory: 4Gi
-                cpu: 1
+                cpu: 500m
+                memory: 2Gi
+
 
           # Image Converter
         #  suwayomi-converter:
@@ -101,7 +102,7 @@ spec:
           #        failureThreshold: 5
 
               # Liveness: App is still alive
-           #   liveness:
+          #   liveness:
            #     enabled: true
            #     custom: true
            #     spec:
