@@ -11,5 +11,5 @@ resources:
   - ./komf/ks.yaml
 #  - ./kavita/ks.yaml
   - ./samba/ks.yaml
-  - ./flaresolverr/ks.yaml
+  - ./byparr/ks.yaml
 #  - ./prowlarr/ks.yaml
