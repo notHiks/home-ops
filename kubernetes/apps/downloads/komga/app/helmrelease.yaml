@@ -25,13 +25,14 @@ spec:
               TZ: Europe/london
               SERVER_PORT: &port 8080
               KOMGA_CORS_ALLOWED_ORIGINS: https://komf.musai.ovh
-              JAVA_TOOL_OPTIONS: "-Xmx6g"
+              JAVA_TOOL_OPTIONS: "-Xmx1g"
             resources:
               requests:
-                cpu: 15m
-                memory: 1Gi
+                cpu: 100m
+                memory: 512Mi
               limits:
-                memory: 4Gi
+                cpu: 300m
+                memory: 1.5Gi
     service:
       app:
         controller: komga

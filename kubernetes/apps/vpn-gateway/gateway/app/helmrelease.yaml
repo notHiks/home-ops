@@ -34,6 +34,13 @@ spec:
             image:
               repository: ghcr.io/angelnu/pod-gateway
               tag: v1.13.0@sha256:a5b032e15f7570493977b330a5a86dcffebb807d35685ad803e47afb62d105f2
+            resources:
+              requests:
+                cpu: 20m
+                memory: 32Mi
+              limits:
+                cpu: 50m
+                memory: 64Mi
           gluetun:
             enabled: true
             type: gluetun
@@ -68,10 +75,10 @@ spec:
             resources:
               requests:
                 cpu: 100m
-                memory: 64Mi
+                memory: 128Mi
               limits:
-                cpu: 175m
-                memory: 192Mi
+                cpu: 200m
+                memory: 2562Mi
                 devic.es/tun: "1"
 
             probes:

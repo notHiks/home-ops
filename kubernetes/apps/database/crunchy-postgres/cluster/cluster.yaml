@@ -18,7 +18,7 @@ spec:
             cpu: 10m
             memory: 64M
           limits:
-            memory: 512M
+            memory: 128Mi
   patroni: # turn on sync writes to at least 1 other replica
     dynamicConfiguration:
       synchronous_mode: true
@@ -43,11 +43,11 @@ spec:
             storage: 20Gi
       resources:
         requests:
-          cpu: 200m
+          cpu: 150m
           memory: 512Mi
         limits:
-          cpu: "1"
-          memory: "1.5Gi"
+          cpu: 300m
+          memory: 768Mi
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: "kubernetes.io/hostname"
