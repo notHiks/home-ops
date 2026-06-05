@@ -80,7 +80,7 @@ spec:
     route:
       app:
         hostnames:
-          - "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - "{{ .Release.Name }}.musai.ovh"
         parentRefs:
           - name: envoy-internal
             namespace: network
