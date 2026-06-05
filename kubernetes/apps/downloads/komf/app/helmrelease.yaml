@@ -34,15 +34,17 @@ spec:
             env:
               KOMF_KOMGA_BASE_URI: http://komga.downloads.svc.cluster.local:8080
               KOMF_LOG_LEVEL: INFO
+              JAVA_TOOL_OPTIONS: "-Xmx512m"
             envFrom:
               - secretRef:
                   name: komf-secret
             resources:
               requests:
-                memory: 1024Mi
-                cpu: 15m
+                cpu: 50m
+                memory: 256Mi
               limits:
-                memory: 2048Mi
+                cpu: 150m
+                memory: 768Mi
     defaultPodOptions:
       securityContext:
         fsGroup: 1000
