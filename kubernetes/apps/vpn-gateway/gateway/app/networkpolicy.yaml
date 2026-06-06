@@ -13,23 +13,47 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
-
-  # Allow client pods (in routed namespaces) to reach the gateway over both the
-  # ICMP connectivity check (v7+ client init) and the VXLAN tunnel.
-  ingress:
-    - fromEntities:
-        - all
-
   egress:
+    # Allow WireGuard VPN traffic to the internet
     - toCIDR:
         - 0.0.0.0/0
       toPorts:
         - ports:
             - port: "51820"
               protocol: UDP
+    # Allow DHCP traffic to the gateway
+    - toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+        - ports:
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN (dynamic port 0) by allowing all UDP to cluster pods
     - toEntities:
-        - all
-
+        - cluster
+        - host
+    # Allow ICMP for ping out
+    - toEntities:
+        - cluster
+  ingress:
+    # Allow inbound DHCP
+    - toPorts:
+        - ports:
+            - port: "67"
+              protocol: UDP
+        - ports:
+            - port: "68"
+              protocol: UDP
+    # Allow VXLAN traffic (any UDP) from cluster pods
+    - fromEntities:
+        - cluster
+        - host
+    # Allow ICMP echo
+    - icmps:
+        - fields:
+            - type: 8
+              family: IPv4
 ---
 # Admission webhook traffic (K8s API server -> pod-gateway)
 apiVersion: cilium.io/v2
@@ -68,31 +92,3 @@ spec:
         - ports:
             - port: "80"
               protocol: TCP
----
-# clusterwide vxlan and dhcp policy for the vpn-gateway, since it needs to talk to other nodes and the cluster network
-apiVersion: cilium.io/v2
-kind: CiliumClusterwideNetworkPolicy
-metadata:
-  name: allow-pod-gateway-vxlan
-spec:
-  nodeSelector: {}
-  ingress:
-    # Allow everything from other nodes (strong)
-    - fromEntities:
-        - remote-node
-        - host
-        - cluster
-      toPorts:
-        - ports:
-            - port: "4789"
-              protocol: UDP
-        - ports:
-            - port: "67"
-              protocol: UDP
-            - port: "68"
-              protocol: UDP
-    # Allow all traffic to the gateway pod from anywhere in cluster
-    - fromEntities:
-        - cluster
-        - remote-node
-        - host
