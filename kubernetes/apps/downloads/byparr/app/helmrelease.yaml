@@ -14,7 +14,6 @@ spec:
       byparr:
         annotations:
           reloader.stakater.com/auto: "true"
-          setGateway: "true"
         containers:
           app:
             image:
@@ -75,6 +74,8 @@ spec:
         options:
           - name: ndots
             value: "1"
+      annotations:
+        setGateway: "true"
     service:
       app:
         controller: byparr
