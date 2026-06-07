@@ -61,6 +61,24 @@ spec:
             - type: 8
               family: IPv4
 ---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-dhcp-to-routed-pods
+  namespace: downloads
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: pod-gateway
+            app.kubernetes.io/instance: vpn-gateway
+      toPorts:
+        - ports:
+            - port: "68"
+              protocol: UDP
+
+---
 # Allow the admission webhook to receive traffic from the Kubernetes API server
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
