@@ -224,6 +224,7 @@ spec:
       # cleanly with port 0 — the chart's settings.sh comment explicitly says
       # "change it to 4789 (preferably) when using Cillium".
       VXLAN_PORT: "4789"
+      DNS: 172.16.1.1
 
   # Post-renderers to expose Gluetun HTTP dashboard on port 80
   postRenderers:
