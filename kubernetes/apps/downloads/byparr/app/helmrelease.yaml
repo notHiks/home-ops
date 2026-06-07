@@ -76,6 +76,19 @@ spec:
             value: "1"
       annotations:
         setGateway: "true"
+
+    pod:
+      containers:
+        gateway-sidecar:
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    iptables -I INPUT 1 -i lo -j ACCEPT
+                    iptables -I OUTPUT 1 -o lo -j ACCEPT
     service:
       app:
         controller: byparr
