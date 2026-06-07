@@ -219,7 +219,7 @@ spec:
       # Traffic to these CIDRs will bypass the VPN (local + cluster internal)
       VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
       # Traffic from routed pods to these CIDRs will NOT go through the gateway
-      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+      NOT_ROUTED_TO_GATEWAY_CIDRS: "127.0.0.0/8 10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
       # Default is 0 (kernel-chosen). Cilium's CNI doesn't carry VXLAN traffic
       # cleanly with port 0 — the chart's settings.sh comment explicitly says
       # "change it to 4789 (preferably) when using Cillium".
