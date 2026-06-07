@@ -50,18 +50,10 @@ spec:
         - ports:
             - port: "4789"
               protocol: UDP
-            - port: "67"
-              protocol: UDP
-            - port: "68"
-              protocol: UDP
   ingress:
     - toPorts:
         - ports:
             - port: "4789"
-              protocol: UDP
-            - port: "67"
-              protocol: UDP
-            - port: "68"
               protocol: UDP
     # Allow ICMP echo for basic troubleshooting (ping from/to gateway)
     - icmps:
