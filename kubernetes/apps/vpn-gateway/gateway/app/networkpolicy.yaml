@@ -50,6 +50,10 @@ spec:
         - ports:
             - port: "4789"
               protocol: UDP
+            - port: "67"
+              protocol: UDP
+            - port: "68"
+              protocol: UDP
   ingress:
     - toPorts:
         - ports:
