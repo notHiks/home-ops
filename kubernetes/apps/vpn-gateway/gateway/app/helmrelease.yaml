@@ -1,3 +1,5 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -11,23 +13,15 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: angelnu-charts
-  timeout: 20m
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
 
   values:
     # ==================== Main VPN Gateway Controller ====================
     controllers:
       main:
         enabled: true
-        serviceAccount:
-          identifier: default
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
 
         containers:
           main:
@@ -36,18 +30,49 @@ spec:
               tag: v1.13.0@sha256:a5b032e15f7570493977b330a5a86dcffebb807d35685ad803e47afb62d105f2
             resources:
               requests:
-                cpu: 20m
-                memory: 32Mi
+                cpu: 15m
+                memory: 30M
               limits:
-                cpu: 50m
-                memory: 64Mi
+                memory: 30M
+            securityContext:
+              privileged: true
+            # The v7 client-side gateway-init script pings the gateway pod IP as a
+            # connectivity check BEFORE establishing the VXLAN tunnel. Pod-gateway's
+            # gateway_init.sh sets `iptables INPUT policy DROP` and only accepts
+            # VXLAN/DHCP/loopback — ICMP from clients is dropped, so the client init
+            # fails with "100% packet loss". Insert an ICMP ACCEPT rule via postStart.
+            #
+            # postStart blocks the container from being marked "Started", so it
+            # MUST NOT wait synchronously for gateway_init.sh (the container's main
+            # command) — that's a deadlock. Instead, fork a background poller that
+            # tries to insert the rule for ~30s, then exit immediately. The rule is
+            # idempotent: -C checks first, -I inserts at position 1 if missing.
+            # https://github.com/rwlove/home-ops/blob/cb51580dfb609c7f4c4e2cdb634b5449dfe9c0a8/kubernetes/apps/vpn/downloads-gateway/app/helmrelease.yaml
+            lifecycle:
+              postStart:
+                exec:
+                  command:
+                    - /bin/sh
+                    - -c
+                    - |
+                      (
+                        for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+                          if iptables -C INPUT -p icmp -j ACCEPT 2>/dev/null; then
+                            exit 0
+                          fi
+                          if iptables -I INPUT 1 -p icmp -j ACCEPT 2>/dev/null; then
+                            exit 0
+                          fi
+                          sleep 2
+                        done
+                      ) >/dev/null 2>&1 &
+                      exit 0
           gluetun:
             enabled: true
-            type: gluetun
-            gluetun:
-              image:
-                repository: ghcr.io/qdm12/gluetun
-                tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            dependsOn: main
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
 
             env:
              - name: VPN_TYPE
@@ -74,10 +99,9 @@ spec:
                   - NET_ADMIN
             resources:
               requests:
-                cpu: 100m
+                cpu: 15m
                 memory: 128Mi
               limits:
-                cpu: 200m
                 memory: 2562Mi
                 devic.es/tun: "1"
 
@@ -128,9 +152,6 @@ spec:
                 periodSeconds: 30
                 failureThreshold: 3
                 timeoutSeconds: 5
-
-        # no probes on main container
-        probes: {}
 
         persistence:
           config:
@@ -191,11 +212,17 @@ spec:
       VPN_BLOCK_OTHER_TRAFFIC: true
       # -- If VPN_BLOCK_OTHER_TRAFFIC is true, allow VPN traffic over this port
       VPN_TRAFFIC_PORT: 51820
+      # -- VXLAN settings for routing pod traffic through the gateway
+      VXLAN_ID: 43
+      # -- Must be a /24 or larger subnet to accommodate routing for all pods (default is 172.16.1.0/24)
+      VXLAN_IP_NETWORK: 172.16.1
       # Traffic to these CIDRs will bypass the VPN (local + cluster internal)
-      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 172.16.0.0/12 192.168.99.0/24"
+      VPN_LOCAL_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
       # Traffic from routed pods to these CIDRs will NOT go through the gateway
-      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 172.16.0.0/12 192.168.99.0/24"
-      # VXLAN port
+      NOT_ROUTED_TO_GATEWAY_CIDRS: "10.42.0.0/16 10.43.0.0/16 192.168.99.0/24"
+      # Default is 0 (kernel-chosen). Cilium's CNI doesn't carry VXLAN traffic
+      # cleanly with port 0 — the chart's settings.sh comment explicitly says
+      # "change it to 4789 (preferably) when using Cillium".
       VXLAN_PORT: "4789"
 
   # Post-renderers to expose Gluetun HTTP dashboard on port 80

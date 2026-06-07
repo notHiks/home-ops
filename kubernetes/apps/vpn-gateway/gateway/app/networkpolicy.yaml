@@ -13,49 +13,55 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
+
+  ingress:
+    # Allow routed pods + cluster components to reach the gateway
+    - fromEntities:
+        - cluster
+
   egress:
-    # Allow WireGuard VPN traffic to the internet
+    # Allow ONLY VPN (WireGuard) traffic to the internet
     - toCIDR:
         - 0.0.0.0/0
       toPorts:
         - ports:
             - port: "51820"
               protocol: UDP
-    # Allow DHCP traffic to the gateway
+    # Allow all cluster-internal communication (pods, services, nodes)
+    - toEntities:
+        - cluster
+
+---
+# This policy allows the vpn-gateway to communicate over the default VXLAN port 4789
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vpn-gateway-vxlan
+  labels:
+    app.kubernetes.io/instance: &instance vpn-gateway
+    app.kubernetes.io/name: &name pod-gateway
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/instance: *instance
+      app.kubernetes.io/name: *name
+  egress:
     - toPorts:
         - ports:
-            - port: "67"
+            - port: "4789"
               protocol: UDP
-        - ports:
-            - port: "68"
-              protocol: UDP
-    # Allow VXLAN (dynamic port 0) by allowing all UDP to cluster pods
-    - toEntities:
-        - cluster
-        - host
-    # Allow ICMP for ping out
-    - toEntities:
-        - cluster
   ingress:
-    # Allow inbound DHCP
     - toPorts:
         - ports:
-            - port: "67"
+            - port: "4789"
               protocol: UDP
-        - ports:
-            - port: "68"
-              protocol: UDP
-    # Allow VXLAN traffic (any UDP) from cluster pods
-    - fromEntities:
-        - cluster
-        - host
-    # Allow ICMP echo
+    # Allow ICMP echo for basic troubleshooting (ping from/to gateway)
     - icmps:
         - fields:
             - type: 8
               family: IPv4
 ---
-# Admission webhook traffic (K8s API server -> pod-gateway)
+# Allow the admission webhook to receive traffic from the Kubernetes API server
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -68,8 +74,20 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: *instance
       app.kubernetes.io/name: *name
+  # Additive — default-deny is what triggers the lockdown; these rules
+  # punch holes through it.
+  enableDefaultDeny:
+    egress: false
+    ingress: false
   ingress:
-    - toPorts:
+    # MutatingWebhookConfiguration `gateway-admision-controller` is
+    # called by kube-apiserver on pod creation in any namespace
+    # labeled `routed-gateway`. Apiserver source carries the reserved
+    # `kube-apiserver` identity (NOT a pod identity), so a CIDR rule
+    # would silently drop in Cilium 1.19; use the entity selector.
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
         - ports:
             - port: "8080"
               protocol: TCP
