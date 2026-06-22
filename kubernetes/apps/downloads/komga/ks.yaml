@@ -14,6 +14,9 @@ spec:
       #   - ../../../../components/nfs-scaler
       #   - ../../../../components/volsync
   path: ./kubernetes/apps/downloads/komga/app
+  postBuild:
+    substitute:
+      APP_NAME: suwayomi
   prune: true
   sourceRef:
     kind: GitRepository
