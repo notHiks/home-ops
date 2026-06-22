@@ -1,3 +1,4 @@
+---
 machine:
   kernel:
     modules:
@@ -7,5 +8,3 @@ machine:
       - name: drbd_transport_tcp
       # LVM_THIN storage pools require this module
       - name: dm-thin-pool
-      # ZFS storage pools require this module from the ZFS extension
-      #- name: zfs

@@ -1,8 +1,10 @@
 ---
 version: '3'
 
-set: [pipefail]
-shopt: [globstar]
+set:
+  - pipefail
+shopt:
+  - globstar
 
 vars:
   BOOTSTRAP_DIR: '{{.ROOT_DIR}}/bootstrap'
@@ -15,6 +17,7 @@ vars:
 env:
   KUBECONFIG: '{{.ROOT_DIR}}/kubeconfig'
   SOPS_AGE_KEY_FILE: '{{.ROOT_DIR}}/age.key'
+  SOPS_CONFIG: '{{.ROOT_DIR}}/.sops.yaml'
   TALOSCONFIG: '{{.TALOSCONFIG}}'
 
 includes:
