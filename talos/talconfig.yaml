@@ -11,8 +11,10 @@ additionalApiServerCertSans: &sans
   - "cephiro.musai.ovh"
 additionalMachineCertSans: *sans
 
-clusterPodNets: ["10.42.0.0/16"]
-clusterSvcNets: ["10.43.0.0/16"]
+clusterPodNets:
+  - "10.42.0.0/16"
+clusterSvcNets:
+  - "10.43.0.0/16"
 
 # Disable built-in CNI to use Cilium
 cniConfig:
@@ -40,7 +42,7 @@ nodes:
           ip: "192.168.99.60"
   - hostname: "fuu-01"
     ipAddress: "192.168.99.21"
-    installDisk: "/dev/sdb"
+    installDisk: "/dev/sda"
     machineSpec:
       secureboot: false
     talosImageURL: factory.talos.dev/installer/ed8f512419f9237e2ee8a61b0323774dd935fdd41d51f33acf41f2df68517432
