@@ -27,11 +27,10 @@ parameters:
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
 mountOptions:
-  - soft                
-  - timeo=600           
+  - nfsvers=4.2
+  - hard
+  - timeo=600
   - retrans=3
-  - intr
-  - nfsvers=4.2         
   - noatime
   - nodiratime
 ---
