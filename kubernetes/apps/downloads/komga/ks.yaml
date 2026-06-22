@@ -16,7 +16,7 @@ spec:
   path: ./kubernetes/apps/downloads/komga/app
   postBuild:
     substitute:
-      APP_NAME: suwayomi
+      APP_NAME: *app
   prune: true
   sourceRef:
     kind: GitRepository
