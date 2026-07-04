@@ -13,6 +13,9 @@
 # Kubernetes
 kubeconfig
 talosconfig
+# Python
+__pycache__/
+*.py[cod]
 # Misc.
 docs/
 tests/
