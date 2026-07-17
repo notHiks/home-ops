@@ -18,12 +18,6 @@
 - search:
     provider: [duckduckgo, google]
     target: _blank
-#- openmeteo:
-#    latitude: "${SECRET_LATITUDE}"
-#    longitude: "${SECRET_LONGITUDE}"
-#    timezone: "${TIMEZONE}"
-#    units: imperial
-#    cache: 15
 - datetime:
     text_size: l
     format:

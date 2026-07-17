@@ -13,7 +13,7 @@ spec:
   path: ./kubernetes/apps/storage/volsync-system/kopia/app
   postBuild:
     substitute:
-      APP: kopia
+      APP_NAME: kopia
   prune: true
   sourceRef:
     kind: GitRepository
