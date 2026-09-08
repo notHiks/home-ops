@@ -24,6 +24,7 @@
       groupName: "mise tools",
       minimumReleaseAge: "3 days",
     },
+    {
       description: "Talos Group",
       groupName: "talos",
       matchPackageNames: ["siderolabs/talos"],
