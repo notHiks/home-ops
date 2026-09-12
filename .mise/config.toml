@@ -18,9 +18,15 @@ just = "1.58.0"
 kubeconform = "0.8.0"
 kubectl = "1.37.0"
 kustomize = "5.8.1"
+<<<<<<< HEAD
 lefthook = "2.1.10"
 node = "26.5.0"
 oxfmt = "0.60.0"
+=======
+lefthook = "2.1.12"
+node = "26.8.1"
+oxfmt = "0.67.0"
+>>>>>>> e39e5356 (feat(mise)!: Update tool oxfmt (0.66.0 ➔ 0.67.0))
 sops = "3.13.3"
 talhelper = "3.1.15"
 talosctl = "1.13.7"
