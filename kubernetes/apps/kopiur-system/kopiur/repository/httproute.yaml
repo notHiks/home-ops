@@ -1,0 +1,30 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: HTTPRoute
+metadata:
+  name: garage-s3-kopiur
+  namespace: network
+spec:
+  hostnames:
+    - kopiur.s3.musai.ovh
+  parentRefs:
+    - name: envoy-internal
+      namespace: network
+      sectionName: https
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              # Rewrite Kopia’s virtual-host request:
+              #   /<object>
+              # into Garage’s path-style:
+              #   /v1/s3/kopiur/<object>
+              replacePrefixMatch: "/v1/s3/kopiur"
+      backendRefs:
+        - name: garage
+          namespace: storage
+          port: 3900
