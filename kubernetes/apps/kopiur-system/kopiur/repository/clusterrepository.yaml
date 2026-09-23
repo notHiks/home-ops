@@ -17,7 +17,7 @@ spec:
       endpoint: kopiur.s3.musai.ovh
       region: eu-west-1
       tls:
-        disableTls: false
+        disableTls: true
   encryption:
     passwordSecretRef:
       name: kopiur-repository-secret
