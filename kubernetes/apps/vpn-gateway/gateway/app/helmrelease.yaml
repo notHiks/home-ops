@@ -197,17 +197,14 @@ spec:
         enabled: false
 
     # ==================== VPN Routing / Sidecar Injection Settings ====================
-    routed_namespaces: []
+    routed_namespaces:
+      - downloads
 
     # Inject VPN sidecar into ALL pods in the routed_namespaces. (true by default)
     gatewayDefault: false
 
     # No longer needed when gatewayDefault = true
     gatewayAnnotation: setGateway
-
-    # Force creation of the gateway ConfigMap so webhook does not fail
-    gatewayConfig:
-    enabled: true
 
     settings:
       # -- If using a VPN, interface name created by it
