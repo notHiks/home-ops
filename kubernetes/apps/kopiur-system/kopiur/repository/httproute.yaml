@@ -24,6 +24,7 @@ spec:
               #   /<object>
               # into Garage’s path-style:
               #   /v1/s3/kopiur/<object>
+              type: ReplacePrefixMatch
               replacePrefixMatch: "/v1/s3/kopiur"
       backendRefs:
         - name: garage
