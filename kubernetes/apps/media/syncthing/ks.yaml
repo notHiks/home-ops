@@ -20,9 +20,7 @@ spec:
   postBuild:
     substitute:
       APP: syncthing
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+      KOPIUR_CAPACITY: 50Gi
   prune: true
   sourceRef:
     kind: GitRepository
