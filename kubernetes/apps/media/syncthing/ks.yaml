@@ -9,9 +9,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  components:
-    - ../../../../components/kopiur/backup
-    - ../../../../components/zeroscaler
+  #  components:
+  #    - ../../../../components/kopiur/backup
+  #    - ../../../../components/zeroscaler
   dependsOn:
     - name: linstor
       namespace: flux-system
