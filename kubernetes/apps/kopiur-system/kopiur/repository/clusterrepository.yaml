@@ -15,7 +15,7 @@ spec:
           namespace: kopiur-system
       bucket: kopiur
       endpoint: kopiur.s3.musai.ovh
-      region: eu-west-1
+      region: eu-west-2
       tls:
         disableTls: true
   encryption:
