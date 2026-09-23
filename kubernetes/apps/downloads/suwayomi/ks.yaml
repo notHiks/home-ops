@@ -6,9 +6,9 @@ metadata:
   name: suwayomi
   namespace: downloads
 spec:
-  #components:
-  #  - ../../../../components/nfs-scaler
-  #  - ../../../../components/volsync
+  components:
+    - ../../../../components/kopiur/backup
+    - ../../../../components/zeroscaler
   dependsOn:
     - name: linstor
       namespace: flux-system
@@ -20,7 +20,6 @@ spec:
   postBuild:
     substitute:
       APP_NAME: suwayomi
-      VOLSYNC_CAPACITY: 2Gi
   prune: true
   sourceRef:
     kind: GitRepository
