@@ -3,7 +3,7 @@
 apiVersion: kopiur.home-operations.com/v1alpha1
 kind: ClusterRepository
 metadata:
-  name: expanse
+  name: cephiro
 spec:
   allowedNamespaces:
     all: true
@@ -14,8 +14,8 @@ spec:
           name: kopiur-repository-secret
           namespace: kopiur-system
       bucket: kopiur
-      endpoint: expanse.internal:9000
-      region: us-east-1
+      endpoint: http://192.168.99.19:3900
+      region: eu-west-1
       tls:
         disableTls: true
   encryption:
@@ -43,4 +43,4 @@ spec:
     epoch:
       minDuration: 1h
   scheduleDefaults:
-    timezone: America/New_York
+    timezone: Europe/london
