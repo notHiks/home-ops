@@ -19,7 +19,7 @@ spec:
   path: ./kubernetes/apps/downloads/suwayomi/app
   postBuild:
     substitute:
-      APP_NAME: suwayomi
+      APP: suwayomi
   prune: true
   sourceRef:
     kind: GitRepository
