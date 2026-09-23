@@ -14,7 +14,7 @@ spec:
           name: kopiur-repository-secret
           namespace: kopiur-system
       bucket: kopiur
-      endpoint: kopiur.s3.musai.ovh
+      endpoint: http://192.168.99.19:3900
       region: eu-west-2
       tls:
         disableTls: true
