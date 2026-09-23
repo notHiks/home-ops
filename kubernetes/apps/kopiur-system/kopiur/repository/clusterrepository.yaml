@@ -43,4 +43,4 @@ spec:
     epoch:
       minDuration: 1h
   scheduleDefaults:
-    timezone: Europe/london
+    timezone: Europe/London
