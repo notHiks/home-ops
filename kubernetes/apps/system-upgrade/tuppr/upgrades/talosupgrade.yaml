@@ -6,10 +6,18 @@ metadata:
   name: talos
 spec:
   talos:
-    # renovate: datasource=custom.talos-factory depName=siderolabs/talos
+    # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
     version: v1.14.1
+
+  parallelism: 1
+
   policy:
     rebootMode: powercycle
+    drainTimeout: 10m
+    timeout: 30m
+    force: false
+    nodrain: false
+
   healthChecks:
     - apiVersion: volsync.backube/v1alpha1
       kind: ReplicationSource
