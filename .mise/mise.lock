@@ -621,6 +621,9 @@ url_api = "https://api.github.com/repos/budimanjojo/talhelper/releases/assets/53
 [[tools.talosctl]]
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/main
 version = "1.14.1"
 backend = "aqua:siderolabs/talos"
 
@@ -646,6 +649,7 @@ provenance = "cosign"
 checksum = "sha256:8cb8654c7af2be501667fccb6a4879b91c213101d83b49fe59e1a1e4e70ed5f4"
 url = "https://github.com/siderolabs/talos/releases/download/v1.14.1/talosctl-darwin-amd64"
 url_api = "https://api.github.com/repos/siderolabs/talos/releases/assets/566050751"
+<<<<<<< HEAD
 =======
 version = "1.14.0"
 =======
@@ -682,6 +686,8 @@ checksum = "sha256:8cb8654c7af2be501667fccb6a4879b91c213101d83b49fe59e1a1e4e70ed
 url = "https://github.com/siderolabs/talos/releases/download/v1.14.1/talosctl-darwin-amd64"
 url_api = "https://api.github.com/repos/siderolabs/talos/releases/assets/566050751"
 >>>>>>> a1b179a2 (fix(container): update talos group)
+=======
+>>>>>>> origin/main
 provenance = "cosign"
 
 [[tools.yq]]
