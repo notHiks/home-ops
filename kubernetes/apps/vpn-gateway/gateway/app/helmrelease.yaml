@@ -205,6 +205,10 @@ spec:
     # No longer needed when gatewayDefault = true
     gatewayAnnotation: setGateway
 
+    # Force creation of the gateway ConfigMap so webhook does not fail
+    gatewayConfig:
+    enabled: true
+
     settings:
       # -- If using a VPN, interface name created by it
       VPN_INTERFACE: wg0
