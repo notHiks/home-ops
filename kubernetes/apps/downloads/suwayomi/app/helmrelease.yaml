@@ -76,7 +76,6 @@ spec:
                 cpu: 500m
                 memory: 2Gi
 
-
           # Image Converter
         #  suwayomi-converter:
         #    image:
@@ -88,42 +87,42 @@ spec:
         #    ports:
         #      - containerPort: 5678
 
-          #  probes:
-          #    # Readiness: App is ready to serve traffic
-          #    readiness:
-          #      enabled: true
-          #      custom: true
-          #      spec:
-          #        httpGet:
-          #          path: /api/v1/ping
-          #          port: 4567
-          #        initialDelaySeconds: 30
-          #        periodSeconds: 30
-          #        failureThreshold: 5
+        #  probes:
+        #    # Readiness: App is ready to serve traffic
+        #    readiness:
+        #      enabled: true
+        #      custom: true
+        #      spec:
+        #        httpGet:
+        #          path: /api/v1/ping
+        #          port: 4567
+        #        initialDelaySeconds: 30
+        #        periodSeconds: 30
+        #        failureThreshold: 5
 
-              # Liveness: App is still alive
-          #   liveness:
-           #     enabled: true
-           #     custom: true
-           #     spec:
-           #       httpGet:
-           #         path: /api/v1/ping
-           #         port: 4567
-           #       initialDelaySeconds: 60
-           #       periodSeconds: 60
-           #       failureThreshold: 8
+        # Liveness: App is still alive
+        #   liveness:
+        #     enabled: true
+        #     custom: true
+        #     spec:
+        #       httpGet:
+        #         path: /api/v1/ping
+        #         port: 4567
+        #       initialDelaySeconds: 60
+        #       periodSeconds: 60
+        #       failureThreshold: 8
 
-              # Startup: Give time for database + NFS mount
-             # startup:
-             #   enabled: true
-             #   custom: true
-             #   spec:
-             #     httpGet:
-             #       path: /api/v1/ping
-             #       port: 4567
-             #     initialDelaySeconds: 45
-             #     periodSeconds: 10
-             #     failureThreshold: 60   # ~10 minutes total
+        # Startup: Give time for database + NFS mount
+        # startup:
+        #   enabled: true
+        #   custom: true
+        #   spec:
+        #     httpGet:
+        #       path: /api/v1/ping
+        #       port: 4567
+        #     initialDelaySeconds: 45
+        #     periodSeconds: 10
+        #     failureThreshold: 60   # ~10 minutes total
     service:
       app:
         controller: suwayomi
@@ -159,7 +158,7 @@ spec:
       config:
         enabled: true
         type: persistentVolumeClaim
-        existingClaim: ${APP_NAME}
+        existingClaim: ${APP}
         globalMounts:
           - path: /home/suwayomi/.local/share/Tachidesk
 
