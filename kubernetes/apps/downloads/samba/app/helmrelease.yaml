@@ -22,7 +22,7 @@ spec:
         pod:
           nodeSelector:
             kubernetes.io/hostname: fuu-01
-          terminationGracePeriodSeconds: 60
+          terminationGracePeriodSeconds: 120
           annotations:
             setGateway: "false"
             reloader.stakater.com/auto: "true"
