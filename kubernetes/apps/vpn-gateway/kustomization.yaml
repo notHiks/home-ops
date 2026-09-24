@@ -6,4 +6,4 @@ namespace: vpn-gateway
 components:
   - ../../components/common
 resources:
-  - ./gateway/ks.yaml
+#  - ./gateway/ks.yaml
