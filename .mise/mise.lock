@@ -78,9 +78,10 @@ backend = "core:node"
 specifiers = ["26.9.0"]
 
 [[tools.oxfmt]]
-version = "0.68.0"
+version = "0.70.0"
+aube = { path = "locks/oxfmt/0.70.0", digest = "sha256:6f43444e29a288a4c8eaae0fd4842397419f6bde12beb04d2be2216a275f96e2" }
 backend = "npm:oxfmt"
-specifiers = ["0.68.0"]
+specifiers = ["0.70.0"]
 
 [[tools.sops]]
 version = "3.13.3"
