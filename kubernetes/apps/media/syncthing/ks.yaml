@@ -15,7 +15,8 @@ spec:
   dependsOn:
     - name: linstor
       namespace: flux-system
-  interval: 30m
+  interval: 1h
+  patches: []
   path: ./kubernetes/apps/media/syncthing/app
   postBuild:
     substitute:
@@ -31,4 +32,4 @@ spec:
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: false
+  wait: true

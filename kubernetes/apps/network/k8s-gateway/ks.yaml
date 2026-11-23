@@ -5,6 +5,7 @@ metadata:
   name: k8s-gateway
 spec:
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/network/k8s-gateway/app
   postBuild:
     substituteFrom:
@@ -16,4 +17,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: network
-  wait: false

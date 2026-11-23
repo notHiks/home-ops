@@ -22,6 +22,10 @@ spec:
               cpu: 300m
               memory: 256Mi
       envoyService:
+        # Cilium serves the LoadBalancer IP itself; NodePorts would only open
+        # the gateways on every node address. Gateways whose class forwards
+        # to NodePorts turn them back on below.
+        allocateLoadBalancerNodePorts: false
         externalTrafficPolicy: Cluster
   shutdown:
     drainTimeout: 180s
@@ -119,7 +123,9 @@ spec:
     numRetries: 2
     retryOn:
       triggers:
-        - reset
+        - connect-failure
+        - refused-stream
+        - reset-before-request
   targetSelectors:
     - group: gateway.networking.k8s.io
       kind: Gateway

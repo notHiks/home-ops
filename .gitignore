@@ -15,14 +15,13 @@ talosconfig.*
 __pycache__/
 *.py[cod]
 # Misc.
-.claude/
 docs/
 tests/
 .claude/
 .private/
 .venv/
 .DS_Store
+.sopsrc
 Thumbs.db
 /talos/output/
 /talos/rendered/
-.sopsrc
