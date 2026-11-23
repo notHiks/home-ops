@@ -1,0 +1,160 @@
+[tasks.talos]
+description = "Bootstrap the Talos cluster"
+run = [
+  { task = ":talos-secret" },
+  { task = ":talos-preflight" },
+  { task = ":talos-apply" },
+  { task = ":talos-talosconfig" },
+  { task = ":talos-kubeconfig" },
+]
+
+[tasks.apps]
+description = "Bootstrap apps into the Talos cluster"
+run = [
+  { task = ":apps-ready" },
+  { task = ":apps-namespaces" },
+  { task = ":apps-secrets" },
+  { task = ":apps-crds" },
+  { task = ":apps-helm" },
+  'mise run //:log info "Cluster is bootstrapped — Flux will start syncing the Git repository"',
+]
+
+# No sops call or existence guard is needed: the bundle is stored already
+# encrypted with the repo's age recipient, and existing bundles are left
+# untouched.
+[tasks.talos-secret]
+hide = true
+dir = "{{ config_root }}/../talos"
+run = '''
+mise run //:log info "Generating secrets" stage "$MISE_TASK_NAME"
+topf secrets --confirm=false > /dev/null
+'''
+
+# topf bootstraps the first controller. If it was reset while another one
+# still runs etcd, --auto-bootstrap would start a second etcd cluster on it.
+# Unreachable nodes report stage "unknown"; topf apply aborts on them anyway.
+[tasks.talos-preflight]
+hide = true
+dir = "{{ config_root }}/../talos"
+run = '''
+mise run //:log info "Checking controller state" stage "$MISE_TASK_NAME"
+if ! first="$(topf nodes --output yaml | yq '
+    map(select(.node.role == "control-plane"))
+    | select(.[0].machinestatus.stage == "maintenance")
+    | select(.[1:] | any_c(.machinestatus.stage != "maintenance" and .machinestatus.stage != "unknown"))
+    | .[0].node.host
+')"; then
+    mise run //:log fatal "Failed to query the nodes"
+fi
+if [[ -n "$first" ]]; then
+    mise run //:log fatal "Cluster is already bootstrapped; re-join the node with mise run //talos:apply-node $first" node "$first"
+fi
+'''
+
+# Nodes stay NotReady until the apps step installs the CNI, so topf's
+# readiness pre-flight and post-apply checks would fail a re-run.
+[tasks.talos-apply]
+hide = true
+dir = "{{ config_root }}/../talos"
+run = '''
+mise run //:log info "Applying talos config and bootstrapping" stage "$MISE_TASK_NAME"
+topf apply --auto-bootstrap --allow-not-ready --skip-post-apply-checks --confirm=false
+'''
+
+# Both configs are admin credentials: mktemp creates them owner-only, and the
+# mv keeps a working file in place when topf fails.
+[tasks.talos-talosconfig]
+hide = true
+dir = "{{ config_root }}/../talos"
+run = '''
+mise run //:log info "Generating talosconfig" stage "$MISE_TASK_NAME"
+tmp="$(mktemp talosconfig.XXXXXX)"
+trap 'rm -f "$tmp"' EXIT
+topf talosconfig > "$tmp"
+mv "$tmp" talosconfig
+'''
+
+# topf issues short-lived admin certs by default; 8760h keeps the
+# kubeconfig usable long-term.
+[tasks.talos-kubeconfig]
+hide = true
+dir = "{{ config_root }}/../talos"
+run = '''
+mise run //:log info "Fetching kubeconfig" stage "$MISE_TASK_NAME"
+tmp="$(mktemp "$MISE_MONOREPO_ROOT/kubeconfig.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+topf kubeconfig --validity 8760h > "$tmp"
+mv "$tmp" "$MISE_MONOREPO_ROOT/kubeconfig"
+'''
+
+[tasks.apps-crds]
+hide = true
+run = '''
+mise run //:log info "Applying CRDs" stage "$MISE_TASK_NAME"
+if ! helmfile --file helmfile/crds.yaml template --quiet | yq eval-all --exit-status 'select(.kind == "CustomResourceDefinition")' | kubectl apply --server-side --force-conflicts --filename -; then
+    mise run //:log fatal "Failed to apply crds"
+fi
+'''
+
+[tasks.apps-helm]
+hide = true
+run = '''
+mise run //:log info "Syncing helmfile" stage "$MISE_TASK_NAME"
+if ! helmfile --file helmfile/apps.yaml sync --hide-notes; then
+    mise run //:log fatal "Failed to sync helmfile"
+fi
+'''
+
+[tasks.apps-namespaces]
+hide = true
+run = '''
+mise run //:log info "Applying namespaces for apps" stage "$MISE_TASK_NAME"
+for app in ../kubernetes/apps/*/; do
+    ns="$(basename "$app")"
+    if kubectl create namespace "$ns" --dry-run=client -o yaml \
+            | kubectl apply --server-side --filename - &>/dev/null; then
+        mise run //:log info "Namespace applied" namespace "$ns"
+    else
+        mise run //:log fatal "Failed to apply namespace" namespace "$ns"
+    fi
+done
+'''
+
+[tasks.apps-secrets]
+hide = true
+run = '''
+mise run //:log info "Applying secrets for apps" stage "$MISE_TASK_NAME"
+if [[ -e deploy-key.sops.yaml ]]; then
+    mise run //:log warn "Secret ignored, repository is not ssh://; delete the stale file" resource deploy-key
+fi
+for secret in \
+    sops-age.sops.yaml \
+    ../kubernetes/components/sops/cluster-secrets.sops.yaml
+do
+    name="$(basename "$secret" .sops.yaml)"
+    if sops decrypt "$secret" \
+            | kubectl --namespace flux-system apply --server-side --filename - &>/dev/null; then
+        mise run //:log info "Secret applied" resource "$name"
+    else
+        mise run //:log fatal "Failed to apply secret" resource "$name"
+    fi
+done
+'''
+
+# Wait until at least one node has registered with the API server. Nodes
+# stay Ready=False until the CNI is installed, and on a re-run they may be
+# in any mix of Ready=True/False/Unknown, so only their existence is checked;
+# the CNI DaemonSet picks up nodes that register later.
+[tasks.apps-ready]
+hide = true
+run = '''
+mise run //:log info "Waiting for nodes to register" stage "$MISE_TASK_NAME"
+deadline=$((SECONDS + 600))
+until [[ -n "$(kubectl get nodes --output=name --request-timeout=10s 2>/dev/null)" ]]; do
+    if (( SECONDS >= deadline )); then
+        mise run //:log fatal "Timed out waiting for nodes to register"
+    fi
+    mise run //:log info "No nodes registered yet. Retrying in 5 seconds..."
+    sleep 5
+done
+'''
