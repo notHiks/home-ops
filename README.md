@@ -9,7 +9,7 @@ At its core, this project uses [makejinja](https://github.com/mirkolenz/makejinj
 A Kubernetes cluster deployed with [Talos Linux](https://github.com/siderolabs/talos) and an opinionated implementation of [Flux](https://github.com/fluxcd/flux2) syncing from the Git provider of your choice (GitHub, GitLab, Gitea, Forgejo, Codeberg or self-hosted), [sops](https://github.com/getsops/sops) to manage secrets and [cloudflared](https://github.com/cloudflare/cloudflared) to access applications external to your local network.
 
 - **Required:** Some knowledge of [Containers](https://opencontainers.org/), [YAML](https://noyaml.com/), [Git](https://git-scm.com/), and a **domain**. Exposing apps to the public internet requires a **Cloudflare account**; internal-only clusters don't.
-- **Included components:** [flux](https://github.com/fluxcd/flux2), [cilium](https://github.com/cilium/cilium), [cert-manager](https://github.com/cert-manager/cert-manager), [spegel](https://github.com/spegel-org/spegel), [reloader](https://github.com/stakater/Reloader), [coredns](https://github.com/coredns/coredns), [metrics-server](https://github.com/kubernetes-sigs/metrics-server), [k8s_gateway](https://github.com/k8s-gateway/k8s_gateway), [envoy-gateway](https://github.com/envoyproxy/gateway), [external-dns](https://github.com/kubernetes-sigs/external-dns) and [cloudflared](https://github.com/cloudflare/cloudflared).
+- **Included components:** [flux](https://github.com/fluxcd/flux2), [cilium](https://github.com/cilium/cilium), [cert-manager](https://github.com/cert-manager/cert-manager), [spegel](https://github.com/spegel-org/spegel), [reloader](https://github.com/stakater/Reloader), [coredns](https://github.com/coredns/coredns), [metrics-server](https://github.com/kubernetes-sigs/metrics-server) and [prometheus-operator-crds](https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-operator-crds). The template also includes [k8s_gateway](https://github.com/k8s-gateway/k8s_gateway), [envoy-gateway](https://github.com/envoyproxy/gateway), [external-dns](https://github.com/kubernetes-sigs/external-dns) and [cloudflared](https://github.com/cloudflare/cloudflared) for DNS and ingress.
 
 **Other features include:**
 
@@ -101,6 +101,9 @@ These guidelines are a baseline, not a guarantee: **test and benchmark** your ha
 > [!TIP]
 > **Internal-only cluster?** Set `provider = "none"` under `[dns]` in `cluster.toml` and skip this stage entirely: no Cloudflare account, API token, or `cloudflare-tunnel.json` is needed. Nothing is exposed to the internet, apps are reachable on your LAN via the internal gateway, and the wildcard certificate is issued by an in-cluster self-signed CA instead of Let's Encrypt.
 
+> [!TIP]
+> **Public cluster on another DNS host?** Set `provider = "none"` under `[dns]` and `mode = "direct"` under `[ingress]`, and skip this stage. Instead, forward TCP 443 (and optionally 80) on your router to the `gateways.external` IP, point `external.<domain>` at your WAN address and create the per-app records yourself (e.g. a `*.<domain>` CNAME to `external.<domain>`). The wildcard certificate then comes from the in-cluster CA, which public clients and Git webhooks do not trust (so `webhook_provider` defaults to `"none"`); for a trusted one, bring your own ClusterIssuer and set `cluster_issuer` under `[certs]` as described in `cluster.sample.toml`.
+
 1. Create a Cloudflare API token for use with cloudflared and external-dns by reviewing the official [documentation](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/) and following the instructions below.
 
     - Click the blue `Use template` button for the `Edit zone DNS` template.
@@ -116,7 +119,7 @@ These guidelines are a baseline, not a guarantee: **test and benchmark** your ha
     cloudflared tunnel create --credentials-file cloudflare-tunnel.json kubernetes
     ```
 
-    📍 _**Prefer port-forwarding over a tunnel?** Set `mode = "direct"` under `[ingress]` in `cluster.toml` and skip this step: no `cloudflare-tunnel.json` is needed. Instead, forward TCP 443 (and optionally 80) on your router to the `gateways.external` IP, and create an `external.<domain>` DNS record yourself pointing at your WAN address (an A record, or a CNAME to a DDNS hostname). Per-app records are still published automatically._
+    📍 _**Prefer port-forwarding over a tunnel?** Set `mode = "direct"` under `[ingress]` in `cluster.toml` and skip this step: no `cloudflare-tunnel.json` is needed. Instead, forward TCP 443 (and optionally 80) on your router to the external gateway's address (the `gateways.external` IP, or a node IP when it uses `load_balancer_class = "io.cilium/node"`; with `cilium.announce` set to `"bgp"` or `"none"` your router must route that address to the nodes), and create an `external.<domain>` DNS record yourself pointing at your WAN address (an A record, or a CNAME to a DDNS hostname). Per-app records are still published automatically._
 
 ### Stage 5: Cluster configuration
 
@@ -217,12 +220,12 @@ These guidelines are a baseline, not a guarantee: **test and benchmark** your ha
 
 ### 🌐 Public DNS
 
-📍 _Only applies when `ingress.mode` is `"cloudflare-tunnel"` or `"direct"`. With `"none"` there is no `envoy-external` gateway or public DNS: `echo` and `flux-webhook` use `envoy-internal` and resolve only through [Home DNS](#-home-dns)._
+📍 _Only applies when `ingress.mode` is `"cloudflare-tunnel"` or `"direct"`. With `"none"` there is no `envoy-external` gateway or public DNS: `echo` uses `envoy-internal` and resolves only through [Home DNS](#-home-dns), and `flux-webhook` is skipped unless you set `webhook_provider` explicitly (e.g. for a Git host on your LAN)._
 
 > [!TIP]
 > Use the `envoy-external` gateway on `HTTPRoutes` to make applications public to the internet. These are also accessible on your private network once you set up split DNS.
 
-The `cloudflare-dns` application ([external-dns](https://github.com/kubernetes-sigs/external-dns)) in the `network` namespace will handle creating public DNS records. By default, `echo` and the `flux-webhook` are the only subdomains reachable from the public internet. In order to make additional applications public you must **set the correct gateway** like in the HelmRelease for `echo`.
+With `dns.provider = "cloudflare"`, the `cloudflare-dns` application ([external-dns](https://github.com/kubernetes-sigs/external-dns)) in the `network` namespace will handle creating public DNS records; with `"none"` you create them at your DNS host yourself. By default, `echo` and `flux-webhook` (unless `webhook_provider = "none"`) are the only subdomains reachable from the public internet. In order to make additional applications public you must **set the correct gateway** like in the HelmRelease for `echo`.
 
 ### 🏠 Home DNS
 
@@ -237,7 +240,9 @@ _... Nothing working? That is expected, this is DNS after all!_
 
 By default Flux will periodically check your git repository for changes. In-order to have Flux reconcile on `git push` you must configure your Git provider to send `push` events to Flux.
 
-📍 _Don't want a webhook, or your Git provider can't reach the cluster? Set `webhook_provider = "none"` in `cluster.toml` and skip this section; Flux will keep polling on an interval._
+📍 _Don't want a webhook, or your Git provider can't reach the cluster? Set `webhook_provider = "none"` in `cluster.toml` and skip this section; Flux will keep polling on an interval. It already defaults to `"none"` when `ingress.mode` is `"none"` or the wildcard certificate comes from the in-cluster CA._
+
+📍 _For a Git host on your LAN with an internal-only cluster, set `webhook_provider` explicitly. `flux-webhook` is then served on `envoy-internal`: the Git host must resolve it through [Home DNS](#-home-dns), and with `dns.provider = "none"` it must trust the cluster's internal CA. Self-hosted Gitea/Forgejo also need `flux-webhook.<domain>` added to `[webhook] ALLOWED_HOST_LIST`, since private addresses are blocked by default._
 
 1. Obtain the webhook path:
 
@@ -257,7 +262,7 @@ By default Flux will periodically check your git repository for changes. In-orde
 
     - **GitHub**: under "Settings/Webhooks" press the "Add webhook" button. Fill in the webhook URL, paste the token as the secret, Content type: `application/json`, Events: Choose Just the push event, and save.
     - **GitLab**: under "Settings/Webhooks" fill in the webhook URL, paste the token as the secret token, check the push events trigger, and save. Also set `webhook_provider = "gitlab"` in `cluster.toml`.
-    - **Gitea/Forgejo**: under "Settings/Webhooks" add a **Gitea/Forgejo** webhook with the webhook URL, method `POST`, content type `application/json`, paste the token as the secret, trigger on push events, and save. Keep the default `webhook_provider = "github"` since these providers emulate GitHub webhooks.
+    - **Gitea/Forgejo**: under "Settings/Webhooks" add a **Gitea/Forgejo** webhook with the webhook URL, method `POST`, content type `application/json`, paste the token as the secret, trigger on push events, and save. Use `webhook_provider = "github"` since these providers emulate GitHub webhooks; set it explicitly on internal-only clusters, where the default is `"none"`.
 
 ### 🤖 Renovate
 
@@ -302,6 +307,30 @@ mise run //talos:apply-node <node>
 # e.g. mise run //talos:apply-node k8s-0
 ```
 
+### 🧩 Adding your own Talos patches
+
+[topf](https://postfinance.github.io/topf/main/configuration-model/) merges every patch it finds in these directories under `talos/`, in this order and alphabetically within each, later patches taking precedence:
+
+- `all/`: every node
+- `control-plane/` or `worker/`: nodes with that role
+- `node/<hostname>/`: a single node
+
+Files ending in `.yaml` are strategic merge patches, `.yaml.tpl` files are Go templates that can read `data:` from `topf.yaml` (`.Data.<key>`, `.Node.Data.<key>`), SOPS-encrypted files are decrypted automatically and comment-only files are skipped.
+
+> [!IMPORTANT]
+> `mise run configure` overwrites the files it renders (including `topf.yaml`) but leaves files you add alone, so give your patches names the template doesn't use, such as a `99-` prefix. After `mise run //template:tidy` nothing is re-rendered.
+
+```yaml
+# talos/all/99-local-sysctls.yaml
+---
+apiVersion: v1alpha1
+kind: SysctlConfig
+params:
+    vm.max_map_count: "262144"
+```
+
+`mise run configure` renders every node's config and fails on an invalid patch or machine config. Check the result with `mise run //talos:diff`, then apply it as shown [above](#️-updating-talos-node-configuration).
+
 ### ⬆️ Updating Talos and Kubernetes versions
 
 > [!TIP]
@@ -318,6 +347,9 @@ mise run //talos:upgrade-node <node>
 mise run //talos:upgrade-k8s
 ```
 
+> [!IMPORTANT]
+> After a `kubernetesVersion` bump in `topf.yaml` (e.g. from a Renovate PR), run `mise run //talos:upgrade-k8s` **before** any `//talos:apply` or `//talos:apply-node`. An apply pushes the new version straight into the machine configs without `upgrade-k8s`'s version skew and readiness checks.
+
 ### ➕ Adding a node to your cluster
 
 At some point you might want to expand your cluster to run more workloads and/or improve the reliability of your cluster. Keep in mind it is recommended to have an **odd number** of control plane nodes for quorum reasons.
@@ -333,7 +365,13 @@ You don't need to re-bootstrap the cluster to add new nodes. Follow these steps:
     talosctl get links -n <ip> --insecure
     ```
 
-3. **Update the configuration**: Read the documentation for [topf](https://postfinance.github.io/topf/) and extend `topf.yaml` (and any `node/<hostname>/` patches) manually with the new node information (including the disk and MAC address from step 2).
+3. **Update the configuration**: Add a `[[nodes]]` entry for the new node to `cluster.toml` (including the disk and MAC address from step 2) and re-render:
+
+    ```sh
+    mise run configure
+    ```
+
+    After `mise run //template:tidy` there is no `cluster.toml` any more: read the documentation for [topf](https://postfinance.github.io/topf/) and extend `talos/topf.yaml` (and any `node/<hostname>/` patches) manually instead.
 
 4. **Apply the configuration**:
 
@@ -348,16 +386,38 @@ You don't need to re-bootstrap the cluster to add new nodes. Follow these steps:
 
 The node should join the cluster automatically and workloads will be scheduled once they report as ready.
 
+### 💾 Backing up etcd
+
+etcd holds the whole cluster state, and with a single control-plane node there is no other copy. Take a snapshot before risky changes:
+
+```sh
+mise run //talos:etcd-snapshot
+# or write it elsewhere: mise run //talos:etcd-snapshot /path/to/etcd.snapshot
+```
+
+Snapshots go to `.private/etcd/` by default, which is not committed. They contain every Kubernetes Secret, encrypted with the key in `talos/secrets.sops.yaml`, so restoring needs that same file. To restore, follow Talos' [disaster recovery guide](https://docs.siderolabs.com/talos/v1.14/build-and-extend-talos/cluster-operations-and-maintenance/disaster-recovery) (`talosctl bootstrap --recover-from`). Persistent volume data is not included.
+
+### 🔑 Renewing admin credentials
+
+The admin certificates in `talos/talosconfig` and `kubeconfig` expire after a year. Both are signed locally from `talos/secrets.sops.yaml`, so they can be renewed at any time, even after they have expired:
+
+```sh
+mise run //talos:talosconfig
+mise run //talos:kubeconfig
+```
+
 ### 💥 Reset
 
 > [!CAUTION]
 > **Resetting** the cluster **multiple times in a short period of time** could lead to being **rate limited by DockerHub or Let's Encrypt**.
 
-There might be a situation where you want to destroy your Kubernetes cluster. The following command will reset your nodes back to maintenance mode.
+There might be a situation where you want to destroy your Kubernetes cluster. The following command will reset your nodes back to maintenance mode, after which `mise run //bootstrap:talos` can set the cluster up again.
 
 ```sh
 mise run //talos:reset
 ```
+
+To take a single node out of a running cluster, `mise run //talos:reset-node <node>` drains it and removes it from etcd first; add `--force` to skip that for the last control plane node or a broken cluster. Both tasks only wipe the `STATE` and `EPHEMERAL` partitions, so the installed Talos boots back into maintenance mode. Bring a single node back with `mise run //talos:apply-node <node>`; `//bootstrap:talos` is only for a new cluster and refuses to run when the first control plane node was reset but others were not, as that would start a second etcd cluster.
 
 ## 🐛 Debugging
 
@@ -402,6 +462,10 @@ Resolving problems that you have could take some tweaking of your YAML manifests
 ## ❔ What's next
 
 There's a lot to absorb here, especially if you're new to these tools, so take time to learn how the components fit together and read their documentation. This shouldn't be a production environment yet: experiment, break things intentionally, and challenge yourself to fix them. Below are some optional considerations you may want to explore.
+
+### Applications
+
+When you add an application, copy an existing `ks.yaml` such as `kubernetes/apps/default/echo/ks.yaml`. Each Flux `Kustomization` must set `spec.patches`, even as `patches: []`, because Flux adds the `HelmRelease` defaults to this list. If one `Kustomization` omits it, the `flux-system` Kustomization fails to build and Flux does not apply changes under `kubernetes/apps`. The error is `add operation does not apply: doc is missing path: "/spec/patches/0": missing value`.
 
 ### DNS
 

@@ -5,13 +5,14 @@ kind: Kustomization
 metadata:
   name: prowlarr
 spec:
-#  components:
-#    - ../../../../components/volsync
-#    - ../../../../components/zeroscaler
+  #  components:
+  #    - ../../../../components/volsync
+  #    - ../../../../components/zeroscaler
   dependsOn:
     - name: linstor
       namespace: flux-system
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/downloads/prowlarr/app
   postBuild:
     substitute:
@@ -22,4 +23,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: downloads
-  wait: false

@@ -1,10 +1,22 @@
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool
 metadata:
   name: pool
 spec:
   allowFirstLastIPs: "No"
+  # Only the gateway VIPs, and only for the gateway Services: handing out
+  # node_cidr addresses would let a new LoadBalancer Service claim (and
+  # announce) the router, a node or a DHCP client's IP, and an open pool
+  # would let it take a gateway VIP first. For your own LoadBalancer
+  # Services, add a second pool with a free range and no serviceSelector;
+  # existing ones lose their node_cidr address until it covers them.
+  serviceSelector:
+    matchExpressions:
+      - { key: io.kubernetes.service.namespace, operator: In, values: ["network"] }
+      - key: io.kubernetes.service.name
+        operator: In
+        values: ["envoy-external", "envoy-internal", "k8s-gateway"]
   blocks:
     - cidr: "192.168.99.0/24"
 ---
@@ -16,13 +28,14 @@ spec:
   loadBalancerIPs: true
   # NOTE: interfaces might need to be set if you have more than one active NIC on your hosts
   # interfaces:
+  #   - ^bond[0-9]+
   #   - ^eno[0-9]+
   #   - ^eth[0-9]+
   nodeSelector:
     matchLabels:
       kubernetes.io/os: linux
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumBGPAdvertisement
 metadata:
   name: bgp-advertisement-config
@@ -36,9 +49,9 @@ spec:
           - LoadBalancerIP
       selector:
         matchExpressions:
-          - {key: somekey, operator: NotIn, values: ["never-used-value"]}
+          - { key: somekey, operator: NotIn, values: ["never-used-value"] }
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumBGPPeerConfig
 metadata:
   name: bgp-peer-config-v4
@@ -50,7 +63,7 @@ spec:
         matchLabels:
           advertise: bgp
 ---
-apiVersion: cilium.io/v2alpha1
+apiVersion: cilium.io/v2
 kind: CiliumBGPClusterConfig
 metadata:
   name: bgp-cluster-config

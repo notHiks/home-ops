@@ -23,12 +23,64 @@ spec:
         kind: GitRepository
         url: "https://github.com/notHiks/home-ops.git"
         ref: "refs/heads/main"
-        path: kubernetes/flux/cluster
+        path: kubernetes/apps
       commonMetadata:
         labels:
           app.kubernetes.io/name: flux
       kustomize:
         patches:
+          # Every child must set spec.patches, even to [], or the build fails for the whole tree
+          # Prepending lets a child's own patches override the HelmRelease defaults
+          - # Decrypt SOPS secrets and add defaults for all child Kustomizations
+            patch: |-
+              - op: add
+                path: /spec/decryption
+                value:
+                  provider: sops
+              - op: add
+                path: /spec/deletionPolicy
+                value: WaitForTermination
+              - op: add
+                path: /spec/patches
+                value:
+                  - patch: |-
+                      - op: add
+                        path: /spec/decryption
+                        value:
+                          provider: sops
+                      - op: add
+                        path: /spec/deletionPolicy
+                        value: WaitForTermination
+                      - op: add
+                        path: /spec/patches/0
+                        value:
+                          patch: |-
+                            apiVersion: helm.toolkit.fluxcd.io/v2
+                            kind: HelmRelease
+                            metadata:
+                              name: _
+                            spec:
+                              install:
+                                crds: CreateReplace
+                                strategy:
+                                  name: RetryOnFailure
+                              rollback:
+                                cleanupOnFail: true
+                              upgrade:
+                                cleanupOnFail: true
+                                crds: CreateReplace
+                                remediation:
+                                  retries: 2
+                          target:
+                            group: helm.toolkit.fluxcd.io
+                            kind: HelmRelease
+                    target:
+                      group: kustomize.toolkit.fluxcd.io
+                      kind: Kustomization
+            target:
+              group: kustomize.toolkit.fluxcd.io
+              kind: Kustomization
+              name: flux-system
           - # Increase the number of workers
             patch: |
               - op: add
@@ -40,7 +92,7 @@ spec:
             target:
               kind: Deployment
               name: (kustomize-controller|helm-controller|source-controller)
-          - # Increase the memory limits
+          - # Increase the memory limits - Orginal value 1Gi
             patch: |
               apiVersion: apps/v1
               kind: Deployment
@@ -61,11 +113,14 @@ spec:
             target:
               kind: Deployment
               name: (kustomize-controller|helm-controller|source-controller)
-          - # Enable in-memory kustomize builds
+          - # Increase the number of workers and enable in-memory kustomize builds
             patch: |
               - op: add
                 path: /spec/template/spec/containers/0/args/-
                 value: --concurrent=20
+              - op: add
+                path: /spec/template/spec/containers/0/args/-
+                value: --requeue-dependency=5s
               - op: replace
                 path: /spec/template/spec/volumes/0
                 value:
