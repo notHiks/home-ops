@@ -14,11 +14,6 @@ spec:
     instance:
       cluster:
         networkPolicy: false
-      components:
-        - source-controller
-        - kustomize-controller
-        - helm-controller
-        - notification-controller
       sync:
         kind: GitRepository
         url: "https://github.com/notHiks/home-ops.git"
@@ -91,7 +86,7 @@ spec:
                 value: --requeue-dependency=5s
             target:
               kind: Deployment
-              name: (kustomize-controller|helm-controller|source-controller)
+              name: (helm-controller|source-controller)
           - # Increase the memory limits - Orginal value 1Gi
             patch: |
               apiVersion: apps/v1
