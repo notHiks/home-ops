@@ -13,6 +13,8 @@ spec:
       # components:
       #   - ../../../../components/nfs-scaler
       #   - ../../../../components/volsync
+  interval: 1h
+  patches: []
   path: ./kubernetes/apps/downloads/komga/app
   postBuild:
     substitute:
@@ -22,8 +24,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  wait: false
-  interval: 1h
-  patches: []
   retryInterval: 1m
   timeout: 5m

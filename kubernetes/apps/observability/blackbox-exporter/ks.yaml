@@ -6,6 +6,7 @@ metadata:
   name: blackbox-exporter-lan
 spec:
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/o11y/blackbox-exporter/lan
   prune: true
   sourceRef:
@@ -13,7 +14,6 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: o11y
-  wait: false
 ---
 # yaml-language-server: $schema=https://k8s-schemas.home-operations.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -25,6 +25,7 @@ spec:
     - name: multus-networks
       namespace: kube-system
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/o11y/blackbox-exporter/vpn
   prune: true
   sourceRef:
@@ -32,4 +33,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: o11y
-  wait: false

@@ -6,9 +6,10 @@ metadata:
   name: kube-prometheus-stack
 spec:
   dependsOn:
-  - name: linstor
-    namespace: flux-system
+    - name: linstor
+      namespace: flux-system
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/observability/kube-prometheus-stack/app
   prune: true
   sourceRef:
@@ -16,4 +17,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: observability
-  wait: false

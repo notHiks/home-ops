@@ -6,6 +6,7 @@ metadata:
   name: tuppr
 spec:
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/system-upgrade/tuppr/app
   prune: true
   sourceRef:
@@ -24,6 +25,7 @@ spec:
   dependsOn:
     - name: tuppr
   interval: 1h
+  patches: []
   path: ./kubernetes/apps/system-upgrade/tuppr/upgrades
   prune: true
   sourceRef:
@@ -31,4 +33,3 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: system-upgrade
-  wait: false

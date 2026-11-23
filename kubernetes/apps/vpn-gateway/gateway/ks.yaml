@@ -9,7 +9,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  interval: 30m
+  interval: 1h
+  patches: []
   path: ./kubernetes/apps/vpn-gateway/gateway/app
   prune: true
   sourceRef:
