@@ -6,20 +6,16 @@ metadata:
   name: talos
 spec:
   talos:
-     # renovate: datasource=custom.talos-factory depName=siderolabs/talos
+    # renovate: datasource=custom.talos-factory depName=siderolabs/talos
     version: v1.14.6
-
-  parallelism: 1
-
   policy:
     rebootMode: powercycle
-    drainTimeout: 10m
-    timeout: 30m
-    force: false
-    nodrain: false
-
   healthChecks:
-    - apiVersion: volsync.backube/v1alpha1
-      kind: ReplicationSource
+    - apiVersion: kopiur.home-operations.com/v1alpha1
+      kind: Snapshot
       expr: |-
-        status.conditions.filter(c, c.type == "Synchronizing").all(c, c.status == "False")
+        status.phase != 'Running'
+    - apiVersion: kopiur.home-operations.com/v1alpha1
+      kind: Restore
+      expr: |-
+        !(status.phase in ['Resolving', 'Restoring'])
