@@ -13,12 +13,11 @@ spec:
     image:
       repository: mirror.gcr.io/coredns/coredns
     k8sAppLabelOverride: kube-dns
-    serviceAccount:
-      create: true
     service:
       name: kube-dns
       clusterIP: "10.43.0.10"
     replicaCount: 2
+    priorityClassName: system-cluster-critical
     servers:
       - zones:
           - zone: .
@@ -44,6 +43,7 @@ spec:
             configBlock: |-
               prefetch 20
               serve_stale
+              servfail 0
           - name: loop
           - name: reload
           - name: loadbalance

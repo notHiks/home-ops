@@ -18,7 +18,9 @@ spec:
         operator: In
         values: ["envoy-external", "envoy-internal", "k8s-gateway"]
   blocks:
-    - cidr: "192.168.99.0/24"
+    - cidr: "192.168.99.40/32"
+    - cidr: "192.168.99.10/32"
+    - cidr: "192.168.99.50/32"
 ---
 apiVersion: cilium.io/v2alpha1
 kind: CiliumL2AnnouncementPolicy
