@@ -9,12 +9,16 @@ spec:
   secretName: linstor-api-ca
   duration: 87600h # 10 years
   isCA: true
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
   usages:
     - signing
     - key encipherment
     - cert sign
   issuerRef:
-    name: selfsigned-issuer
+    name: selfsigned
     kind: ClusterIssuer
 ---
 apiVersion: cert-manager.io/v1
@@ -26,12 +30,16 @@ spec:
   secretName: linstor-internal-ca
   duration: 87600h # 10 years
   isCA: true
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    rotationPolicy: Never
   usages:
     - signing
     - key encipherment
     - cert sign
   issuerRef:
-    name: selfsigned-issuer
+    name: selfsigned
     kind: ClusterIssuer
 ---
 apiVersion: cert-manager.io/v1
