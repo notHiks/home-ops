@@ -9,10 +9,6 @@ spec:
   secretName: linstor-api-ca
   duration: 87600h # 10 years
   isCA: true
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-    rotationPolicy: Never
   usages:
     - signing
     - key encipherment
@@ -30,10 +26,6 @@ spec:
   secretName: linstor-internal-ca
   duration: 87600h # 10 years
   isCA: true
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-    rotationPolicy: Never
   usages:
     - signing
     - key encipherment
